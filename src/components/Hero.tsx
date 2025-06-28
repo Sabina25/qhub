@@ -1,4 +1,3 @@
-import React from 'react';
 import { ArrowRight, Users } from 'lucide-react';
 
 const Hero = () => {
@@ -8,7 +7,7 @@ const Hero = () => {
       <div 
         className="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-blue-800/80 z-10"
         style={{
-          backgroundImage: `url('./src/images/Q1.jpg')`,
+          backgroundImage: `url('./images/Q1.jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed'
