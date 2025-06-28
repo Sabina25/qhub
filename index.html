@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generation Erasmus - Professional Network of the Erasmus Generation</title>
+    <meta name="description" content="The professional network of the Erasmus Generation, connecting young Europeans and fostering lifelong partnerships across the continent." />
+    <meta name="keywords" content="Erasmus, Europe, mobility, education, networking, youth, professional network" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Generation Erasmus - Professional Network" />
+    <meta property="og:description" content="Connecting young Europeans who share the Erasmus experience" />
+    <meta property="og:type" content="website" />
+    
+    <!-- Custom CSS for animations -->
+    <style>
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      .animate-fade-in {
+        animation: fade-in 1s ease-out;
+      }
+      
+      .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      
+      .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      
+      html {
+        scroll-behavior: smooth;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
