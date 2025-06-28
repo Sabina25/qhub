@@ -9,17 +9,11 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-<<<<<<< HEAD
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Node.js
         uses: actions/setup-node@v3
-=======
-      - uses: actions/checkout@v4
-      - run: npm run build
-      - uses: FirebaseExtended/action-hosting-deploy@v0
->>>>>>> 26521ee (Add Firebase Hosting GitHub Actions)
         with:
           node-version: 18
 
@@ -33,6 +27,6 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_<PROJECT_ID> }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_GITHUB_B91AB }}'
           channelId: live
-          projectId: your-project-id
+          projectId: github-b91ab
