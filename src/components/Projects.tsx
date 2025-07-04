@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ExternalLink, Calendar, MapPin, Users } from 'lucide-react';
 
 const Projects = () => {
+  const navigate = useNavigate();
   const projects = [
     {
       title: "EuroVoices",
@@ -91,9 +93,12 @@ const Projects = () => {
         </div>
 
         <div className="text-center mt-12">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200">
-            View All Projects
-          </button>
+        <button
+        onClick={() => navigate('/projects')}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition"
+      >
+        View All Projects
+      </button>
         </div>
       </div>
     </section>
