@@ -76,7 +76,7 @@ const Members = () => {
         </div>
 
         {/* Join Us Section */}
-        <div className="bg-gradient-to-r from-blue-600 to-orange-500 rounded-2xl p-8 text-white text-center">
+        {/* <div className="bg-gradient-to-r from-blue-600 to-orange-500 rounded-2xl p-8 text-white text-center">
           <Users className="h-16 w-16 mx-auto mb-6 opacity-90" />
           <h3 className="text-3xl font-bold mb-4">
             Join Our Growing Network
@@ -93,7 +93,7 @@ const Members = () => {
               Partner with Us
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* Membership Benefits 
         <div className="mt-16">

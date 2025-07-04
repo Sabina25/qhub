@@ -14,7 +14,7 @@ const Header = () => {
   }, []);
 
   const navItems = [
-    'Home', 'Organisation', 'Members', 'Projects', 'News', 'Annual Meeting', 'Contact'
+    'Home', 'Organisation', 'Members', 'Projects', 'News', 'Contact'
   ];
 
   const languages = ['EN', 'IT', 'ES', 'DE', 'FR'];

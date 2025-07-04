@@ -18,7 +18,7 @@ function App() {
         <Hero />
         <Mission />
         <Projects />
-        <AnnualMeeting />
+        {/* <AnnualMeeting /> */}
        {/* <GE4Cities />*/}
         <News />
         <Members />
