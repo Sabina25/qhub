@@ -58,7 +58,7 @@ const Header = () => {
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top row: logo and main nav */}
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-[45px]">
           {/* Logo */}
           <div className="text-2xl font-bold text-blue-600">
             Q<span className="text-orange-500">hub</span>

@@ -145,7 +145,7 @@ const Footer = () => {
             </div>
             
             {/* Legal Links */}
-            <div className="flex flex-wrap gap-6">
+            {/* <div className="flex flex-wrap gap-6">
               {legalLinks.map((link, index) => (
                 <a
                   key={index}
@@ -155,7 +155,7 @@ const Footer = () => {
                   {link.name}
                 </a>
               ))}
-            </div>
+            </div> */}
           </div>
 
           {/* EU Funding Notice */}

@@ -102,7 +102,7 @@ const Contact = () => {
             </div>
 
             {/* Quick Links */}
-            <div className="bg-blue-600 text-white p-6 rounded-lg">
+            {/* <div className="bg-blue-600 text-white p-6 rounded-lg">
               <h4 className="text-lg font-semibold mb-4">Need Immediate Help?</h4>
               <div className="space-y-3">
                 <a href="#faq" className="block hover:underline">
@@ -115,7 +115,7 @@ const Contact = () => {
                   💬 Community Support Forum
                 </a>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Contact Form */}
@@ -177,7 +177,6 @@ const Contact = () => {
                   <option value="partnership">Partnership Opportunities</option>
                   <option value="events">Events & Annual Meeting</option>
                   <option value="projects">Project Collaboration</option>
-                  <option value="ge4cities">gE4Cities Local Chapters</option>
                   <option value="media">Media & Press Inquiries</option>
                   <option value="other">Other</option>
                 </select>
