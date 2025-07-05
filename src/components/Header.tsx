@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Globe } from 'lucide-react';
 
-const Header = () => {
+const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeAnchor, setActiveAnchor] = useState<string>('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -14,6 +15,14 @@ const Header = () => {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setActiveAnchor(window.location.hash);
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   const mainNav = [
@@ -29,7 +38,10 @@ const Header = () => {
     { label: 'Contact', to: 'contact' }
   ];
 
-  const handleNavClick = (e, item) => {
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    item: { label: string; to: string; isRoute?: boolean }
+  ) => {
     e.preventDefault();
 
     if (item.isRoute) {
@@ -42,10 +54,13 @@ const Header = () => {
       navigate('/');
       setTimeout(() => {
         document.getElementById(item.to)?.scrollIntoView({ behavior: 'smooth' });
+        window.location.hash = `#${item.to}`;
       }, 300);
     } else {
       document.getElementById(item.to)?.scrollIntoView({ behavior: 'smooth' });
+      window.location.hash = `#${item.to}`;
     }
+
     setIsMenuOpen(false);
   };
 
@@ -58,12 +73,14 @@ const Header = () => {
       }`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top row: logo and main nav */}
         <div className="flex justify-between items-center h-[45px]">
           {/* Logo */}
-          <div className="text-2xl font-bold text-blue-600">
-            Q<span className="text-orange-500">hub</span>
-          </div>
+          <button
+  onClick={() => navigate('/')}
+  className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition"
+>
+  Q<span className="text-orange-500">hub</span>
+</button>
 
           {/* Desktop Main Navigation */}
           <div className="hidden lg:flex space-x-6 pr-[150px] ml-auto">
@@ -72,7 +89,11 @@ const Header = () => {
                 key={item.label}
                 href={item.to}
                 onClick={(e) => handleNavClick(e, item)}
-                className="text-gray-800 hover:text-blue-600 font-medium transition"
+                className={`font-medium transition ${
+                  location.pathname === item.to
+                    ? 'text-blue-600 font-semibold'
+                    : 'text-gray-800 hover:text-blue-600'
+                }`}
               >
                 {item.label}
               </a>
@@ -102,23 +123,25 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Bottom row: anchor nav */}
-       {/* Bottom row: anchor nav (only on homepage) */}
-{location.pathname === '/' && (
-  <div className="hidden lg:flex border-t border-gray-100 text-xs text-gray-500 font-light tracking-wide py-1 space-x-4 pr-[200px] justify-end">
-    {anchorNav.map((item) => (
-      <a
-        key={item.label}
-        href={`#${item.to}`}
-        onClick={(e) => handleNavClick(e, item)}
-        className="hover:text-blue-600 transition"
-      >
-        {item.label}
-      </a>
-    ))}
-  </div>
-)}
-
+        {/* Anchor navigation (desktop, only on home) */}
+        {location.pathname === '/' && (
+          <div className="hidden lg:flex border-t border-gray-100 text-xs text-gray-500 font-light tracking-wide py-1 space-x-4 pr-[200px] justify-end">
+            {anchorNav.map((item) => (
+              <a
+                key={item.label}
+                href={`#${item.to}`}
+                onClick={(e) => handleNavClick(e, item)}
+                className={`transition ${
+                  activeAnchor === `#${item.to}`
+                    ? 'text-blue-600 font-semibold'
+                    : 'hover:text-blue-600'
+                }`}
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+        )}
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
@@ -128,7 +151,15 @@ const Header = () => {
                 key={item.label}
                 href={item.isRoute ? item.to : `#${item.to}`}
                 onClick={(e) => handleNavClick(e, item)}
-                className="block px-4 text-gray-700 hover:text-blue-600 text-base"
+                className={`block px-4 text-base ${
+                  item.isRoute
+                    ? location.pathname === item.to
+                      ? 'text-blue-600 font-semibold'
+                      : 'text-gray-700 hover:text-blue-600'
+                    : activeAnchor === `#${item.to}`
+                      ? 'text-blue-600 font-semibold'
+                      : 'text-gray-700 hover:text-blue-600'
+                }`}
               >
                 {item.label}
               </a>
