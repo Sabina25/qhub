@@ -65,7 +65,7 @@ const Header: React.FC = () => {
     setIsMenuOpen(false);
   };
 
-  const languages = ['EN', 'IT', 'ES', 'DE', 'FR'];
+  const languages = ['EN', 'UA'];
 
   return (
     <header
