@@ -33,8 +33,9 @@ const Header: React.FC = () => {
 
   const anchorNav = [
     { label: 'Organisation', to: 'organisation' },
-    { label: 'Members', to: 'members' },
+    { label: 'Projects', to: 'projects' },
     { label: 'News', to: 'news' },
+    { label: 'Members', to: 'members' },
     { label: 'Contact', to: 'contact' }
   ];
 
