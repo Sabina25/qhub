@@ -9,7 +9,8 @@ import News from './components/News';
 import Members from './components/Members';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-import AllProjectsPage from './AllEventsPage';
+import AllEventsPage from './AllEventsPage';
+import AllProjectsPage from './AllProjectsPage';
 
 import ScrollToTop from './ScrollToTop';
 
@@ -35,7 +36,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/projects" element={<AllProjectsPage />} />
-        <Route path="/events" element={<AllProjectsPage />} />
+        <Route path="/events" element={<AllEventsPage />} />
       </Routes>
     </Router>
   );
