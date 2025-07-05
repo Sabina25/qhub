@@ -76,11 +76,11 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center h-[45px]">
           {/* Logo */}
           <button
-  onClick={() => navigate('/')}
-  className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition"
->
-  Q<span className="text-orange-500">hub</span>
-</button>
+            onClick={() =>{
+               navigate('/')}}
+            className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition">
+            Q<span className="text-orange-500">hub</span>
+          </button>
 
           {/* Desktop Main Navigation */}
           <div className="hidden lg:flex space-x-6 pr-[150px] ml-auto">

@@ -87,7 +87,7 @@ const News = () => {
 
         {/* News Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {events.filter(item => !item.featured).map((item, index) => (
+          {events.filter((item: Event) => !item.featured).map((item: Event, index: number) => (
             <article key={index} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group hover:-translate-y-1">
               <div className="relative overflow-hidden">
                 <img
