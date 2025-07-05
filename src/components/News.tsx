@@ -1,40 +1,21 @@
-import React from 'react';
 import { Calendar, ArrowRight, Tag } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import events from '../data/events';
 
 const News = () => {
-  const newsItems = [
-    {
-      title: "New Partnership with European Youth Forum",
-      excerpt: "We're excited to announce our collaboration with the European Youth Forum to amplify young voices in European policy-making.",
-      image: "https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "March 15, 2024",
-      category: "Partnership",
-      featured: true
-    },
-    {
-      title: "Annual Meeting 2024 Highlights",
-      excerpt: "Over 350 participants gathered in Barcelona for an inspiring weekend of networking, workshops, and cultural exchange.",
-      image: "https://images.pexels.com/photos/1388919/pexels-photo-1388919.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "March 10, 2024",
-      category: "Events"
-    },
-    {
-      title: "Digital Inclusion Project Launch",
-      excerpt: "Our new initiative aims to bridge the digital divide in international education and ensure equal access to mobility opportunities.",
-      image: "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "February 28, 2024",
-      category: "Projects"
-    },
-    {
-      title: "Green Mobility Report Released",
-      excerpt: "Our comprehensive study on sustainable transportation in student mobility offers actionable insights for institutions.",
-      image: "https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "February 20, 2024",
-      category: "Research"
-    }
-  ];
+  const navigate = useNavigate();
 
-  const categories = ["All", "Partnership", "Events", "Projects", "Research", "Policy"];
+  interface Event {
+    title: string;
+    excerpt: string;
+    image: string;
+    date: string;
+    category: string;
+    featured?: boolean;
+  }
+ 
+
+  //const categories = ["All", "Partnership", "Events", "Projects", "Research", "Policy"];
 
   return (
     <section id="news" className="py-20 bg-gray-50">
@@ -49,7 +30,7 @@ const News = () => {
           </p>
         </div>
 
-        {/* Category Filter */}
+        {/* Category Filter
         <div className="flex flex-wrap justify-center gap-4 mb-12">
           {categories.map((category) => (
             <button
@@ -63,10 +44,10 @@ const News = () => {
               {category}
             </button>
           ))}
-        </div>
+        </div> */}
 
         {/* Featured Article */}
-        {newsItems.filter(item => item.featured).map((item, index) => (
+        {events.filter((item: Event) => item.featured).map((item:Event , index: number) => (
           <div key={index} className="bg-white rounded-2xl shadow-lg overflow-hidden mb-12">
             <div className="grid lg:grid-cols-2 gap-0">
               <div className="relative">
@@ -106,7 +87,7 @@ const News = () => {
 
         {/* News Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {newsItems.filter(item => !item.featured).map((item, index) => (
+          {events.filter(item => !item.featured).map((item, index) => (
             <article key={index} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group hover:-translate-y-1">
               <div className="relative overflow-hidden">
                 <img
@@ -145,7 +126,9 @@ const News = () => {
         </div>
 
         <div className="text-center mt-12">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200">
+          <button 
+          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200"
+          onClick={() => navigate('/events')}>
             View All News
           </button>
         </div>

@@ -1,43 +1,19 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ExternalLink, Calendar, MapPin, Users } from 'lucide-react';
+import { ExternalLink, Calendar, Users } from 'lucide-react';
+import projects from '../data/projects';
+
+interface Project {
+  title: string;
+  description: string;
+  image: string;
+  funding: string;
+  duration: string;
+  participants: string;
+}
 
 const Projects = () => {
+  const arrProjects = projects.slice(0, 4)
   const navigate = useNavigate();
-  const projects = [
-    {
-      title: "EuroVoices",
-      description: "Amplifying young European voices in policy-making through digital platforms and civic engagement initiatives.",
-      image: "https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      funding: "Erasmus+ Programme",
-      duration: "2023-2025",
-      participants: "15 countries"
-    },
-    {
-      title: "Bridge Building",
-      description: "Creating connections between Erasmus alumni and current students to foster mentorship and professional networks.",
-      image: "https://images.pexels.com/photos/1438072/pexels-photo-1438072.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      funding: "European Commission",
-      duration: "2024-2026",
-      participants: "25 cities"
-    },
-    {
-      title: "Green Mobility",
-      description: "Promoting sustainable practices in international education and green transportation for student mobility.",
-      image: "https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      funding: "EU Green Deal",
-      duration: "2023-2024",
-      participants: "12 countries"
-    },
-    {
-      title: "Digital Inclusion",
-      description: "Ensuring equal access to digital education and mobility opportunities for students from all backgrounds.",
-      image: "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      funding: "Digital Europe Programme",
-      duration: "2024-2025",
-      participants: "20 universities"
-    }
-  ];
 
   return (
     <section id="projects" className="py-20 bg-white">
@@ -53,7 +29,7 @@ const Projects = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-          {projects.map((project, index) => (
+          {arrProjects.map((project: Project, index: number) => (
             <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
               <div className="relative overflow-hidden">
                 <img
@@ -70,7 +46,7 @@ const Projects = () => {
               
               <div className="p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-3">{project.title}</h3>
-                <p className="text-gray-600 mb-4 line-clamp-3">{project.description}</p>
+                {/* <p className="text-gray-600 mb-4 line-clamp-3">{project.description}</p> */}
                 
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-sm text-gray-500">
