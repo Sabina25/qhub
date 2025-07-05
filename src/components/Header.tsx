@@ -18,7 +18,8 @@ const Header = () => {
 
   const mainNav = [
     { label: 'Home', to: '/' },
-    { label: 'Projects', to: '/projects', isRoute: true }
+    { label: 'Projects', to: '/projects', isRoute: true },
+    { label: 'Events', to: '/events', isRoute: true }
   ];
 
   const anchorNav = [

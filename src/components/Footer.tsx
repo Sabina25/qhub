@@ -12,12 +12,12 @@ const Footer = () => {
     { name: 'Become a Member', href: '#members' }
   ];
 
-  const legalLinks = [
-    { name: 'Privacy Policy', href: '#privacy' },
-    { name: 'Terms of Service', href: '#terms' },
-    { name: 'Cookie Policy', href: '#cookies' },
-    { name: 'Code of Conduct', href: '#conduct' }
-  ];
+  // const legalLinks = [
+  //   { name: 'Privacy Policy', href: '#privacy' },
+  //   { name: 'Terms of Service', href: '#terms' },
+  //   { name: 'Cookie Policy', href: '#cookies' },
+  //   { name: 'Code of Conduct', href: '#conduct' }
+  // ];
 
     {/*const resources = [
     { name: 'Erasmus+ Programme', href: 'https://erasmus-plus.ec.europa.eu/', external: true },
