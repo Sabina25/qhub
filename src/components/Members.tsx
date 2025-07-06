@@ -54,20 +54,27 @@ const Members = () => {
             className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center justify-center min-h-[120px] group"
           >
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-orange-500 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition-transform duration-200">
-                <span className="text-white font-bold text-xl">
-                  {member.name
-                    .split(" ")
-                    .map((word) => word[0])
-                    .join("")
-                    .slice(0, 2)}
-                </span>
-              </div>
-              <p className="text-sm font-medium text-gray-700 line-clamp-2">
-                {member.name}
-              </p>
-              <p className="text-xs text-gray-500 capitalize">{member.type}</p>
+            {member.imageUrl ? (
+            <div className="w-16 h-16 rounded-lg overflow-hidden mx-auto mb-3 group-hover:scale-105 transition-transform duration-200">
+              <img
+                src={member.imageUrl}
+                alt={member.name}
+                className="w-full h-full object-cover"
+              />
             </div>
+          ) : (
+            <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-500 to-orange-500 flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition-transform duration-200">
+              <span className="text-white font-bold text-xl">
+                {member.name.split(" ").map((word) => word[0]).join("").slice(0, 2)}
+              </span>
+            </div>
+          )}
+
+          <p className="text-sm font-medium text-gray-700 line-clamp-2">
+            {member.name}
+          </p>
+          <p className="text-xs text-gray-500 capitalize">{member.type}</p>
+        </div>
           </div>
         ))}
       </div>
