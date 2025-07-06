@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ExternalLink, Calendar, Users } from 'lucide-react';
-import projects from '../data/projects';
+import projects from '../data/projects.tsx';
 
 interface Project {
   title: string;

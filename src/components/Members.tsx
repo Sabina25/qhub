@@ -1,17 +1,10 @@
-import React from 'react';
+import {useState} from 'react';
 import { Users, CaseSensitive as University, Building, Heart } from 'lucide-react';
+import memberLogos from '../data/members'
 
 const Members = () => {
-  const memberLogos = [
-    { name: "European University Association", type: "university" },
-    { name: "Erasmus Student Network", type: "network" },
-    { name: "European Youth Forum", type: "organization" },
-    { name: "European Students' Union", type: "union" },
-    { name: "AEGEE-Europe", type: "network" },
-    { name: "JEF Europe", type: "organization" },
-    { name: "European Movement International", type: "movement" },
-    { name: "Youth for Europe", type: "network" },
-  ];
+  const [showAll, setShowAll] = useState(false);
+  const visibleLogos = showAll ? memberLogos : memberLogos.slice(0, 8);
 
   const stats = [
     { number: "150+", label: "Partner Organizations", icon: Building },
@@ -49,31 +42,47 @@ const Members = () => {
           })}
         </div>
 
-        {/* Partner Logos Grid */}
         <div className="bg-gray-50 rounded-2xl p-8 mb-12">
-          <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
-            Trusted by Leading Organizations
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {memberLogos.map((member, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center justify-center min-h-[120px] group">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-orange-500 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition-transform duration-200">
-                    <span className="text-white font-bold text-xl">
-                      {member.name.split(' ').map(word => word[0]).join('').slice(0, 2)}
-                    </span>
-                  </div>
-                  <p className="text-sm font-medium text-gray-700 line-clamp-2">
-                    {member.name}
-                  </p>
-                  <p className="text-xs text-gray-500 capitalize">
-                    {member.type}
-                  </p>
-                </div>
+      <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
+        Trusted by Leading Organizations
+      </h3>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {visibleLogos.map((member, index) => (
+          <div
+            key={index}
+            className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center justify-center min-h-[120px] group"
+          >
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-orange-500 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition-transform duration-200">
+                <span className="text-white font-bold text-xl">
+                  {member.name
+                    .split(" ")
+                    .map((word) => word[0])
+                    .join("")
+                    .slice(0, 2)}
+                </span>
               </div>
-            ))}
+              <p className="text-sm font-medium text-gray-700 line-clamp-2">
+                {member.name}
+              </p>
+              <p className="text-xs text-gray-500 capitalize">{member.type}</p>
+            </div>
           </div>
+        ))}
+      </div>
+
+      {memberLogos.length > 8 && (
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="text-blue-600 font-medium hover:underline"
+          >
+            {showAll ? "See less" : "See more"}
+          </button>
         </div>
+      )}
+    </div>
 
         {/* Join Us Section */}
         {/* <div className="bg-gradient-to-r from-blue-600 to-orange-500 rounded-2xl p-8 text-white text-center">

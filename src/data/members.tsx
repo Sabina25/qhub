@@ -1,0 +1,30 @@
+const members = [
+    { name: "European University Association", type: "university" },
+    { name: "Erasmus Student Network", type: "network" },
+    { name: "European Youth Forum", type: "organization" },
+    { name: "European Students' Union", type: "union" },
+    { name: "AEGEE-Europe", type: "network" },
+    { name: "JEF Europe", type: "organization" },
+    { name: "European Movement International", type: "movement" },
+    { name: "Youth for Europe", type: "network" },
+    { name: "European University Association", type: "university" },
+    { name: "Erasmus Student Network", type: "network" },
+    { name: "European Youth Forum", type: "organization" },
+    { name: "European Students' Union", type: "union" },
+    { name: "AEGEE-Europe", type: "network" },
+    { name: "JEF Europe", type: "organization" },
+    { name: "European Movement International", type: "movement" },
+    { name: "Youth for Europe", type: "network" },
+    { name: "Youth for Europe", type: "network" },
+    { name: "European University Association", type: "university" },
+    { name: "Erasmus Student Network", type: "network" },
+    { name: "European Youth Forum", type: "organization" },
+    { name: "European Students' Union", type: "union" },
+    { name: "AEGEE-Europe", type: "network" },
+    { name: "JEF Europe", type: "organization" },
+    { name: "European Movement International", type: "movement" },
+    { name: "Youth for Europe", type: "network" },
+  ];
+
+
+export default members;

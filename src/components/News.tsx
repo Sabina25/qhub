@@ -1,6 +1,6 @@
 import { Calendar, ArrowRight, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import events from '../data/events';
+import events from '../data/events.tsx';
 
 const News = () => {
   const navigate = useNavigate();

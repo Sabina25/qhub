@@ -1,4 +1,3 @@
-import React from 'react';
 import { Target, Heart, Globe, Award } from 'lucide-react';
 
 const Mission = () => {
