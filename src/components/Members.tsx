@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import { Users, CaseSensitive as University, Building, Heart } from 'lucide-react';
 import memberLogos from '../data/members'
+import LogoMarquee from './LogoMarquee';
 
 const Members = () => {
   const [showAll, setShowAll] = useState(false);
@@ -26,8 +27,11 @@ const Members = () => {
           </p>
         </div>
 
+        {/* Partners */}
+        <LogoMarquee />
+
         {/* Statistics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+        {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
           {stats.map((stat, index) => {
             const IconComponent = stat.icon;
             return (
@@ -40,12 +44,13 @@ const Members = () => {
               </div>
             );
           })}
-        </div>
-
-        <div className="bg-gray-50 rounded-2xl p-8 mb-12">
-      <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
-        Trusted by Leading Organizations
-      </h3>
+        </div> */}
+          
+       {/* Members */}
+      <div className="bg-gray-50 rounded-2xl p-8 mb-12">
+        <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
+          Trusted by Leading Organizations
+        </h3>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {visibleLogos.map((member, index) => (
