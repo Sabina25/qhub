@@ -20,7 +20,7 @@ const AllEventsPage: React.FC = () => {
         <h1 className="text-4xl font-bold mb-10 text-center">All Events</h1>
         <div className="grid md:grid-cols-2 gap-8">
           {events.map((event: Event, index: number) => (
-            <div key={index} className="bg-white rounded-xl shadow p-6">
+            <div key={index} className="bg-white rounded-lg shadow p-6">
               <img
                 src={event.image}
                 alt={event.title}

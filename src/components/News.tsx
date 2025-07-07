@@ -29,7 +29,7 @@ const News = () => {
 
         {/* Featured Article */}
         {events.filter((item: Event) => item.featured).map((item, index) => (
-          <div key={index} className="bg-white rounded-2xl shadow-lg overflow-hidden mb-12">
+          <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden mb-12">
             <div className="grid lg:grid-cols-2">
               <div className="relative">
                 <img
@@ -38,7 +38,7 @@ const News = () => {
                   className="w-full h-72 lg:h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80"></div>
-                <span className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-md">
+                <span className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-lg text-sm font-semibold shadow-md">
                   Featured
                 </span>
               </div>
@@ -70,7 +70,7 @@ const News = () => {
           {events.filter((item: Event) => !item.featured).map((item, index) => (
             <article
               key={index}
-              className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 group hover:-translate-y-1"
+              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 group hover:-translate-y-1"
             >
               <div className="relative overflow-hidden">
                 <img
@@ -106,7 +106,7 @@ const News = () => {
         <div className="text-center mt-12">
           <button
             onClick={() => navigate('/events')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold shadow-md transition"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold shadow-md transition"
           >
             View All News
           </button>
