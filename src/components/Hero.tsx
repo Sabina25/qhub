@@ -22,15 +22,15 @@ const Hero = () => {
             <Users className="h-16 w-16 text-orange-400" />
           </div>
           
-          <h1 className="font-anton text-4xl md:text-6xl lg:text-7xl text-white mb-6 leading-tight">
+          <h1 className="font-raleway font-bold text-4xl md:text-6xl lg:text-7xl text-white mb-6 leading-tight">
             Q-hub — Кримська проєктна фундація
           </h1>
 
-          <p className="text-xl md:text-2xl text-gray-200 mb-6 max-w-3xl mx-auto leading-relaxed">
+          <p className="font-notosans text-xl md:text-2xl text-gray-200 mb-6 max-w-3xl mx-auto leading-relaxed">
             Розвиваємо освітні, медійні та культурні ініціативи для внутрішньо переміщених осіб з окупованих територій та кримських татар по всьому світу.
           </p>
 
-          <p className="text-xl md:text-2xl text-gray-200 mb-12 max-w-3xl mx-auto leading-relaxed">
+          <p className="font-notosans text-xl md:text-2xl text-gray-200 mb-12 max-w-3xl mx-auto leading-relaxed">
             Ми працюємо заради майбутнього Криму та всієї України. Ми беремо на себе відповідальність за наступні покоління.
           </p>
 

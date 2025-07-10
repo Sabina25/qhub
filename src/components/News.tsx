@@ -19,10 +19,10 @@ const News = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <div className="text-center mb-16">
-          <h2 className="font-anton text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h2 className="font-raleway font-semibold text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Останні новини 
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="font-notosans text-lg text-gray-600 max-w-2xl mx-auto">
             Слідкуйте останніми подіями та історіями нашої спільноти.
           </p>
         </div>
@@ -108,7 +108,7 @@ const News = () => {
             onClick={() => navigate('/events')}
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold shadow-md transition"
           >
-            View All News
+            Переглянути всі новини
           </button>
         </div>
       </div>

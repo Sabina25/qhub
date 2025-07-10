@@ -18,10 +18,10 @@ const Members = () => {
     <section id="members" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <h2 className="font-raleway font-semibold text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             Наші партнери
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="font-notosans text-xl text-gray-600 max-w-3xl mx-auto">
             Building a stronger Europe together with leading universities, organizations, 
             and institutions committed to educational mobility and youth empowerment
           </p>
@@ -48,7 +48,7 @@ const Members = () => {
           
        {/* Members */}
       <div className="bg-gray-50 rounded-2xl p-8 mb-12">
-        <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
+        <h3 className="font-raleway font-semibold text-2xl font-bold text-gray-900 text-center mb-8">
           Наші резиденти/команда: 
         </h3>
 
@@ -90,7 +90,7 @@ const Members = () => {
             onClick={() => setShowAll(!showAll)}
             className="text-blue-600 font-medium hover:underline"
           >
-            {showAll ? "See less" : "See more"}
+            {showAll ? "Згорнути" : "Показати більше"}
           </button>
         </div>
       )}

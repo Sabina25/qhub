@@ -19,10 +19,10 @@ const Projects = () => {
     <section id="projects" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <h2 className="font-raleway font-semibold text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             Наші проекти
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="font-notosans text-xl text-gray-600 max-w-3xl mx-auto">
             Перспективні ініціативи, що сприяють позитивним змінам у Криму, Україні та Європі через співпрацю, освіту та громадську активність 
           </p>
         </div>
@@ -72,7 +72,7 @@ const Projects = () => {
         onClick={() => navigate('/projects')}
         className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3  font-semibold transition"
       >
-        View All Projects
+        Переглянути всі проекти
       </button>
         </div>
       </div>

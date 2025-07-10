@@ -12,7 +12,10 @@ export default {
           '100%': { transform: 'translateX(-50%)' },
         },
       },
-    
+      fontFamily: {
+        raleway: ['Raleway', 'sans-serif'],
+        notosans: ['Noto Sans', 'sans-serif'],
+      },
     },
   },
   plugins: [],

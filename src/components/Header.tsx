@@ -26,17 +26,17 @@ const Header: React.FC = () => {
   }, []);
 
   const mainNav = [
-    { label: 'Home', to: '/' },
-    { label: 'Projects', to: '/projects', isRoute: true },
-    { label: 'Events', to: '/events', isRoute: true }
+    { label: 'Головна', to: '/' },
+    { label: 'Проекти', to: '/projects', isRoute: true },
+    { label: 'Новини', to: '/events', isRoute: true }
   ];
 
   const anchorNav = [
-    { label: 'Organisation', to: 'organisation' },
-    { label: 'Projects', to: 'projects' },
-    { label: 'News', to: 'news' },
-    { label: 'Members', to: 'members' },
-    { label: 'Contact', to: 'contact' }
+    { label: 'Організація', to: 'organisation' },
+    { label: 'Проекти', to: 'projects' },
+    { label: 'Новини', to: 'news' },
+    { label: 'Pезиденти', to: 'members' },
+    { label: 'Kонтакт', to: 'contact' }
   ];
 
   const handleNavClick = (
@@ -84,16 +84,16 @@ const Header: React.FC = () => {
           </button>
 
           {/* Desktop Main Navigation */}
-          <div className="hidden lg:flex space-x-6 pr-[150px] ml-auto">
+          <div className="font-notosans hidden lg:flex space-x-6 pr-[150px] ml-auto">
             {mainNav.map((item) => (
               <a
                 key={item.label}
                 href={item.to}
                 onClick={(e) => handleNavClick(e, item)}
-                className={`font-medium transition ${
+                className={`font-notosans font-medium transition ${
                   location.pathname === item.to
-                    ? 'text-blue-600 font-semibold'
-                    : 'text-gray-800 hover:text-blue-600'
+                    ? 'font-notosans text-blue-600 font-semibold'
+                    : 'font-notosans text-gray-800 hover:text-blue-600'
                 }`}
               >
                 {item.label}
@@ -104,7 +104,7 @@ const Header: React.FC = () => {
           {/* Language Switcher */}
           <div className="hidden md:flex items-center space-x-2">
             <Globe className="h-4 w-4 text-gray-600" />
-            <select className="text-sm text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
+            <select className="font-notosans text-sm text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
               {languages.map((lang) => (
                 <option key={lang} value={lang}>
                   {lang}
@@ -126,16 +126,16 @@ const Header: React.FC = () => {
 
         {/* Anchor navigation (desktop, only on home) */}
         {location.pathname === '/' && (
-          <div className="hidden lg:flex border-t border-gray-100 text-xs text-gray-500 font-light tracking-wide py-1 space-x-4 pr-[200px] justify-end">
+          <div className="font-notosans hidden lg:flex border-t border-gray-100 text-xs text-gray-500 font-light tracking-wide py-1 space-x-4 pr-[200px] justify-end">
             {anchorNav.map((item) => (
               <a
                 key={item.label}
                 href={`#${item.to}`}
                 onClick={(e) => handleNavClick(e, item)}
-                className={`transition ${
+                className={`font-notosans transition ${
                   activeAnchor === `#${item.to}`
-                    ? 'text-blue-600 font-semibold'
-                    : 'hover:text-blue-600'
+                    ? 'font-notosans text-blue-600 font-semibold'
+                    : 'font-notosans hover:text-blue-600'
                 }`}
               >
                 {item.label}
