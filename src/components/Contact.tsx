@@ -27,11 +27,10 @@ const Contact = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Get in Touch
+            Зв'язатися з нами
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Have questions about our network, want to get involved, or need support? 
-            We'd love to hear from you and help you.
+            Маєте запитання про нашу спільноту, хочете долучитися або потребуєте підтримки? Ми з радістю вислухаємо вас і допоможемо. 
           </p>
         </div>
 
@@ -40,7 +39,7 @@ const Contact = () => {
           <div className="space-y-8">
             <div>
               <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                Contact Information
+                Контактна інформація
               </h3>
               
               <div className="space-y-6">
@@ -60,7 +59,7 @@ const Contact = () => {
                     <Phone className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-900">Phone</h4>
+                    <h4 className="text-lg font-semibold text-gray-900">Телефон</h4>
                     <p className="text-gray-600">+380 95 681 2469</p>
                     <p className="text-gray-600">+380 95 681 2469 (Partnerships)</p>
                   </div>
@@ -71,7 +70,7 @@ const Contact = () => {
                     <MapPin className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-900">Address</h4>
+                    <h4 className="text-lg font-semibold text-gray-900">Адреса</h4>
                     <p className="text-gray-600">
                       Q-hub<br />
                       ул. Омельяновича-Павленко, 9<br />
@@ -84,19 +83,19 @@ const Contact = () => {
 
             {/* Office Hours */}
             <div className="bg-white p-6 rounded-lg shadow-md">
-              <h4 className="text-lg font-semibold text-gray-900 mb-4">Office Hours</h4>
+              <h4 className="text-lg font-semibold text-gray-900 mb-4">Офісні години</h4>
               <div className="space-y-2 text-gray-600">
                 <div className="flex justify-between">
-                  <span>Monday - Friday</span>
-                  <span>9:00 AM - 6:00 PM CET</span>
+                  <span>Понеділок - П'ятниця</span>
+                  <span>9:00 - 18:00</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Saturday</span>
-                  <span>10:00 AM - 2:00 PM CET</span>
+                  <span>10:00 - 14:00</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Sunday</span>
-                  <span>Closed</span>
+                  <span>Неділя</span>
+                  <span>Зачинено</span>
                 </div>
               </div>
             </div>
@@ -122,14 +121,14 @@ const Contact = () => {
           <div className="bg-white p-8 rounded-lg shadow-lg">
             <div className="flex items-center mb-6">
               <MessageSquare className="h-6 w-6 text-blue-600 mr-3" />
-              <h3 className="text-2xl font-bold text-gray-900">Send us a Message</h3>
+              <h3 className="text-2xl font-bold text-gray-900">Надішліть нам повідомлення</h3>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                    Full Name *
+                    ПІБ *
                   </label>
                   <input
                     type="text"
@@ -145,7 +144,7 @@ const Contact = () => {
 
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address *
+                    Адреса електронної пошти *
                   </label>
                   <input
                     type="email"
@@ -162,7 +161,7 @@ const Contact = () => {
 
               <div>
                 <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-                  Subject *
+                  Тема *
                 </label>
                 <select
                   id="subject"
@@ -184,7 +183,7 @@ const Contact = () => {
 
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                  Message *
+                  Повідомлення *
                 </label>
                 <textarea
                   id="message"
@@ -203,12 +202,12 @@ const Contact = () => {
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center space-x-2"
               >
                 <Send className="h-5 w-5" />
-                <span>Send Message</span>
+                <span>Надіслати повідомлення</span>
               </button>
             </form>
 
             <p className="text-sm text-gray-500 mt-4">
-              * Required fields. We typically respond within 24-48 hours during business days.
+              * Обов'язкові поля. Зазвичай ми відповідаємо протягом 24-48 годин у робочі дні.
             </p>
           </div>
         </div>

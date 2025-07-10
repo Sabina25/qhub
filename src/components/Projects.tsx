@@ -20,17 +20,16 @@ const Projects = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Our Projects
+            Наші проекти
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Innovative initiatives driving positive change across Europe through collaboration, 
-            education, and civic engagement
+            Перспективні ініціативи, що сприяють позитивним змінам у Криму, Україні та Європі через співпрацю, освіту та громадську активність 
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
           {arrProjects.map((project: Project, index: number) => (
-            <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 group">
+            <div key={index} className="bg-white  shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300 group">
               <div className="relative overflow-hidden">
                 <img
                   src={project.image}
@@ -38,7 +37,7 @@ const Projects = () => {
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute top-4 left-4">
-                  <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                  <span className="bg-blue-600 text-white px-3 py-1 text-sm font-semibold">
                     {project.funding}
                   </span>
                 </div>
@@ -71,7 +70,7 @@ const Projects = () => {
         <div className="text-center mt-12">
         <button
         onClick={() => navigate('/projects')}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition"
+        className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3  font-semibold transition"
       >
         View All Projects
       </button>

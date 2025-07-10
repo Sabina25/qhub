@@ -19,17 +19,17 @@ const News = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Latest News
+          <h2 className="font-anton text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Останні новини 
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Stay updated with our latest initiatives, partnerships, and stories from the Erasmus Generation community.
+            Слідкуйте останніми подіями та історіями нашої спільноти.
           </p>
         </div>
 
         {/* Featured Article */}
         {events.filter((item: Event) => item.featured).map((item, index) => (
-          <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden mb-12">
+          <div key={index} className="bg-white overflow-hidden mb-12">
             <div className="grid lg:grid-cols-2">
               <div className="relative">
                 <img
@@ -50,7 +50,7 @@ const News = () => {
                   <Calendar className="h-4 w-4 mr-2" />
                   {item.date}
                 </div>
-                <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
+                <h3 className="font-anton text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
                   {item.title}
                 </h3>
                 <p className="text-gray-600 mb-6 text-lg leading-relaxed line-clamp-4">
@@ -70,7 +70,7 @@ const News = () => {
           {events.filter((item: Event) => !item.featured).map((item, index) => (
             <article
               key={index}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 group hover:-translate-y-1"
+              className="bg-white   overflow-hidden  transition-all duration-300 group hover:-translate-y-1"
             >
               <div className="relative overflow-hidden">
                 <img
@@ -87,12 +87,12 @@ const News = () => {
                   <Calendar className="h-4 w-4 mr-2" />
                   {item.date}
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                <h3 className="font-anton text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                   {item.title}
                 </h3>
-                <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                {/* <p className="mt-4 text-gray-600 text-sm mb-4 line-clamp-3">
                   {item.excerpt}
-                </p>
+                </p> */}
                 <button className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition group text-sm">
                   Read More
                   <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />

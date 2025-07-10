@@ -19,7 +19,7 @@ const Members = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Our Members & Partners
+            Наші партнери
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Building a stronger Europe together with leading universities, organizations, 
@@ -49,18 +49,18 @@ const Members = () => {
        {/* Members */}
       <div className="bg-gray-50 rounded-2xl p-8 mb-12">
         <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
-          Trusted by Leading Organizations
+          Наші резиденти/команда: 
         </h3>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {visibleLogos.map((member, index) => (
           <div
             key={index}
-            className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center justify-center min-h-[120px] group"
+            className="bg-white p-6 rounded-sm shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center justify-center min-h-[120px] group"
           >
             <div className="text-center">
             {member.imageUrl ? (
-            <div className="w-16 h-16 rounded-lg overflow-hidden mx-auto mb-3 group-hover:scale-105 transition-transform duration-200">
+            <div className="w-36 h-36 rounded-sm overflow-hidden mx-auto mb-3 group-hover:scale-105 transition-transform duration-200">
               <img
                 src={member.imageUrl}
                 alt={member.name}
@@ -68,7 +68,7 @@ const Members = () => {
               />
             </div>
           ) : (
-            <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-500 to-orange-500 flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition-transform duration-200">
+            <div className="w-36 h-36 rounded-lg bg-gradient-to-br from-blue-500 to-orange-500 flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition-transform duration-200">
               <span className="text-white font-bold text-xl">
                 {member.name.split(" ").map((word) => word[0]).join("").slice(0, 2)}
               </span>
@@ -78,7 +78,7 @@ const Members = () => {
           <p className="text-sm font-medium text-gray-700 line-clamp-2">
             {member.name}
           </p>
-          <p className="text-xs text-gray-500 capitalize">{member.type}</p>
+          <p className="text-xs text-gray-500 capitalize">{member.role}</p>
         </div>
           </div>
         ))}

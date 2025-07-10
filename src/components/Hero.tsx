@@ -22,25 +22,27 @@ const Hero = () => {
             <Users className="h-16 w-16 text-orange-400" />
           </div>
           
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-          Q-hub is a project and 
-            <span className="block text-orange-400 mt-2">educational platform</span>
+          <h1 className="font-anton text-4xl md:text-6xl lg:text-7xl text-white mb-6 leading-tight">
+            Q-hub — Кримська проєктна фундація
           </h1>
-           
 
+          <p className="text-xl md:text-2xl text-gray-200 mb-6 max-w-3xl mx-auto leading-relaxed">
+            Розвиваємо освітні, медійні та культурні ініціативи для внутрішньо переміщених осіб з окупованих територій та кримських татар по всьому світу.
+          </p>
 
           <p className="text-xl md:text-2xl text-gray-200 mb-12 max-w-3xl mx-auto leading-relaxed">
-          working to strenghten cultural, professional and personal growth of residents, IDP's and citizens of Ukraine. 
+            Ми працюємо заради майбутнього Криму та всієї України. Ми беремо на себе відповідальність за наступні покоління.
           </p>
+
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-lg font-semibold text-lg flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
-              Discover More
+            Дізнатись більше
               <ArrowRight className="h-5 w-5" />
             </button>
             
             <button className="border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105">
-              Join Our Network
+            Наше ЗМІ
             </button>
           </div>
         </div>

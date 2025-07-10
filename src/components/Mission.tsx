@@ -6,7 +6,7 @@ const Mission = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Our Mission & Vision
+            Наша Місія & Візія   
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Building bridges across Europe through the shared experience of educational mobility
@@ -20,11 +20,9 @@ const Mission = () => {
                 <Target className="h-8 w-8 text-blue-600" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Our Mission</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Наше бачення</h3>
                 <p className="text-gray-600">
-                  To connect, support, and empower the Erasmus Generation - young Europeans who have 
-                  experienced international mobility and are committed to building a more united, 
-                  inclusive, and dynamic Europe.
+                  Стале громадянське суспільство в Криму та Україні, що відповідає викликам сучасності та готове до змін майбутнього.   
                 </p>
               </div>
             </div>
@@ -34,11 +32,9 @@ const Mission = () => {
                 <Heart className="h-8 w-8 text-orange-500" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Our Values</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Наші цінності</h3>
                 <p className="text-gray-600">
-                  Diversity, solidarity, and European citizenship guide everything we do. 
-                  We believe in the transformative power of cross-cultural exchange and 
-                  lifelong learning.
+                  Бути відкритими до нового, шукати нестандартні рішення в складних питаннях, спиратися на кращі прикладати та створювати прецеденти 
                 </p>
               </div>
             </div>
@@ -48,10 +44,9 @@ const Mission = () => {
                 <Globe className="h-8 w-8 text-blue-600" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Our Vision</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Наша місія</h3>
                 <p className="text-gray-600">
-                  A Europe where mobility is accessible to all, where cultural diversity is 
-                  celebrated, and where the Erasmus Generation leads positive social change.
+                  Інтелектуальний розвиток покоління через інноваційні проекти для зміцнення суспільства 
                 </p>
               </div>
             </div>
@@ -72,23 +67,23 @@ const Mission = () => {
         </div>
 
         {/* Stats Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-8 text-center">
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="text-3xl font-bold text-blue-600 mb-2">12M+</div>
-            <div className="text-gray-600">Erasmus Alumni</div>
+            <div className="text-3xl font-bold text-blue-600 mb-2">300+ </div>
+            <div className="text-gray-600">Активістів обʼєднано</div>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="text-3xl font-bold text-orange-500 mb-2">4000+</div>
-            <div className="text-gray-600">Universities</div>
+            <div className="text-3xl font-bold text-orange-500 mb-2">50+</div>
+            <div className="text-gray-600">Проектів реалізовано</div>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="text-3xl font-bold text-blue-600 mb-2">35</div>
-            <div className="text-gray-600">Countries</div>
+            <div className="text-3xl font-bold text-blue-600 mb-2">9+</div>
+            <div className="text-gray-600">Років працюємо</div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          {/* <div className="bg-white p-6 rounded-lg shadow-md">
             <div className="text-3xl font-bold text-orange-500 mb-2">35+</div>
             <div className="text-gray-600">Years of Impact</div>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>
