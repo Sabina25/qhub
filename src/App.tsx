@@ -1,5 +1,5 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { TranslationProvider } from './context/TranslationContext'
 
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -31,14 +31,16 @@ const Home = () => (
 
 function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/projects" element={<AllProjectsPage />} />
-        <Route path="/events" element={<AllEventsPage />} />
-      </Routes>
-    </Router>
+    <TranslationProvider>
+      <Router>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/projects" element={<AllProjectsPage />} />
+          <Route path="/events" element={<AllEventsPage />} />
+        </Routes>
+      </Router>
+    </TranslationProvider>
   );
 }
 

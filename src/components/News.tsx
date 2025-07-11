@@ -1,18 +1,11 @@
 import { Calendar, ArrowRight, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../context/TranslationContext';
 import events from '../data/events.tsx';
 
 const News = () => {
   const navigate = useNavigate();
-
-  interface Event {
-    title: string;
-    excerpt: string;
-    image: string;
-    date: string;
-    category: string;
-    featured?: boolean;
-  }
+  const { t } = useTranslation();
 
   return (
     <section id="news" className="py-20 bg-gray-50">
@@ -20,15 +13,15 @@ const News = () => {
         {/* Heading */}
         <div className="text-center mb-16">
           <h2 className="font-raleway font-semibold text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Останні новини 
+            {t('news.title')}
           </h2>
           <p className="font-notosans text-lg text-gray-600 max-w-2xl mx-auto">
-            Слідкуйте останніми подіями та історіями нашої спільноти.
+            {t('news.subtitle')}
           </p>
         </div>
 
         {/* Featured Article */}
-        {events.filter((item: Event) => item.featured).map((item, index) => (
+        {events.filter((item) => item.featured).map((item, index) => (
           <div key={index} className="bg-white overflow-hidden mb-12">
             <div className="grid lg:grid-cols-2">
               <div className="relative">
@@ -39,7 +32,7 @@ const News = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80"></div>
                 <span className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-lg text-sm font-semibold shadow-md">
-                  Featured
+                  {t('news.featured')}
                 </span>
               </div>
               <div className="p-8 lg:p-12 flex flex-col justify-center">
@@ -57,7 +50,7 @@ const News = () => {
                   {item.excerpt}
                 </p>
                 <button className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold text-lg transition group">
-                  Read Full Story
+                  {t('news.read_full')}
                   <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
@@ -67,10 +60,10 @@ const News = () => {
 
         {/* News Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {events.filter((item: Event) => !item.featured).map((item, index) => (
+          {events.filter((item) => !item.featured).map((item, index) => (
             <article
               key={index}
-              className="bg-white   overflow-hidden  transition-all duration-300 group hover:-translate-y-1"
+              className="bg-white overflow-hidden transition-all duration-300 group hover:-translate-y-1"
             >
               <div className="relative overflow-hidden">
                 <img
@@ -90,11 +83,8 @@ const News = () => {
                 <h3 className="font-anton text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                   {item.title}
                 </h3>
-                {/* <p className="mt-4 text-gray-600 text-sm mb-4 line-clamp-3">
-                  {item.excerpt}
-                </p> */}
                 <button className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition group text-sm">
-                  Read More
+                  {t('news.read_more')}
                   <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
@@ -108,7 +98,7 @@ const News = () => {
             onClick={() => navigate('/events')}
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold shadow-md transition"
           >
-            Переглянути всі новини
+            {t('news.view_all')}
           </button>
         </div>
       </div>

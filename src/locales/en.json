@@ -1,0 +1,167 @@
+{
+    "hero": {
+      "title": "Q-hub — Crimean Project Foundation",
+      "description1": "We develop educational, media, and cultural initiatives for internally displaced persons from occupied territories and Crimean Tatars around the world.",
+      "description2": "We work for the future of Crimea and all of Ukraine. We take responsibility for the next generations.",
+      "button_learn_more": "Learn more",
+      "button_media": "Our Media"
+    },
+    "header": {
+      "nav_main": {
+        "home": "Home",
+        "projects": "Projects",
+        "news": "News"
+      },
+      "nav_anchors": {
+        "organisation": "Organisation",
+        "projects": "Projects",
+        "news": "News",
+        "members": "Members",
+        "contact": "Contact"
+      },
+      "language": {
+        "en": "EN",
+        "ua": "UA"
+      }
+    },
+    "mission": {
+    "title": "Our Mission & Vision",
+    "subtitle": "Building bridges across Europe through the shared experience of educational mobility",
+    "vision_title": "Our Vision",
+    "vision_text": "A resilient civil society in Crimea and Ukraine that meets modern challenges and is ready for future change.",
+    "values_title": "Our Values",
+    "values_text": "To be open to new ideas, to seek unconventional solutions to complex issues, to rely on best practices, and to set precedents.",
+    "mission_title": "Our Mission",
+    "mission_text": "Intellectual development of the generation through innovative projects to strengthen society.",
+    "stat_1_value": "300+",
+    "stat_1_label": "Activists united",
+    "stat_2_value": "50+",
+    "stat_2_label": "Projects implemented",
+    "stat_3_value": "9+",
+    "stat_3_label": "Years of impact",
+    "award_label": "35+ Countries",
+    "award_subtext": "United in diversity"
+  },
+ "projects": {
+  "title": "Our Projects",
+  "subtitle": "...",
+  "button_more": "More Info",
+  "button_view_all": "View All Projects"
+  },
+  "news": {
+    "title": "Latest News",
+    "subtitle": "Stay up to date with the latest events and stories from our community.",
+    "featured": "Featured",
+    "read_full": "Read Full Story",
+    "read_more": "Read More",
+    "view_all": "View All News"
+  },
+  "members": {
+    "title": "Our Partners",
+    "subtitle": "Building a stronger Europe together with leading universities, organizations, and institutions committed to educational mobility and youth empowerment",
+    "team": "Our Residents/Team:",
+    "show_more": "Show More",
+    "show_less": "Show Less",
+      "list": {
+        "names": {
+          "muslim_umerov": "Muslim Umerov",
+          "emil_ibrahimov": "Emil Ibrahimov",
+          "fatima_osmanova": "Fatima Osmanova",
+          "ivan_vdovychenko": "Ivan Vdovychenko",
+          "imran_useinov": "Imran Useinov",
+          "adel_khayrutdinova": "Adel Khayrutdinova",
+          "dmytro_mamaiev": "Dmytro Mamaiev",
+          "suleiman_mamutov": "Suleiman Mamutov",
+          "kadir_tataris": "Kadir Tataris",
+          "elvina_khalilova": "Elvina Khalilova",
+          "ruslan_khalapov": "Ruslan Khalapov",
+          "safiye_ametova": "Safiye Ametova",
+          "fikret_refatov": "Fikret Refatov",
+          "akhtem_amzaiev": "Akhtem Amzaiev",
+          "mefa_umerov": "Mefa Umerov",
+          "elnara_nuriyeva": "Elnara Nuriyeva",
+          "emir_asan_dervishev": "Emir-Asan Dervishev",
+          "feride_seydametova": "Feride Seydametova",
+          "zore_mustafaeva": "Zore Mustafaeva",
+          "lia_gazi_kyzy": "Lia Gazi Kyzy"
+        },
+        "roles": {
+          "head_of_board": "Head of the Board",
+          "deputy_head_of_board": "Deputy Head of the Board",
+          "cultural_projects_manager": "Cultural Projects Manager",
+          "international_cooperation_manager": "International Cooperation Manager",
+          "sports_projects_manager": "Sports Projects Manager",
+          "sustainable_partnerships_advisor": "Sustainable Partnerships Advisor",
+          "international_programs_advisor": "International Programs Advisor",
+          "legal_operations_advisor": "Legal & Operations Advisor",
+          "fundraising_advisor": "Fundraising Advisor",
+          "crimean_tatar_language_ambassador": "Crimean Tatar Language Ambassador",
+          "media_advisor": "Media Advisor",
+          "finance_advisor": "Finance Advisor",
+          "communications_advisor": "Communications Advisor",
+          "education_advisor": "Education Advisor",
+          "qhub_rep_odesa": "Q-hub Representative in Odesa",
+          "qhub_rep_germany": "Q-hub Representative in Germany",
+          "qhub_rep_estonia": "Q-hub Representative in Estonia",
+          "qhub_rep_belgium": "Q-hub Representative in Belgium",
+          "qhub_rep_turkey": "Q-hub Representative in Turkey",
+          "qhub_rep_spain": "Q-hub Representative in Spain"
+        }
+      }    
+  },
+  "contact": {
+  "title": "Contact Us",
+  "subtitle": "Have questions about our community, want to get involved, or need support? We’re here to help.",
+  "info": {
+    "title": "Contact Information",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "hours": "Office Hours",
+    "mon_fri": "Monday - Friday",
+    "sat": "Saturday",
+    "sun": "Sunday",
+    "closed": "Closed"
+  },
+  "form": {
+    "send_message": "Send Us a Message",
+    "name": "Full Name *",
+    "email": "Email Address *",
+    "subject": "Subject *",
+    "message": "Message *",
+    "submit": "Send Message",
+    "note": "* Required fields. We usually respond within 24–48 business hours.",
+    "placeholder_name": "Your full name",
+    "placeholder_email": "your.email@example.com",
+    "placeholder_message": "Tell us more about your inquiry...",
+    "subject_options": {
+      "select": "Select a subject",
+      "membership": "Membership Information",
+      "partnership": "Partnership Opportunities",
+      "events": "Events & Annual Meeting",
+      "projects": "Project Collaboration",
+      "media": "Media & Press Inquiries",
+      "other": "Other"
+    }
+  }
+  },
+  "footer": {
+    "description": "is a project and educational platform working to strengthen cultural, professional and personal growth of residents, IDPs and citizens of Ukraine.",
+    "contact": {
+      "email": "hub.qirim@gmail.com",
+      "phone": "+380 95 681 2469",
+      "address": "9 Omelyanovycha-Pavlenka St.\nKyiv, Ukraine"
+    },
+    "social": "Follow Us",
+    "quick_links_title": "Quick Links",
+    "quick_links": {
+      "about": "About Us",
+      "projects": "Our Projects",
+      "news": "News & Updates",
+      "members": "Become a Member"
+    },
+    "copyright": "© {year} Q-hub. All rights reserved.",
+    "funding_notice": "Crimean project and educational platform Q-hub is a non-governmental organization founded by Crimean Tatar activists."
+  }
+  }
+  
