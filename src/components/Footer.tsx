@@ -78,9 +78,16 @@ const Footer = () => {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-gray-700 pt-8 mt-12">
-          <div className="text-center text-sm text-gray-300">
-            {t('footer.copyright').replace('{year}', `${currentYear}`)}
+        <div className="h-20 border-t pt-8 mt-12 border-gray-800">
+           <div className="flex items-center justify-between text-sm text-gray-300">
+            <span>
+              {t('footer.copyright').replace('{year}', `${currentYear}`)}
+            </span>
+            <img
+              src="../images/tamga.png"
+              className="h-8 mr-10 transition-transform duration-300 transform hover:scale-105"
+              alt="Tamga"
+            />
           </div>
 
           <div className="mt-6 pt-6 border-t border-gray-800">
