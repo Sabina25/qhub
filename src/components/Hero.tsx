@@ -43,7 +43,7 @@ const Hero = () => {
               <ArrowRight className="h-5 w-5" />
             </button>
             
-            {/* <button onClick={() => {
+            <button onClick={() => {
                 console.log('Image button clicked')}}
               className="transition-all duration-300 transform hover:scale-105 focus:outline-none"
             >
@@ -52,10 +52,10 @@ const Hero = () => {
                 alt={t('hero.button_learn_more')}
                 className="h-20 w-auto" 
               />
-            </button> */}
-            <button className="border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105">
-              {t('hero.button_media')}
             </button>
+            {/* <button className="border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105">
+              {t('hero.button_media')}
+            </button> */}
           </div>
         </div>
       </div>

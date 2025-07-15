@@ -24,7 +24,7 @@ const Mission = () => {
                 <Target className="h-8 w-8 text-blue-600" />
               </div>
               <div>
-                <h3 className="font-raleway text-xl font-semibold text-gray-900 mb-2">
+                <h3 className="font-raleway text-xl font-semibold text-gray-900 mb-2 uppercase">
                   {t('mission.vision_title')}
                 </h3>
                 <p className="font-notosans text-gray-600">
@@ -39,7 +39,7 @@ const Mission = () => {
                 <Heart className="h-8 w-8 text-orange-500" />
               </div>
               <div>
-                <h3 className="font-raleway text-xl font-semibold text-gray-900 mb-2">
+                <h3 className="font-raleway text-xl font-semibold text-gray-900 mb-2 uppercase">
                   {t('mission.values_title')}
                 </h3>
                 <p className="font-notosans text-gray-600">
@@ -54,7 +54,7 @@ const Mission = () => {
                 <Globe className="h-8 w-8 text-blue-600" />
               </div>
               <div>
-                <h3 className="font-raleway text-xl font-semibold text-gray-900 mb-2">
+                <h3 className="font-raleway text-xl font-semibold text-gray-900 mb-2 uppercase">
                   {t('mission.mission_title')}
                 </h3>
                 <p className="font-notosans text-gray-600">

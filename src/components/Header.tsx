@@ -81,8 +81,8 @@ const Header: React.FC = () => {
                 onClick={(e) => handleNavClick(e, item)}
                 className={`font-notosans font-medium transition ${
                   location.pathname === item.to
-                    ? 'text-blue-600 font-semibold'
-                    : 'text-gray-800 hover:text-blue-600'
+                    ? 'text-blue-600 font-semibold uppercase'
+                    : 'text-gray-800 hover:text-blue-600 uppercase'
                 }`}
               >
                 {item.label}
@@ -124,8 +124,8 @@ const Header: React.FC = () => {
                 onClick={(e) => handleNavClick(e, item)}
                 className={`transition ${
                   activeAnchor === `#${item.to}`
-                    ? 'text-blue-600 font-semibold'
-                    : 'hover:text-blue-600'
+                    ? 'text-blue-600 font-semibold uppercase'
+                    : 'hover:text-blue-600 uppercase'
                 }`}
               >
                 {item.label}
@@ -145,11 +145,11 @@ const Header: React.FC = () => {
                 className={`block px-4 text-base ${
                   item.isRoute
                     ? location.pathname === item.to
-                      ? 'text-blue-600 font-semibold'
-                      : 'text-gray-700 hover:text-blue-600'
+                      ? 'text-blue-600 font-semibold uppercase'
+                      : 'text-gray-700 hover:text-blue-600 uppercase'
                     : activeAnchor === `#${item.to}`
-                      ? 'text-blue-600 font-semibold'
-                      : 'text-gray-700 hover:text-blue-600'
+                      ? 'text-blue-600 font-semibold uppercase'
+                      : 'text-gray-700 hover:text-blue-600 uppercase'
                 }`}
               >
                 {item.label}

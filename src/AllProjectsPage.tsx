@@ -28,7 +28,7 @@ const AllProjectsPage = () => {
         <h1 className="text-4xl font-bold mb-10 text-center">All Projects</h1>
         <div className="grid md:grid-cols-2 gap-8">
           {projects.slice(0, visibleCount).map((project: Project, index: number) => (
-            <div key={index} className="bg-white rounded-lg shadow p-6">
+            <div key={index} className="bg-white rounded-lg shadow p-6 transform transition-transform duration-300 hover:scale-105">
               <img
                 src={project.image}
                 alt={project.title}
