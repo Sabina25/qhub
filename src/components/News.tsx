@@ -21,7 +21,7 @@ const News = () => {
         </div>
 
         {/* Featured Article */}
-        {events.filter((item) => item.featured).map((item, index) => (
+        {events.slice(0, 1).filter((item) => item.featured).map((item, index) => (
           <div key={index} className="bg-white overflow-hidden mb-12">
             <div className="grid lg:grid-cols-2">
               <div className="relative">
@@ -43,7 +43,7 @@ const News = () => {
                   <Calendar className="h-4 w-4 mr-2" />
                   {item.date}
                 </div>
-                <h3 className="font-anton text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
+                <h3 className="font-raleway uppercase text-2xl lg:text-3xl text-gray-900 mb-4">
                   {item.title}
                 </h3>
                 <p className="text-gray-600 mb-6 text-lg leading-relaxed line-clamp-4">
@@ -60,7 +60,7 @@ const News = () => {
 
         {/* News Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {events.filter((item) => !item.featured).map((item, index) => (
+          {events.slice(0, 4).filter((item) => !item.featured).map((item, index) => (
             <article
               key={index}
               className="bg-white overflow-hidden transition-all duration-300 group hover:-translate-y-1"
@@ -80,7 +80,7 @@ const News = () => {
                   <Calendar className="h-4 w-4 mr-2" />
                   {item.date}
                 </div>
-                <h3 className="font-anton text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                <h3 className="font-raleway uppercase  text-lg text-gray-900 mb-2 line-clamp-2">
                   {item.title}
                 </h3>
                 <button className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition group text-sm">
