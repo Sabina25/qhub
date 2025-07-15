@@ -63,7 +63,6 @@ const events  = [
       image: "https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
       date: "March 15, 2024",
       category: "Partnership",
-      featured: true
     },
     {
       title: "Annual Meeting 2024 Highlights",
@@ -92,7 +91,6 @@ const events  = [
       image: "https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
       date: "March 15, 2024",
       category: "Partnership",
-      featured: true
     },
     {
       title: "Annual Meeting 2024 Highlights",
