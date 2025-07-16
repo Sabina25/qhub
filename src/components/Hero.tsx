@@ -25,15 +25,15 @@ const Hero = () => {
             <Users className="h-16 w-16 text-orange-400" />
           </div>
 
-          <h1 className="font-raleway font-bold text-4xl md:text-6xl lg:text-7xl text-white mb-6 leading-tight">
+          <h1 className="font-raleway text-4xl md:text-6xl lg:text-7xl text-white mb-6 leading-tight">
             {t('hero.title')}
           </h1>
 
-          <p className="font-notosans text-xl md:text-2xl text-gray-200 mb-6 max-w-3xl mx-auto leading-relaxed">
+          <p className="font-sans  text-xl md:text-2xl text-gray-200 mb-6 max-w-3xl mx-auto leading-relaxed">
             {t('hero.description1')}
           </p>
 
-          <p className="font-notosans text-xl md:text-2xl text-gray-200 mb-12 max-w-3xl mx-auto leading-relaxed">
+          <p className="font-sans text-xl md:text-2xl text-gray-200 mb-12 max-w-3xl mx-auto leading-relaxed">
             {t('hero.description2')}
           </p>
 

@@ -13,8 +13,9 @@ export default {
         },
       },
       fontFamily: {
+        sans: ['Lato', 'sans-serif'], 
+        heading: ['Raleway', 'sans-serif'],
         raleway: ['Raleway', 'sans-serif'],
-        notosans: ['Noto Sans', 'sans-serif'],
       },
     },
   },

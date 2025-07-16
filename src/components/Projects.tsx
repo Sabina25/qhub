@@ -24,14 +24,14 @@ const Projects = () => {
           <h2 className="font-raleway font-semibold text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             {t('projects.title')}
           </h2>
-          <p className="font-notosans text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className=" text-xl text-gray-600 max-w-3xl mx-auto">
             {t('projects.subtitle')}
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
           {arrProjects.map((pr: Project, index: number) => (
-            <div key={index} className="bg-white shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300 group">
+            <div key={index} className="bg-gray-50 overflow-hidden hover:shadow-sm transition-shadow duration-300 group">
               <div className="relative overflow-hidden">
                 <img
                   src={pr.image}
@@ -46,9 +46,7 @@ const Projects = () => {
               </div>
 
               <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{pr.title}</h3>
-
-                <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between space-y-2 mb-4">
                   <div className="flex items-center text-sm text-gray-500">
                     <Calendar className="h-4 w-4 mr-2" />
                     {pr.duration}
@@ -58,6 +56,7 @@ const Projects = () => {
                     {pr.participants}
                   </div>
                 </div>
+                <h3 className="text-xl text-gray-900 mb-3 uppercase">{pr.title}</h3>
 
                 <button className="flex items-center text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-200">
                   {t('projects.button_more')}
