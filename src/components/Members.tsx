@@ -5,7 +5,7 @@ import { useTranslation } from '../context/TranslationContext';
 
 const Members = () => {
   const [showAll, setShowAll] = useState(false);
-  const visibleLogos = showAll ? memberLogos : memberLogos.slice(0, 8);
+  const visibleLogos = showAll ? memberLogos : memberLogos.slice(0, 4);
   const { t } = useTranslation();
 
   return (

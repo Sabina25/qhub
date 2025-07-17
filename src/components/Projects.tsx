@@ -24,14 +24,14 @@ const Projects = () => {
           <h2 className="font-raleway font-semibold text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             {t('projects.title')}
           </h2>
-          <p className=" text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="font-notosans text-xl text-gray-600 max-w-3xl mx-auto">
             {t('projects.subtitle')}
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
           {arrProjects.map((pr: Project, index: number) => (
-            <div key={index} className="bg-gray-50 overflow-hidden hover:shadow-sm transition-shadow duration-300 group">
+            <div key={index} className="bg-gray-50 overflow-hidden hover:shadow- transition-shadow duration-300 group">
               <div className="relative overflow-hidden">
                 <img
                   src={pr.image}
@@ -76,6 +76,8 @@ const Projects = () => {
           </button>
         </div>
       </div>
+      <div className="relative"> 
+    </div>
     </section>
   );
 };

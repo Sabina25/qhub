@@ -11,6 +11,7 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AllEventsPage from './AllEventsPage';
 import AllProjectsPage from './AllProjectsPage';
+import WaveDivider from './components/WaveDivider';
 
 import ScrollToTop from './ScrollToTop';
 
@@ -19,6 +20,7 @@ const Home = () => (
     <Header />
     <main>
       <Hero />
+      <WaveDivider />
       <Mission />
       <Projects />
       <News />
