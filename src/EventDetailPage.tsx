@@ -24,7 +24,10 @@ const EventDetailPage = () => {
             <Link to="/events" className="text-blue-600 underline mb-4 inline-block">← Back to Events</Link>
             <h1 className="text-4xl mb-4">{selectedEvent.title}</h1>
             <p className="text-gray-500 text-sm mb-2">Date: {selectedEvent.date}</p>
-            <p className="text-lg text-gray-700">{selectedEvent.excerpt}</p>
+            <div
+            className="prose prose-lg max-w-none text-gray-800 leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: selectedEvent.excerpt }}
+            ></div>
         </div>
         <Footer />
     </>
