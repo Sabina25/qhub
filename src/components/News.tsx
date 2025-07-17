@@ -83,9 +83,12 @@ const News = () => {
                 <h3 className="font-raleway uppercase text-lg text-gray-900 mb-2 line-clamp-2">
                   {item.title}
                 </h3>
-                <button className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition group text-sm">
-                  {t('news.read_more')}
-                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                <button
+                  onClick={() => navigate(`/events/${item.id}`)}
+                  className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold text-lg transition group"
+                >
+                  {t('news.read_full')}
+                  <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
             </article>
