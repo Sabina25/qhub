@@ -1,118 +1,60 @@
-const events  = [
-    {
-      title: "New Partnership with European Youth Forum",
-      excerpt: "We're excited to announce our collaboration with the European Youth Forum to amplify young voices in European policy-making.",
-      image: "https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "March 15, 2024",
-      category: "Partnership",
-      featured: true
-    },
-    {
-      title: "Annual Meeting 2024 Highlights",
-      excerpt: "Over 350 participants gathered in Barcelona for an inspiring weekend of networking, workshops, and cultural exchange.",
-      image: "https://images.pexels.com/photos/1388919/pexels-photo-1388919.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "March 10, 2024",
-      category: "Events"
-    },
-    {
-      title: "Digital Inclusion Project Launch",
-      excerpt: "Our new initiative aims to bridge the digital divide in international education and ensure equal access to mobility opportunities.",
-      image: "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "February 28, 2024",
-      category: "Projects"
-    },
-    {
-      title: "Green Mobility Report Released",
-      excerpt: "Our comprehensive study on sustainable transportation in student mobility offers actionable insights for institutions.",
-      image: "https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "February 20, 2024",
-      category: "Research"
-    },
-    {
-      title: "New Partnership with European Youth Forum",
-      excerpt: "We're excited to announce our collaboration with the European Youth Forum to amplify young voices in European policy-making.",
-      image: "https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "March 15, 2024",
-      category: "Partnership",
-      featured: true
-    },
-    {
-      title: "Annual Meeting 2024 Highlights",
-      excerpt: "Over 350 participants gathered in Barcelona for an inspiring weekend of networking, workshops, and cultural exchange.",
-      image: "https://images.pexels.com/photos/1388919/pexels-photo-1388919.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "March 10, 2024",
-      category: "Events"
-    },
-    {
-      title: "Digital Inclusion Project Launch",
-      excerpt: "Our new initiative aims to bridge the digital divide in international education and ensure equal access to mobility opportunities.",
-      image: "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "February 28, 2024",
-      category: "Projects"
-    },
-    {
-      title: "Green Mobility Report Released",
-      excerpt: "Our comprehensive study on sustainable transportation in student mobility offers actionable insights for institutions.",
-      image: "https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "February 20, 2024",
-      category: "Research"
-    },
-    {
-      title: "New Partnership with European Youth Forum",
-      excerpt: "We're excited to announce our collaboration with the European Youth Forum to amplify young voices in European policy-making.",
-      image: "https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "March 15, 2024",
-      category: "Partnership",
-    },
-    {
-      title: "Annual Meeting 2024 Highlights",
-      excerpt: "Over 350 participants gathered in Barcelona for an inspiring weekend of networking, workshops, and cultural exchange.",
-      image: "https://images.pexels.com/photos/1388919/pexels-photo-1388919.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "March 10, 2024",
-      category: "Events"
-    },
-    {
-      title: "Digital Inclusion Project Launch",
-      excerpt: "Our new initiative aims to bridge the digital divide in international education and ensure equal access to mobility opportunities.",
-      image: "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "February 28, 2024",
-      category: "Projects"
-    },
-    {
-      title: "Green Mobility Report Released",
-      excerpt: "Our comprehensive study on sustainable transportation in student mobility offers actionable insights for institutions.",
-      image: "https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "February 20, 2024",
-      category: "Research"
-    },
-    {
-      title: "New Partnership with European Youth Forum",
-      excerpt: "We're excited to announce our collaboration with the European Youth Forum to amplify young voices in European policy-making.",
-      image: "https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "March 15, 2024",
-      category: "Partnership",
-    },
-    {
-      title: "Annual Meeting 2024 Highlights",
-      excerpt: "Over 350 participants gathered in Barcelona for an inspiring weekend of networking, workshops, and cultural exchange.",
-      image: "https://images.pexels.com/photos/1388919/pexels-photo-1388919.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "March 10, 2024",
-      category: "Events"
-    },
-    {
-      title: "Digital Inclusion Project Launch",
-      excerpt: "Our new initiative aims to bridge the digital divide in international education and ensure equal access to mobility opportunities.",
-      image: "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "February 28, 2024",
-      category: "Projects"
-    },
-    {
-      title: "Green Mobility Report Released",
-      excerpt: "Our comprehensive study on sustainable transportation in student mobility offers actionable insights for institutions.",
-      image: "https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
-      date: "February 20, 2024",
-      category: "Research"
-    }
-  ];
+const events = [
+  {
+    title: "Сулейман Мамутов виступив на Деколоніальному форумі у Берліні",
+    excerpt: "На початку липня у німецькій столиці пройшов Деколоніальний форум «Корінне бачення», де зібрались національні діячі та активісти корінних народів Росії. Серед гостей заходу - кримськотатарські та українські представники. Кримську проектну фундацію Q-hub на форумі представили Сулейман Мамутов та Еміль Ібрагімов. /\"Кримці – є корінним народом України. Те, що нас сьогодні пов'язує і робить наш досвід схожим з корінними народами Російської Федерації, це те, що ми живемо в одній реальності через те, що Крим було окуповано. І хоча ми не вибирали для себе цю реальність, дуже важливим є звірення досвідів і солідаризація в спільній боротьбі за звільнення /\", - підвів підсумки форуму радник Q-hub з правових питань Cулейман Мамутов.Організатори Форуму:  Indigenous of Russia foundation, ГО «Nomads Indigenous Collective», Вілюя Чойнова.",
+    image: "/images/news/SM.jpeg",
+    date: "2025-07-08",
+    category: "Events",
+    featured: false
+  },
+  {
+    title: "Виставка Tamırlar — подорож до свого коріння",
+    excerpt: "Рената Асанова відкрила виставку у Squat 17b — дослідження теми дому, памʼяті та кримськотатарських орнаментів.",
+    image: "/images/news/Tamırlar.jpg",
+    date: "2025-07-05",
+    category: "Events",
+    featured: false
+  },
+  {
+    title: "У Києві відзначили Qırımtatar Bayraq Künü",
+    excerpt: "Свято прапора об'єднало кримців у Саду Довженка з ярмарком, концертами й аукціоном на підтримку ЗСУ.",
+    image: "/images/news/BK.jpg",
+    date: "2025-06-26",
+    category: "Events",
+    featured: false
+  },
+  {
+    title: "Лідер «Друга Ріка» прочитав лист політв'язня Азіза Ахтемова",
+    excerpt: "Валерій Харчишин прочитав емоційний лист Азіза Ахтемова — незаконно засудженого кримськотатарського активіста.",
+    image: "/images/news/AA.jpg",
+    date: "2025-06-24",
+    category: "Events",
+    featured: false
+  },
+  {
+    title: "Іван Вдовиченко розповів про Erasmus-проєкт",
+    excerpt: "На лекції «Сила діалогу» Іван Вдовиченко презентував освітній проєкт Q-hub у рамках Erasmus+.",
+    image: "/images/news/Erasmus.jpg",
+    date: "2025-06-21",
+    category: "Events",
+    featured: false
+  },
+  {
+    title: "«Крим за ґратами» — зустріч з Леніє Умеровою",
+    excerpt: "У Берліні відбулась зустріч з колишньою політвʼязненою Леніє Умеровою, звільненою у 2024 році.",
+    image: "/images/news/Lenie.jpeg",
+    date: "2025-06-18",
+    category: "Events",
+    featured: false
+  },
+  {
+    title: "Saba qavesi: Кримськотатарські дисиденти",
+    excerpt: "У Squat17b пройшла зустріч з показом фільму «Киснева станція» про Мустафу Джемілєва й історію кримськотатарського опору.",
+    image: "/images/news/Saba_qavesi.jpg",
+    date: "2025-06-07",
+    category: "Events",
+    featured: false
+  }
+];
 
-  export default events;
+export default events;

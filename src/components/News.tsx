@@ -21,7 +21,7 @@ const News = () => {
         </div>
 
         {/* Featured Article */}
-        {events.slice(0, 1).filter((item) => item.featured).map((item, index) => (
+        {events.slice(0, 1).map((item, index) => (
           <div key={index} className="bg-white overflow-hidden mb-12">
             <div className="grid lg:grid-cols-2">
               <div className="relative">
@@ -31,9 +31,9 @@ const News = () => {
                   className="w-full h-72 lg:h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80"></div>
-                <span className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-lg text-sm font-semibold shadow-md">
+                {/* <span className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-lg text-sm font-semibold shadow-md">
                   {t('news.featured')}
-                </span>
+                </span> */}
               </div>
               <div className="p-8 lg:p-12 flex flex-col justify-center">
                 <div className="flex items-center text-sm text-gray-500 mb-4">
@@ -60,7 +60,7 @@ const News = () => {
 
         {/* News Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {events.slice(0, 4).filter((item) => !item.featured).map((item, index) => (
+          {events.slice(1, 4).filter((item) => !item.featured).map((item, index) => (
             <article
               key={index}
               className="bg-white overflow-hidden transition-all duration-300 group hover:-translate-y-1"
@@ -80,7 +80,7 @@ const News = () => {
                   <Calendar className="h-4 w-4 mr-2" />
                   {item.date}
                 </div>
-                <h3 className="font-raleway uppercase  text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                <h3 className="font-raleway uppercase text-lg text-gray-900 mb-2 line-clamp-2">
                   {item.title}
                 </h3>
                 <button className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition group text-sm">

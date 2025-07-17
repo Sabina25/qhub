@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Footer from './components/Footer';
 import Header from './components/Header';
 import projects from './data/projects.tsx';

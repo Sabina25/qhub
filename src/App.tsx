@@ -12,6 +12,8 @@ import Footer from './components/Footer';
 import AllEventsPage from './AllEventsPage';
 import AllProjectsPage from './AllProjectsPage';
 import WaveDivider from './components/WaveDivider';
+import EventDetailPage from './EventDetailPage';
+
 
 import ScrollToTop from './ScrollToTop';
 
@@ -40,6 +42,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<AllProjectsPage />} />
           <Route path="/events" element={<AllEventsPage />} />
+          <Route path="/events/:id" element={<EventDetailPage />} />
         </Routes>
       </Router>
     </TranslationProvider>
