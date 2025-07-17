@@ -49,7 +49,7 @@ const News = () => {
                 <p className="text-gray-600 mb-6 text-lg leading-relaxed line-clamp-4">
                   {item.excerpt}
                 </p>
-                <button className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold text-lg transition group">
+                <button  onClick={() => navigate(`/events/${item.id}`)} className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold text-lg transition group">
                   {t('news.read_full')}
                   <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </button>
