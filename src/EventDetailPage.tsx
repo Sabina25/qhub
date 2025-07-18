@@ -6,7 +6,7 @@ import Header from './components/Header';
 
 const EventDetailPage = () => {
   const { id } = useParams();
-  const selectedEvent = events[Number(id)];
+  const selectedEvent = events.find(item => item.id == id);
 
   if (!selectedEvent || typeof selectedEvent.image !== 'string') {
     console.warn('Invalid event or image:', selectedEvent);

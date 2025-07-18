@@ -6,6 +6,7 @@ import Header from './components/Header';
 import events from './data/events.tsx';
 
 interface Event {
+  id: number;
   title: string;
   excerpt: string;
   image: string;
@@ -30,7 +31,7 @@ const AllEventsPage: React.FC = () => {
         <hr className="mb-10 border-t border-gray-300" />
         <div className="grid md:grid-cols-3 gap-8">
           {events.slice(0, visibleCount).map((event: Event, index: number) => (
-          <Link to={`/events/${index}`} key={index} className="relative block transform transition-transform duration-300 hover:scale-105">
+          <Link to={`/events/${event.id}`} key={index} className="relative block transform transition-transform duration-300 hover:scale-105">
           {event.featured && (
             <span className="absolute top-2 right-2 bg-green-100 text-green-600 text-xs font-semibold px-2 py-1 rounded">
               Featured
