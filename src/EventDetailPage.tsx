@@ -3,6 +3,7 @@ import events from './data/events.tsx';
 
 import Footer from './components/Footer';
 import Header from './components/Header';
+import ParallaxBanner from './components/ParallaxBannerProps.tsx'; 
 
 const EventDetailPage = () => {
   const { id } = useParams();
@@ -16,10 +17,11 @@ const EventDetailPage = () => {
   return (
     <>
         <Header />
-        <div
+        <ParallaxBanner image={selectedEvent.image} height="75vh" />
+        {/* <div
             className="w-full h-[75vh] bg-center bg-cover bg-fixed"
             style={{ backgroundImage: `url(${selectedEvent.image})` }}
-        ></div>
+        ></div> */}
         <div className="max-w-4xl mx-auto px-4 py-10">
             <Link to="/events" className="text-blue-600 underline mb-4 inline-block">← Back to Events</Link>
             <h1 className="text-4xl mb-4">{selectedEvent.title}</h1>
