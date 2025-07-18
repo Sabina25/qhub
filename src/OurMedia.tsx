@@ -9,6 +9,7 @@ const CHANNEL_ID = "UCm-C1Ix_tf4PnuROw8QRqTg";
 function YouTubeFeed() {
   const [shorts, setShorts] = useState([]);
   const [longVideos, setLongVideos] = useState([]);
+  const [loading, setLoading] = useState(true); // новое
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -46,60 +47,94 @@ function YouTubeFeed() {
 
         setShorts(shortsList.slice(0, 4));
         setLongVideos(longList.slice(0, 6));
+        setLoading(false); // загрузка завершена
       } catch (error) {
         console.error("Ошибка при загрузке видео:", error);
+        setLoading(false); // даже при ошибке
       }
     };
 
     fetchVideos();
   }, []);
 
+  // 🔄 Компонент скелетона (заглушки)
+  const SkeletonBox = ({ aspect = "aspect-video" }: { aspect?: string }) => (
+    <div className={`bg-gray-200 animate-pulse rounded-xl ${aspect}`} />
+  );
+
   return (
     <div className="space-y-12">
-      {shorts.length > 0 && (
-        <section>
-          <h2 className="text-xl font-semibold mb-4">Shorts</h2>
-          <div className="flex overflow-x-auto gap-4 pb-2 -mx-4 px-4">
-            {shorts.map((video) => (
-              <div
-                key={video.id}
-                className="min-w-[180px] aspect-[9/16] flex-shrink-0"
-              >
-                <iframe
-                  className="w-full h-full rounded-lg"
-                  src={`https://www.youtube.com/embed/${video.id}?modestbranding=1`}
-                  title={video.snippet.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      {loading ? (
+        <>
+          <section>
+            <h2 className="text-xl font-semibold mb-4">Shorts</h2>
+            <div className="flex overflow-x-auto gap-4 pb-2 -mx-4 px-4">
+              {Array(4)
+                .fill(0)
+                .map((_, idx) => (
+                  <SkeletonBox key={idx} aspect="min-w-[180px] aspect-[9/16]" />
+                ))}
+            </div>
+          </section>
 
-      {longVideos.length > 0 && (
-        <section>
-          <h2 className="text-xl font-semibold mb-4">Последние видео</h2>
-          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {longVideos.map((video) => (
-              <div key={video.id} className="aspect-video">
-                <iframe
-                  className="w-full h-full rounded-xl"
-                  src={`https://www.youtube.com/embed/${video.id}`}
-                  title={video.snippet.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+          <section>
+            <h2 className="text-xl font-semibold mb-4">Последние видео</h2>
+            <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {Array(6)
+                .fill(0)
+                .map((_, idx) => (
+                  <SkeletonBox key={idx} />
+                ))}
+            </div>
+          </section>
+        </>
+      ) : (
+        <>
+          {shorts.length > 0 && (
+            <section>
+              <h2 className="text-xl font-semibold mb-4">Shorts</h2>
+              <div className="flex overflow-x-auto gap-4 pb-2 -mx-4 px-4">
+                {shorts.map((video) => (
+                  <div
+                    key={video.id}
+                    className="min-w-[180px] aspect-[9/16] flex-shrink-0"
+                  >
+                    <iframe
+                      className="w-full h-full rounded-lg"
+                      src={`https://www.youtube.com/embed/${video.id}?modestbranding=1`}
+                      title={video.snippet.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </section>
+            </section>
+          )}
+
+          {longVideos.length > 0 && (
+            <section>
+              <h2 className="text-xl font-semibold mb-4">Последние видео</h2>
+              <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {longVideos.map((video) => (
+                  <div key={video.id} className="aspect-video">
+                    <iframe
+                      className="w-full h-full rounded-xl"
+                      src={`https://www.youtube.com/embed/${video.id}`}
+                      title={video.snippet.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </>
       )}
     </div>
   );
 }
-
 
 const OurMedia = () => {
     return (

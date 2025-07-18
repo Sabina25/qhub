@@ -1,8 +1,10 @@
 import { ArrowRight, Users } from 'lucide-react';
 import { useTranslation } from '../context/TranslationContext'; 
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
   const { t } = useTranslation(); 
+  const navigate = useNavigate();
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -52,6 +54,7 @@ const Hero = () => {
                 src="../images/partnersLogo/logo_01.png"
                 alt={t('hero.button_learn_more')}
                 className="h-20 w-auto"
+                onClick={() => navigate('/media')}
               />
             </button>
 
