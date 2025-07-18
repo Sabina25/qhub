@@ -12,7 +12,7 @@ const Hero = () => {
       <div 
         className="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-blue-800/80 z-10"
         style={{
-          backgroundImage: `url('./images/Q1.jpg')`,
+          backgroundImage: `url('/images/Q1.jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed'
@@ -41,13 +41,10 @@ const Hero = () => {
 
 
           <div className="flex flex-row flex-wrap gap-3 justify-center items-center">
-            {/* Кнопка "Узнать больше" */}
             <button className="h-14 sm:h-16 bg-orange-500 hover:bg-orange-600 text-white px-5 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
               {t('hero.button_learn_more')}
               <ArrowRight className="h-5 w-5" />
             </button>
-
-            {/* Кнопка с логотипом (нажатие ведёт на /media) */}
             <button
               onClick={() => navigate('/media')}
               className="transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-0 focus:border-none"
