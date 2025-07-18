@@ -10,7 +10,8 @@
       "nav_main": {
         "home": "Home",
         "projects": "Projects",
-        "news": "News"
+        "news": "News",
+        "media": "Our Media"
       },
       "nav_anchors": {
         "organisation": "Organisation",

@@ -26,7 +26,8 @@ const Header: React.FC = () => {
   const mainNav = [
     { label: t('header.nav_main.home'), to: '/' },
     { label: t('header.nav_main.projects'), to: '/projects', isRoute: true },
-    { label: t('header.nav_main.news'), to: '/events', isRoute: true }
+    { label: t('header.nav_main.news'), to: '/events', isRoute: true },
+    { label: t('header.nav_main.media'), to: '/media', isRoute: true }
   ];
 
   const anchorNav = [

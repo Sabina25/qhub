@@ -31,9 +31,9 @@ const News = () => {
                   className="w-full h-72 lg:h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80"></div>
-                {/* <span className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-lg text-sm font-semibold shadow-md">
-                  {t('news.featured')}
-                </span> */}
+                <span className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-lg text-sm font-semibold shadow-md">
+                  {item.category}
+                </span>
               </div>
               <div className="p-8 lg:p-12 flex flex-col justify-center">
                 <div className="flex items-center text-sm text-gray-500 mb-4">
