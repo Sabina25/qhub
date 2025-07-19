@@ -117,20 +117,20 @@ const Header: React.FC = () => {
 
         {/* Anchor nav on homepage */}
         {location.pathname === '/' && (
-          <div className="font-notosans hidden lg:flex border-t border-gray-100 text-xs text-gray-500 font-light tracking-wide py-1 space-x-4 pr-[200px] justify-end">
+          <div className="font-notosans hidden lg:flex border-t border-gray-100 text-s text-gray-500 font-light tracking-wide py-1 space-x-4 pr-[200px] justify-end">
             {anchorNav.map((item) => (
               <a
-                key={item.label}
-                href={`#${item.to}`}
-                onClick={(e) => handleNavClick(e, item)}
-                className={`transition ${
-                  activeAnchor === `#${item.to}`
-                    ? 'text-blue-600 font-semibold uppercase'
-                    : 'hover:text-blue-600 uppercase'
-                }`}
-              >
-                {item.label}
-              </a>
+              key={item.label}
+              href={`#${item.to}`}
+              onClick={(e) => handleNavClick(e, item)}
+              className={`transition capitalize lowercase ${
+                activeAnchor === `#${item.to}`
+                  ? 'text-blue-600 font-semibold'
+                  : 'hover:text-blue-600'
+              }`}
+            >
+              {item.label}
+            </a>
             ))}
           </div>
         )}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -9,7 +9,21 @@ const CHANNEL_ID = "UCm-C1Ix_tf4PnuROw8QRqTg";
 function YouTubeFeed() {
   const [shorts, setShorts] = useState([]);
   const [longVideos, setLongVideos] = useState([]);
-  const [loading, setLoading] = useState(true); // новое
+  const [loading, setLoading] = useState(true);
+
+  const shortsContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollShorts = (direction: 'left' | 'right') => {
+    const itemWidth = 180 + 16; 
+    const scrollAmount = itemWidth * 4;
+  
+    if (shortsContainerRef.current) {
+      shortsContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -38,26 +52,25 @@ function YouTubeFeed() {
           const seconds = parseInt(match?.[2] || "0", 10);
           const totalSeconds = minutes * 60 + seconds;
 
-          if (totalSeconds < 60) {
+          if (totalSeconds < 180) {
             shortsList.push(video);
-          } else if (totalSeconds >= 180) {
+          } else if (totalSeconds >= 200) {
             longList.push(video);
           }
         }
 
-        setShorts(shortsList.slice(0, 4));
+        setShorts(shortsList);
         setLongVideos(longList.slice(0, 6));
-        setLoading(false); // загрузка завершена
+        setLoading(false);
       } catch (error) {
         console.error("Ошибка при загрузке видео:", error);
-        setLoading(false); // даже при ошибке
+        setLoading(false);
       }
     };
 
     fetchVideos();
   }, []);
 
-  // 🔄 Компонент скелетона (заглушки)
   const SkeletonBox = ({ aspect = "aspect-video" }: { aspect?: string }) => (
     <div className={`bg-gray-200 animate-pulse rounded-xl ${aspect}`} />
   );
@@ -91,13 +104,26 @@ function YouTubeFeed() {
       ) : (
         <>
           {shorts.length > 0 && (
-            <section>
+            <section className="relative">
               <h2 className="text-xl font-semibold mb-4">Shorts</h2>
-              <div className="flex overflow-x-auto gap-4 pb-2 -mx-4 px-4">
+
+              {/* button */}
+              <button
+                onClick={() => scrollShorts('left')}
+                className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white shadow rounded-full p-2"
+              >
+                ←
+              </button>
+
+              {/*shorts */}
+              <div
+                ref={shortsContainerRef}
+                className="flex overflow-x-auto gap-4 pb-2 px-4 scroll-smooth"
+              >
                 {shorts.map((video) => (
                   <div
                     key={video.id}
-                    className="min-w-[180px] aspect-[9/16] flex-shrink-0"
+                    className="w-[180px] aspect-[9/16] flex-shrink-0"
                   >
                     <iframe
                       className="w-full h-full rounded-lg"
@@ -109,6 +135,14 @@ function YouTubeFeed() {
                   </div>
                 ))}
               </div>
+
+              {/*button */}
+              <button
+                onClick={() => scrollShorts('right')}
+                className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white shadow rounded-full p-2"
+              >
+                →
+              </button>
             </section>
           )}
 
@@ -136,20 +170,38 @@ function YouTubeFeed() {
   );
 }
 
-const OurMedia = () => {
+
+const OurMediaPage = () => {
     return (
-      <>
-        <Header />
-        <main className="min-h-screen bg-white px-4">
-          <section className="max-w-7xl mx-auto py-12">
-            <h1 className="text-4xl font-semibold text-center mb-10">Наш YouTube</h1>
-            <YouTubeFeed />
-          </section>
-        </main>
-        <Footer />
-      </>
+<>
+  <Header />
+  <main className="min-h-screen bg-white px-4">
+    <section className="max-w-7xl mx-auto py-12 space-y-12">
+      
+     
+      <div className="max-w-4xl mx-auto text-center px-4 space-y-4 text-gray-800">
+        <p className="text-lg font-semibold">
+          <span className="text-blue-700">Crimea Vox</span> — незалежне кримськотатарське медіа, що говорить про Крим таким, яким він є.
+        </p>
+        <p>
+          Це голос півострова, який не затихає і нагадує: Крим — не «загублена територія», а жива частина України.
+          Ми працюємо, щоб повернути Крим у поле української уваги — і утримувати його там постійно, попри окупацію.
+        </p>
+      </div>
+
+      
+      <div>
+        {/* <h1 className="text-4xl font-semibold text-center mb-10">Наш YouTube</h1> */}
+        <YouTubeFeed />
+      </div>
+
+    </section>
+  </main>
+  <Footer />
+</>
+
     );
   };
   
 
-export default OurMedia;
+export default OurMediaPage;
