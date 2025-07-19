@@ -84,7 +84,9 @@
           "emir_asan_dervishev": "Emir-Asan Dervishev",
           "feride_seydametova": "Feride Seydametova",
           "zore_mustafaeva": "Zore Mustafaeva",
-          "lia_gazi_kyzy": "Lia Gazi Kyzy"
+          "lia_gazi_kyzy": "Lia Gazi Kyzy",
+          "ruslan_ablaev": "Ruslan Ablaev",
+          "aziz_axtemov": "Aziz Akhtemov"
         },
         "roles": {
           "head_of_board": "Head of the Board",
@@ -106,7 +108,9 @@
           "qhub_rep_estonia": "Q-hub Representative in Estonia",
           "qhub_rep_belgium": "Q-hub Representative in Belgium",
           "qhub_rep_turkey": "Q-hub Representative in Turkey",
-          "qhub_rep_spain": "Q-hub Representative in Spain"
+          "qhub_rep_spain": "Q-hub Representative in Spain",
+          "communication_and_it": "Online communication and IT projects",
+          "rf_affiliation": "Q-hub resident, Russian Federation affiliation"
         }
       }    
   },
