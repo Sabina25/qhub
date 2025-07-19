@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Globe } from 'lucide-react';
 import { useTranslation } from '../context/TranslationContext'; 
 
+type Language = 'ua' | 'en'
+
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -95,13 +97,13 @@ const Header: React.FC = () => {
           <div className="hidden md:flex items-center space-x-2">
             <Globe className="h-4 w-4 text-gray-600" />
             <select
-              value={lang}
-              onChange={(e) => setLang(e.target.value)}
-              className="font-notosans text-sm text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer"
-            >
-              <option value="en">{t('header.language.en')}</option>
-              <option value="ua">{t('header.language.ua')}</option>
-            </select>
+                value={lang}
+                onChange={(e) => setLang(e.target.value as Language)}
+                className="font-notosans text-sm text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer"
+              >
+                <option value="en">{t('header.language.en')}</option>
+                <option value="ua">{t('header.language.ua')}</option>
+              </select>
           </div>
 
           {/* Mobile Menu Button */}
@@ -160,11 +162,11 @@ const Header: React.FC = () => {
               <Globe className="h-4 w-4 text-gray-600" />
               <select
                 value={lang}
-                onChange={(e) => setLang(e.target.value)}
+                onChange={(e) => setLang(e.target.value as Language)}
                 className="text-sm text-gray-700 border border-gray-300 rounded px-2 py-1"
               >
                 <option value="en">{t('header.language.en')}</option>
-                <option value="uk">{t('header.language.ua')}</option>
+                <option value="ua">{t('header.language.ua')}</option>
               </select>
             </div>
           </div>

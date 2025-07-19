@@ -47,7 +47,13 @@ export const TranslationProvider: React.FC<TranslationProviderProps> = ({ childr
     }
   }, [lang])
 
+  // const setLang = (newLang: Language) => {
+  //   setLangState(newLang)
+  //   localStorage.setItem('lang', newLang)
+  // }
+
   const setLang = (newLang: Language) => {
+    console.log('Выбран язык:', newLang)
     setLangState(newLang)
     localStorage.setItem('lang', newLang)
   }
