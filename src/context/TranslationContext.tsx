@@ -26,21 +26,26 @@ interface TranslationProviderProps {
   children: ReactNode
 }
 
-export const TranslationProvider: React.FC<TranslationProviderProps> = ({
-  children,
-}) => {
-  const [lang, setLangState] = useState<Language>(() => {
-    const storedLang = localStorage.getItem('lang') as Language | null;
-    if (storedLang && translations[storedLang]) {
-      return storedLang;
-    }
-    const browserLang = navigator.language.slice(0, 2) as Language;
-    return ['ua', 'en'].includes(browserLang) ? browserLang : 'ua';
-  });
+export const TranslationProvider: React.FC<TranslationProviderProps> = ({ children }) => {
+  const [lang, setLangState] = useState<Language | null>(null)
 
   useEffect(() => {
-    localStorage.setItem('lang', lang);
-  }, [lang]);
+    const storedLang = localStorage.getItem('lang') as Language | null
+    if (storedLang && translations[storedLang]) {
+      setLangState(storedLang)
+    } else {
+      const browserLang = navigator.languages?.[0]?.slice(0, 2) as Language
+      const detectedLang: Language = ['ua', 'en'].includes(browserLang) ? browserLang : 'ua'
+      setLangState(detectedLang)
+      localStorage.setItem('lang', detectedLang)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (lang) {
+      localStorage.setItem('lang', lang)
+    }
+  }, [lang])
 
   const setLang = (newLang: Language) => {
     setLangState(newLang)
@@ -48,12 +53,14 @@ export const TranslationProvider: React.FC<TranslationProviderProps> = ({
   }
 
   const t = (key: string): string => {
+    if (!lang) return key
     const parts = key.split('.')
     return (
-      parts.reduce((acc: any, part: string) => acc?.[part], translations[lang]) ||
-      key
+      parts.reduce((acc: any, part: string) => acc?.[part], translations[lang]) || key
     )
   }
+
+  if (!lang) return null 
 
   return (
     <TranslationContext.Provider value={{ t, lang, setLang }}>
@@ -61,6 +68,7 @@ export const TranslationProvider: React.FC<TranslationProviderProps> = ({
     </TranslationContext.Provider>
   )
 }
+
 
 export const useTranslation = (): TranslationContextType => {
   const context = useContext(TranslationContext)
