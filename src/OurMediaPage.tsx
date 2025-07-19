@@ -179,7 +179,7 @@ const OurMediaPage = () => {
     <section className="max-w-7xl mx-auto py-12 space-y-12">
       
      
-      <div className="max-w-4xl mx-auto text-center px-4 space-y-4 text-gray-800">
+      <div className="max-w-4xl mx-auto text-center px-4 space-y-4 text-gray-800 mt-10">
         <p className="text-lg font-semibold">
           <span className="text-blue-700">Crimea Vox</span> — незалежне кримськотатарське медіа, що говорить про Крим таким, яким він є.
         </p>
@@ -190,7 +190,7 @@ const OurMediaPage = () => {
       </div>
 
       
-      <div>
+      <div >
         {/* <h1 className="text-4xl font-semibold text-center mb-10">Наш YouTube</h1> */}
         <YouTubeFeed />
       </div>
