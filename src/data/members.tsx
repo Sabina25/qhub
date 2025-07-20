@@ -7,7 +7,7 @@ const members = [
   { name: "members.list.names.adel_khayrutdinova", role: "members.list.roles.sustainable_partnerships_advisor" },
   { name: "members.list.names.dmytro_mamaiev", role: "members.list.roles.international_programs_advisor", imageUrl: "/images/team/d_mamaev.jpg" },
   { name: "members.list.names.suleiman_mamutov", role: "members.list.roles.legal_operations_advisor", imageUrl: "/images/team/Suleiman_Mamutov.jpg" },
-  { name: "members.list.names.ruslan_ablaev", role: "communication_and_it", imageUrl: "/images/team/Ruslan_Ablaev.jpg"},
+  { name: "members.list.names.ruslan_ablaev", role: "members.list.roles.communication_and_it", imageUrl: "/images/team/Ruslan_Ablaev.jpg"},
   { name: "members.list.names.kadir_tataris", role: "members.list.roles.fundraising_advisor", imageUrl: "/images/team/Kadir_Tataris.jpg" },
   { name: "members.list.names.elvina_khalilova", role: "members.list.roles.crimean_tatar_language_ambassador", imageUrl: "/images/team/elvina_khalilova.jpg" },
   { name: "members.list.names.fikret_refatov", role: "members.list.roles.communications_advisor", imageUrl: "/images/team/fikret.jpg" },
