@@ -19,12 +19,11 @@ const Projects: React.FC = () => {
 
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
     loop: true,
-    slides: {
-      perView: 1,
-      spacing: 24,
-    },
+    slides: { perView: 1 },
     created(slider) {
-      setInterval(() => slider.next(), 6000);
+      setInterval(() => {
+        slider.next();
+      }, 8000); 
     },
   });
 
@@ -42,11 +41,11 @@ const Projects: React.FC = () => {
 
         <div className="relative">
           <div ref={sliderRef} className="keen-slider">
-            {projects.map((pr: Project, index: number) => (
+            {projects.slice(0, 5).map((pr: Project, index: number) => (
               <div key={index} className="keen-slider__slide">
-                <div className="flex flex-col lg:flex-row bg-gray-50 rounded-lg shadow-md overflow-hidden">
-                  {/* Картинка слева */}
-                  <div className="lg:w-1/2 w-full h-64 lg:h-auto">
+                <div className="flex flex-col lg:flex-row bg-gray-50 rounded-lg shadow-md overflow-hidden min-h-[400px]">
+                  {/* Left */}
+                  <div className="lg:w-1/2 w-full h-80 lg:h-auto">
                     <img
                       src={pr.image}
                       alt={pr.title}
@@ -54,18 +53,16 @@ const Projects: React.FC = () => {
                     />
                   </div>
 
-                  {/* Контент справа */}
-                  <div className="lg:w-1/2 p-6 flex flex-col justify-between">
+                  {/* Right */}
+                  <div className="lg:w-1/2 w-full p-8 flex flex-col justify-between">
                     <div>
-                      <h3 className="text-2xl font-bold uppercase text-gray-800 mb-2">{pr.title}</h3>
+                      <h3 className="font-raleway uppercase text-3xl text-gray-800 mb-4">{pr.title}</h3>
                       <div className="text-sm text-blue-600 font-semibold mb-3">
                         {pr.funding} • {pr.duration} • {pr.participants}
                       </div>
-                      <p className="text-gray-700 text-base leading-relaxed font-notosans">
-                        {pr.description}
-                      </p>
+                      <p className="text-gray-700 text-base leading-relaxed font-notosans">{pr.description}</p>
                     </div>
-                    <button className="mt-6 text-blue-600 hover:text-blue-800 font-semibold">
+                    <button className="mt-6 text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-2">
                       {t('projects.button_more')}
                     </button>
                   </div>
@@ -74,16 +71,16 @@ const Projects: React.FC = () => {
             ))}
           </div>
 
-          {/* Стрелки */}
+          {/* Arrows */}
           <button
             onClick={() => instanceRef.current?.prev()}
-            className="absolute top-1/2 -translate-y-1/2 left-0 z-10 bg-white p-2 rounded-full shadow hover:scale-105 transition"
+            className="absolute top-1/2 left-0 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:scale-105 transition z-10"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
           <button
             onClick={() => instanceRef.current?.next()}
-            className="absolute top-1/2 -translate-y-1/2 right-0 z-10 bg-white p-2 rounded-full shadow hover:scale-105 transition"
+            className="absolute top-1/2 right-0 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:scale-105 transition z-10"
           >
             <ChevronRight className="w-6 h-6" />
           </button>

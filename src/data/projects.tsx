@@ -10,7 +10,7 @@
     },
     {
       title: "Bridge Building",
-      description: "Creating connections between Erasmus alumni and current students to foster mentorship and professional networks.",
+      description: "Creating connections between Erasmus alumni and current students to foster mentorship and professional networks. Creating connections between Erasmus alumni and current students to foster mentorship and professional networks. Creating connections between Erasmus alumni and current students to foster mentorship and professional networks. Creating connections between Erasmus alumni and current students to foster mentorship and professional networks. Creating connections between Erasmus alumni and current students to foster mentorship and professional networks.",
       image: "https://images.pexels.com/photos/1438072/pexels-photo-1438072.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
       funding: "European Commission",
       duration: "2024-2026",
