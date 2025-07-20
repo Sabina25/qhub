@@ -1,6 +1,8 @@
-import { useNavigate } from 'react-router-dom';
-import { ExternalLink, Calendar, Users } from 'lucide-react';
+import React from 'react';
 import { useTranslation } from '../context/TranslationContext';
+import { useKeenSlider } from 'keen-slider/react';
+import 'keen-slider/keen-slider.min.css';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import projects from '../data/projects.tsx';
 
 interface Project {
@@ -12,72 +14,78 @@ interface Project {
   participants: string;
 }
 
-const Projects = () => {
-  const arrProjects = projects.slice(0, 4);
-  const navigate = useNavigate();
+const Projects: React.FC = () => {
   const { t } = useTranslation();
+
+  const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
+    loop: true,
+    slides: { perView: 1 },
+    created(slider) {
+      setInterval(() => {
+        slider.next();
+      }, 6000); // Автопрокрутка каждые 6 сек
+    },
+  });
 
   return (
     <section id="projects" className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="font-raleway font-semibold text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold mb-4 font-raleway text-gray-900">
             {t('projects.title')}
           </h2>
-          <p className="font-notosans text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto font-notosans">
             {t('projects.subtitle')}
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-          {arrProjects.map((pr: Project, index: number) => (
-            <div key={index} className="bg-gray-50 overflow-hidden hover:shadow- transition-shadow duration-300 group">
-              <div className="relative overflow-hidden">
-                <img
-                  src={pr.image}
-                  alt={pr.title}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-4 left-4">
-                  <span className="bg-blue-600 text-white px-3 py-1 text-sm font-semibold">
-                    {pr.funding}
-                  </span>
+        <div className="relative">
+          <div ref={sliderRef} className="keen-slider">
+            {projects.slice(0, 5).map((pr: Project, index: number) => (
+              <div key={index} className="keen-slider__slide">
+                <div className="flex flex-col lg:flex-row bg-gray-50 rounded-lg shadow-md overflow-hidden min-h-[400px]">
+                  {/* Левая часть: Картинка */}
+                  <div className="lg:w-1/2 w-full h-80 lg:h-auto">
+                    <img
+                      src={pr.image}
+                      alt={pr.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  {/* Правая часть: Контент */}
+                  <div className="lg:w-1/2 w-full p-8 flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-raleway uppercase text-3xl text-gray-800 mb-4">{pr.title}</h3>
+                      <div className="text-sm text-blue-600 font-semibold mb-3">
+                        {pr.funding} • {pr.duration} • {pr.participants}
+                      </div>
+                      <p className="text-gray-700 text-base leading-relaxed font-notosans">{pr.description}</p>
+                    </div>
+                    <button className="mt-6 text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-2">
+                      {t('projects.button_more')}
+                    </button>
+                  </div>
                 </div>
               </div>
+            ))}
+          </div>
 
-              <div className="p-6">
-                <div className="flex items-center justify-between space-y-2 mb-4">
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    {pr.duration}
-                  </div>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Users className="h-4 w-4 mr-2" />
-                    {pr.participants}
-                  </div>
-                </div>
-                <h3 className="text-xl text-gray-900 mb-3 uppercase">{pr.title}</h3>
-
-                <button className="flex items-center text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-200">
-                  {t('projects.button_more')}
-                  <ExternalLink className="h-4 w-4 ml-2" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="text-center mt-12">
+          {/* Стрелки */}
           <button
-            onClick={() => navigate('/projects')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 rounded-md py-3 font-semibold transition"
+            onClick={() => instanceRef.current?.prev()}
+            className="absolute top-1/2 left-0 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:scale-105 transition z-10"
           >
-            {t('projects.button_view_all')}
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <button
+            onClick={() => instanceRef.current?.next()}
+            className="absolute top-1/2 right-0 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:scale-105 transition z-10"
+          >
+            <ChevronRight className="w-6 h-6" />
           </button>
         </div>
       </div>
-      <div className="relative"> 
-    </div>
     </section>
   );
 };
