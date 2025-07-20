@@ -5,7 +5,7 @@ import { useTranslation } from '../context/TranslationContext';
 
 const Members = () => {
   const [showAll, setShowAll] = useState(false);
-  const visibleLogos = showAll ? memberLogos : memberLogos.slice(0, 4);
+  const visibleLogos = showAll ? memberLogos : memberLogos.slice(0, 5);
   const { t } = useTranslation();
 
   return (
@@ -27,15 +27,15 @@ const Members = () => {
             {t('members.team')}
           </h3>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
           {visibleLogos.map((member, index) => (
               <div
                 key={index}
-                className="bg-white p-6 rounded-sm shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center justify-center min-h-[120px] group"
+                className="bg-white p-6 rounded-sm shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center justify-center min-h-[85px] group"
               >
                 <div className="text-center">
                   {member.imageUrl ? (
-                    <div className="w-36 h-36 rounded-sm overflow-hidden mx-auto mb-3 group-hover:scale-105 transition-transform duration-200">
+                    <div className="w-32 h-32 rounded-sm overflow-hidden mx-auto mb-3 group-hover:scale-105 transition-transform duration-200">
                       <img
                         src={member.imageUrl}
                         alt={t(member.name)}
@@ -43,7 +43,7 @@ const Members = () => {
                       />
                     </div>
                   ) : (
-                    <div className="w-36 h-36 rounded-lg bg-gradient-to-br from-blue-500 to-orange-500 flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition-transform duration-200">
+                    <div className="w-32 h-32 rounded-lg bg-gradient-to-br from-blue-500 to-orange-500 flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition-transform duration-200">
                       <span className="text-white font-bold text-xl">
                         {t(member.name).split(" ").map((word) => word[0]).join("").slice(0, 2)}
                       </span>

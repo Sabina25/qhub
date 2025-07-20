@@ -75,7 +75,7 @@ const Contact = () => {
             </div>
 
             {/* Hours */}
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            {/* <div className="bg-white p-6 rounded-lg shadow-md">
               <h4 className="text-lg font-semibold text-gray-900 mb-4">
                 {t('contact.info.hours')}
               </h4>
@@ -93,7 +93,7 @@ const Contact = () => {
                   <span>{t('contact.info.closed')}</span>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Form */}
@@ -138,7 +138,7 @@ const Contact = () => {
                 </div>
               </div>
 
-              <div>
+              {/* <div>
                 <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
                   {t('contact.form.subject')}
                 </label>
@@ -158,7 +158,7 @@ const Contact = () => {
                   <option value="media">{t('contact.form.subject_options.media')}</option>
                   <option value="other">{t('contact.form.subject_options.other')}</option>
                 </select>
-              </div>
+              </div> */}
 
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
