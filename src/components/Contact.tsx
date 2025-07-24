@@ -66,8 +66,8 @@ const Contact = () => {
                     <h4 className="text-lg font-semibold text-gray-900">{t('contact.info.address')}</h4>
                     <p className="text-gray-600">
                       Q-hub<br />
-                      вул. Омельяновича-Павленка, 9<br />
-                      Київ, Україна
+                      вул. Олени Пчілки, буд. 6-а, кв. 69,<br />
+                      Київ, Україна  02081
                     </p>
                   </div>
                 </div>

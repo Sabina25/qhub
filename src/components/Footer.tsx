@@ -1,5 +1,5 @@
 import {
-  Facebook, Instagram, Twitter, Mail, Phone, MapPin
+  Facebook, Instagram, Twitter, Mail, Phone, MapPin, Youtube
 } from 'lucide-react';
 import { useTranslation } from '../context/TranslationContext';
 
@@ -49,14 +49,14 @@ const Footer = () => {
             <div>
               <h4 className="font-semibold mb-3">{t('footer.social')}</h4>
               <div className="flex space-x-4">
-                <a href="https://www.facebook.com/devamibar/" className="text-gray-300 hover:text-white">
+                <a href="https://www.facebook.com/devamibar/" target='_blank' className="text-gray-300 hover:text-white">
                   <Facebook className="h-5 w-5" />
                 </a>
-                <a href="https://www.instagram.com/q_hub/" className="text-gray-300 hover:text-white">
+                <a href="https://www.instagram.com/q_hub/" target='_blank' className="text-gray-300 hover:text-white">
                   <Instagram className="h-5 w-5" />
                 </a>
-                <a href="#" className="text-gray-300 hover:text-white">
-                  <Twitter className="h-5 w-5" />
+                <a href="https://www.youtube.com/@q-hub8132/videos" target='_blank' className="text-gray-300 hover:text-white">
+                  <Youtube className="h-5 w-5" />
                 </a>
               </div>
             </div>
@@ -84,7 +84,7 @@ const Footer = () => {
               {t('footer.copyright').replace('{year}', `${currentYear}`)}
             </span>
             <img
-              src="../images/tamga.png"
+              src="/images/tamga.png"
               className="h-8 mr-10 transition-transform duration-300 transform hover:scale-105"
               alt="Tamga"
             />
