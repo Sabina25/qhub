@@ -2,15 +2,17 @@ import { useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const logos = [
-  { src: "../images/partnersLogo/logo_01.png", link: "https://www.youtube.com/@crimea_vox" },
-  { src: "../images/partnersLogo/Logo_3@4x.png", link: "https://www.dumk.org/" },
-  { src: "../images/partnersLogo/logo_text_white.jpg", link: "https://example.com/3" },
-  { src: "../images/partnersLogo/logo_takava_page-0001.jpg", link: "https://www.instagram.com/takava_coffeebuffet/" },
-  { src: "../images/partnersLogo/CD.png", link: "https://www.facebook.com/CrimeaDaily/" },
-  { src: "../images/partnersLogo/kf.jpg", link: "https://example.com/6" },
-  { src: "../images/partnersLogo/kd.jpg", link: "https://crimeanhouse.org/" },
-  { src: "../images/partnersLogo/f.jpg", link: "https://example.com/9" },
-  { src: "../images/partnersLogo/m.jpg", link: "https://qtmm.org/" },
+  { src: "/images/partnersLogo/logo_01.png", link: "https://www.youtube.com/@crimea_vox" },
+  { src: "/images/partnersLogo/Logo_3@4x.png", link: "https://www.dumk.org/" },
+  { src: "/images/partnersLogo/logo_text_white.jpg", link: "https://amu.org.ua/" },
+  { src: "/images/partnersLogo/logo_takava_page-0001.jpg", link: "https://www.instagram.com/takava_coffeebuffet/" },
+  { src: "/images/partnersLogo/CD.png", link: "https://www.instagram.com/crimeadaily/" },
+  { src: "/images/partnersLogo/kf.jpg", link: "https://crimeanfront.org/" },
+  { src: "/images/partnersLogo/kd.jpg", link: "https://crimeanhouse.org/" },
+  { src: "/images/partnersLogo/f.jpg", link: "https://www.instagram.com/qirim.young/" },
+  { src: "/images/partnersLogo/m.jpg", link: "https://qtmm.org/" },
+  { src: "/images/partnersLogo/icon-tamga.png", link: "https://qmvf.org/" },
+  { src: "/images/partnersLogo/qd.jpg", link: "https://www.instagram.com/qadindivani/" },
 ];
 
 const LogoMarquee = () => {
