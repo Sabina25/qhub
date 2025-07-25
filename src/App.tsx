@@ -14,6 +14,7 @@ import AllProjectsPage from './AllProjectsPage';
 import WaveDivider from './components/WaveDivider';
 import EventDetailPage from './EventDetailPage';
 import OurMediaPage from './OurMediaPage';
+import CreateNews from './CreateNewsPage';
 
 
 import ScrollToTop from './ScrollToTop';
@@ -45,6 +46,7 @@ function App() {
           <Route path="/events" element={<AllEventsPage />} />
           <Route path="/events/:id" element={<EventDetailPage />} />
           <Route path="/media" element={<OurMediaPage />} />
+          <Route path="/create" element={<CreateNews />} />
         </Routes>
       </Router>
     </TranslationProvider>

@@ -1,4 +1,4 @@
-const events = [
+let events = [
   {
     id: '8',
     title: "Медіа Crimea Vox від Q-hub тепер на усіх онлайн-платформах",
@@ -81,5 +81,9 @@ const events = [
     featured: false
   }
 ];
+
+export const addEvent = (newEvent) => {
+  events.unshift(newEvent); 
+};
 
 export default events;
