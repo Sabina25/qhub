@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
-import Footer from './components/Footer';
-import Header from './components/Header';
-import events from './data/events.tsx';
+import Footer from '../components/Footer.tsx';
+import Header from '../components/Header.tsx';
+import events from '../data/events.tsx';
+
 
 interface Event {
   id: number;

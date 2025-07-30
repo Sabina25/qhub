@@ -1,6 +1,11 @@
 import { useState } from 'react';
+import 'react-quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill';
 import { useNavigate } from 'react-router-dom';
-import { addEvent } from './data/events';
+
+import AdminMenu from '../components/AdminMenu';
+
+import { addEvent } from '../data/events';
 
 const CreateNews = () => {
   const navigate = useNavigate();
@@ -32,9 +37,10 @@ const CreateNews = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white shadow-md mt-10 rounded-xl">
-      <h2 className="text-2xl font-semibold mb-6">Create News</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <>
+   <div className="max-w-3xl mx-auto p-8 bg-white shadow-md mt-10 rounded-2xl">
+    <h2 className="text-3xl font-semibold mb-8 text-center">Create News</h2>
+      <form onSubmit={handleSubmit} className="space-y-6">
         <input
           name="title"
           placeholder="Title"
@@ -67,14 +73,32 @@ const CreateNews = () => {
           className="w-full border p-2 rounded"
           required
         />
-        <textarea
-          name="excerpt"
-          placeholder="Excerpt (HTML allowed)"
-          value={form.excerpt}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          rows={4}
-        />
+        <ReactQuill
+            theme="snow"
+            value={form.excerpt}
+            onChange={(value) => setForm((prev) => ({ ...prev, excerpt: value }))}
+            className="bg-white rounded"
+            modules={{
+              toolbar: [
+                [{ header: [1, 2, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['link'],
+                ['clean'],
+              ],
+            }}
+            formats={[
+              'header',
+              'bold',
+              'italic',
+              'underline',
+              'strike',
+              'list',
+              'bullet',
+              'link',
+            ]}
+          />
+
         <label className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -92,6 +116,7 @@ const CreateNews = () => {
         </button>
       </form>
     </div>
+    </>
   );
 };
 

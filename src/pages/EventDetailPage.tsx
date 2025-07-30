@@ -1,9 +1,11 @@
 import { useParams, Link } from 'react-router-dom';
-import events from './data/events.tsx';
 
-import Footer from './components/Footer';
-import Header from './components/Header';
-import ParallaxBanner from './components/ParallaxBannerProps.tsx'; 
+import Footer from '../components/Footer';
+import Header from '../components/Header';
+
+import ParallaxBanner from '../components/ParallaxBannerProps.tsx'; 
+
+import events from '../data/events.tsx';
 
 const EventDetailPage = () => {
   const { id } = useParams();

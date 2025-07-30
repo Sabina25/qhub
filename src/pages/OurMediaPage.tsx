@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 
-import Footer from './components/Footer';
-import Header from './components/Header';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
 
 const YOUTUBE_API_KEY = "AIzaSyDYX3_pppGQYuCTcKJaZgyg9fWZ6FBRI1A";
 const CHANNEL_ID = "UCm-C1Ix_tf4PnuROw8QRqTg";

@@ -9,12 +9,13 @@ import News from './components/News';
 import Members from './components/Members';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-import AllEventsPage from './AllEventsPage';
-import AllProjectsPage from './AllProjectsPage';
+import AllEventsPage from './pages/AllEventsPage';
+import AllProjectsPage from './pages/AllProjectsPage';
 import WaveDivider from './components/WaveDivider';
-import EventDetailPage from './EventDetailPage';
-import OurMediaPage from './OurMediaPage';
-import CreateNews from './CreateNewsPage';
+import EventDetailPage from './pages/EventDetailPage';
+import OurMediaPage from './pages/OurMediaPage';
+import CreateNews from './pages/CreateNewsPage';
+import AdminMenu from './components/AdminMenu';
 
 
 import ScrollToTop from './ScrollToTop';
@@ -46,7 +47,8 @@ function App() {
           <Route path="/events" element={<AllEventsPage />} />
           <Route path="/events/:id" element={<EventDetailPage />} />
           <Route path="/media" element={<OurMediaPage />} />
-          <Route path="/create" element={<CreateNews />} />
+          <Route path="/admin" element={<AdminMenu />} />
+          <Route path="/admin/add-news" element={<CreateNews />} />
         </Routes>
       </Router>
     </TranslationProvider>
