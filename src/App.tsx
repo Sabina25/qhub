@@ -16,6 +16,7 @@ import EventDetailPage from './pages/EventDetailPage';
 import OurMediaPage from './pages/OurMediaPage';
 import CreateNews from './pages/CreateNewsPage';
 import AdminMenu from './components/AdminMenu';
+import CreateProject from './pages/ CreateProjectPage';
 
 
 import ScrollToTop from './ScrollToTop';
@@ -49,6 +50,7 @@ function App() {
           <Route path="/media" element={<OurMediaPage />} />
           <Route path="/admin" element={<AdminMenu />} />
           <Route path="/admin/add-news" element={<CreateNews />} />
+          <Route path="/admin/add-project" element={<CreateProject />} />
         </Routes>
       </Router>
     </TranslationProvider>

@@ -3,8 +3,6 @@ import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import { useNavigate } from 'react-router-dom';
 
-import AdminMenu from '../components/AdminMenu';
-
 import { addEvent } from '../data/events';
 
 const CreateNews = () => {
