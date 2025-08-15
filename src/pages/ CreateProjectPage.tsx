@@ -1,15 +1,19 @@
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../firebase';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { addProject } from '../data/projects'; 
+import { addProject } from '../data/projects';
 
 const CreateProject = () => {
   const navigate = useNavigate();
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+
   const [form, setForm] = useState({
     id: Date.now(),
     title: '',
     description: '',
-    image: '',
+    image: '',   
     date: '',
     location: '',
     youtubeUrls: [''],
@@ -18,141 +22,92 @@ const CreateProject = () => {
 
   const handleChange = (e: any) => {
     const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] || null;
+    setImageFile(f);
   };
 
   const handleVideoChange = (index: number, value: string) => {
-    const updatedUrls = [...form.youtubeUrls];
-    updatedUrls[index] = value;
-    setForm((prev) => ({
-      ...prev,
-      youtubeUrls: updatedUrls,
-    }));
+    const updated = [...form.youtubeUrls];
+    updated[index] = value;
+    setForm((prev) => ({ ...prev, youtubeUrls: updated }));
   };
 
-  const addNewVideoField = () => {
-    setForm((prev) => ({
-      ...prev,
-      youtubeUrls: [...prev.youtubeUrls, ''],
-    }));
-  };
+  const addNewVideoField = () => setForm((p) => ({ ...p, youtubeUrls: [...p.youtubeUrls, ''] }));
+  const removeVideoField = (i: number) =>
+    setForm((p) => ({ ...p, youtubeUrls: p.youtubeUrls.filter((_, idx) => idx !== i) }));
 
-  const removeVideoField = (index: number) => {
-    const updatedUrls = form.youtubeUrls.filter((_, i) => i !== index);
-    setForm((prev) => ({
-      ...prev,
-      youtubeUrls: updatedUrls,
-    }));
-  };
-
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    const newProject = {
-      id: Date.now(),
-      ...form,
-    };
-    addProject(newProject);
-    navigate('/projects');
+
+    try {
+      setUploading(true);
+
+      let imageUrl = form.image;
+      if (imageFile) {
+        // путь в бакете
+        const filePath = `projects/${Date.now()}-${imageFile.name}`;
+        const storageRef = ref(storage, filePath);
+        await uploadBytes(storageRef, imageFile);
+        imageUrl = await getDownloadURL(storageRef);
+      }
+
+      const newProject = {
+        id: Date.now(),
+        ...form,
+        image: imageUrl, 
+      };
+
+      addProject(newProject);
+
+      alert('Project created successfully');
+      navigate('/admin');
+    } catch (err) {
+      console.error(err);
+      alert('Upload failed. Try again.');
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
-    <>
-      <div className="max-w-3xl mx-auto p-8 bg-white shadow-md mt-10 rounded-2xl">
-        <h2 className="text-3xl font-semibold mb-8 text-center">Create Project</h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <input
-            name="title"
-            placeholder="Project Title"
-            value={form.title}
-            onChange={handleChange}
-            className="w-full border p-3 rounded"
-            required
-          />
-          <input
-            name="image"
-            placeholder="Image URL"
-            value={form.image}
-            onChange={handleChange}
-            className="w-full border p-3 rounded"
-            required
-          />
-          <input
-            name="date"
-            type="date"
-            value={form.date}
-            onChange={handleChange}
-            className="w-full border p-3 rounded"
-            required
-          />
-          <input
-            name="location"
-            placeholder="Location"
-            value={form.location}
-            onChange={handleChange}
-            className="w-full border p-3 rounded"
-          />
-          <textarea
-            name="description"
-            placeholder="Description"
-            value={form.description}
-            onChange={handleChange}
-            rows={4}
-            className="w-full border p-3 rounded"
-            required
-          />
+    <div className="max-w-3xl mx-auto p-8 bg-white shadow-md mt-10 rounded-2xl">
+      <h2 className="text-3xl font-semibold mb-8 text-center">Create Project</h2>
 
-          <div className="space-y-4">
-            <label className="block font-semibold">YouTube Videos:</label>
-            {form.youtubeUrls.map((url, index) => (
-              <div key={index} className="flex gap-2 items-center">
-                <input
-                  type="text"
-                  value={url}
-                  onChange={(e) => handleVideoChange(index, e.target.value)}
-                  placeholder="YouTube URL"
-                  className="flex-1 border p-2 rounded"
-                />
-                {form.youtubeUrls.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeVideoField(index)}
-                    className="text-red-600 hover:text-red-800 text-sm"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={addNewVideoField}
-              className="text-blue-600 hover:underline text-sm"
-            >
-              + Add another video
-            </button>
-          </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <input name="title" placeholder="Project Title" value={form.title}
+               onChange={handleChange} className="w-full border p-3 rounded" required />
 
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              name="featured"
-              checked={form.featured}
-              onChange={handleChange}
-            />
-            Featured
-          </label>
-          <button
-            type="submit"
-            className="bg-green-600 text-white px-6 py-3 text-lg rounded hover:bg-green-700"
-          >
-            Create Project
-          </button>
-        </form>
-      </div>
-    </>
+        {/* Загрузка файла вместо URL */}
+        <div>
+          <label className="block mb-2 font-medium">Project Image</label>
+          <input type="file" accept="image/*" onChange={handleImageChange} className="w-full" required />
+        </div>
+
+        <input name="date" type="date" value={form.date}
+               onChange={handleChange} className="w-full border p-3 rounded" required />
+
+        <input name="location" placeholder="Location" value={form.location}
+               onChange={handleChange} className="w-full border p-3 rounded" />
+
+        <textarea name="description" placeholder="Description" value={form.description}
+                  onChange={handleChange} rows={4} className="w-full border p-3 rounded" required />
+
+
+        <label className="flex items-center gap-2">
+          <input type="checkbox" name="featured" checked={form.featured} onChange={handleChange} />
+          Featured
+        </label>
+
+        <button type="submit" disabled={uploading}
+                className="bg-green-600 text-white px-6 py-3 text-lg rounded hover:bg-green-700 disabled:opacity-60">
+          {uploading ? 'Uploading…' : 'Create Project'}
+        </button>
+      </form>
+    </div>
   );
 };
 

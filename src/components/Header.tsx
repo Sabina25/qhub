@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Globe } from 'lucide-react';
 import { useTranslation } from '../context/TranslationContext'; 
+import { useAuth } from '../auth/AuthContext';
+import { ADMIN_EMAIL } from '../auth/constants';
 
 type Language = 'ua' | 'en'
+
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,6 +15,8 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t, lang, setLang } = useTranslation();
+  const { user } = useAuth();                       
+  const isAdmin = user?.email === ADMIN_EMAIL;      
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -25,11 +30,13 @@ const Header: React.FC = () => {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const mainNav = [
+ 
+  const mainNav: { label: string; to: string; isRoute?: boolean }[] = [
     { label: t('header.nav_main.home'), to: '/' },
     { label: t('header.nav_main.projects'), to: '/projects', isRoute: true },
     { label: t('header.nav_main.news'), to: '/events', isRoute: true },
-    { label: t('header.nav_main.media'), to: '/media', isRoute: true }
+    { label: t('header.nav_main.media'), to: '/media', isRoute: true },
+    ...(isAdmin ? [{ label: 'Admin', to: '/admin', isRoute: true }] : []),
   ];
 
   const anchorNav = [
@@ -79,7 +86,7 @@ const Header: React.FC = () => {
           <div className="font-notosans hidden lg:flex space-x-6 pr-[150px] ml-auto">
             {mainNav.map((item) => (
               <a
-              key={`${item.to}-${lang}`}
+                key={`${item.to}-${lang}`}
                 href={item.to}
                 onClick={(e) => handleNavClick(e, item)}
                 className={`font-notosans font-medium transition ${
@@ -97,13 +104,13 @@ const Header: React.FC = () => {
           <div className="hidden md:flex items-center space-x-2">
             <Globe className="h-4 w-4 text-gray-600" />
             <select
-                value={lang}
-                onChange={(e) => setLang(e.target.value as Language)}
-                className="font-notosans text-sm text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer"
-              >
-                <option value="en">{t('header.language.en')}</option>
-                <option value="ua">{t('header.language.ua')}</option>
-              </select>
+              value={lang}
+              onChange={(e) => setLang(e.target.value as Language)}
+              className="font-notosans text-sm text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer"
+            >
+              <option value="en">{t('header.language.en')}</option>
+              <option value="ua">{t('header.language.ua')}</option>
+            </select>
           </div>
 
           {/* Mobile Menu Button */}
@@ -122,17 +129,17 @@ const Header: React.FC = () => {
           <div className="font-notosans hidden lg:flex border-t border-gray-100 text-s text-gray-500 font-light tracking-wide py-1 space-x-4 pr-[200px] justify-end">
             {anchorNav.map((item) => (
               <a
-              key={`${item.to}-${lang}`}
-              href={`#${item.to}`}
-              onClick={(e) => handleNavClick(e, item)}
-              className={`transition capitalize lowercase ${
-                activeAnchor === `#${item.to}`
-                  ? 'text-blue-600 font-semibold'
-                  : 'hover:text-blue-600'
-              }`}
-            >
-              {item.label}
-            </a>
+                key={`${item.to}-${lang}`}
+                href={`#${item.to}`}
+                onClick={(e) => handleNavClick(e, item)}
+                className={`transition capitalize lowercase ${
+                  activeAnchor === `#${item.to}`
+                    ? 'text-blue-600 font-semibold'
+                    : 'hover:text-blue-600'
+                }`}
+              >
+                {item.label}
+              </a>
             ))}
           </div>
         )}
@@ -140,24 +147,25 @@ const Header: React.FC = () => {
         {/* Mobile nav */}
         {isMenuOpen && (
           <div className="lg:hidden bg-white border-t pt-4 pb-6 space-y-4">
-          {mainNav.concat(anchorNav).map((item) => (
-            <a
-              key={`${item.to}-${item.isRoute ? 'route' : 'anchor'}`}
-              href={item.isRoute ? item.to : `#${item.to}`}
-              onClick={(e) => handleNavClick(e, item)}
-              className={`block px-4 text-base ${
-                item.isRoute
-                  ? location.pathname === item.to
-                    ? 'text-blue-600 font-semibold uppercase'
-                    : 'text-gray-700 hover:text-blue-600 uppercase'
-                  : activeAnchor === `#${item.to}`
-                    ? 'text-blue-600 font-semibold uppercase'
-                    : 'text-gray-700 hover:text-blue-600 uppercase'
-              }`}
-            >
-              {item.label}
-            </a>
-          ))}
+            {mainNav.concat(anchorNav).map((item) => (
+              <a
+                key={`${item.to}-${item.isRoute ? 'route' : 'anchor'}`}
+                href={item.isRoute ? item.to : `#${item.to}`}
+                onClick={(e) => handleNavClick(e, item)}
+                className={`block px-4 text-base ${
+                  item.isRoute
+                    ? location.pathname === item.to
+                      ? 'text-blue-600 font-semibold uppercase'
+                      : 'text-gray-700 hover:text-blue-600 uppercase'
+                    : activeAnchor === `#${item.to}`
+                      ? 'text-blue-600 font-semibold uppercase'
+                      : 'text-gray-700 hover:text-blue-600 uppercase'
+                }`}
+              >
+                {item.label}
+              </a>
+            ))}
+
             <div className="flex items-center space-x-2 px-4 pt-2 border-t">
               <Globe className="h-4 w-4 text-gray-600" />
               <select

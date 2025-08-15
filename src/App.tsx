@@ -1,5 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { TranslationProvider } from './context/TranslationContext'
+import { TranslationProvider } from './context/TranslationContext';
+
+import RequireAuth from './auth/RequireAuth';
+import AdminLayout from './components/AdminLayout';
+import { AuthProvider } from './auth/AuthContext';  
 
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -17,7 +21,7 @@ import OurMediaPage from './pages/OurMediaPage';
 import CreateNews from './pages/CreateNewsPage';
 import AdminMenu from './components/AdminMenu';
 import CreateProject from './pages/ CreateProjectPage';
-
+import Login from './pages/Login';
 
 import ScrollToTop from './ScrollToTop';
 
@@ -39,21 +43,36 @@ const Home = () => (
 
 function App() {
   return (
+    <AuthProvider>   
     <TranslationProvider>
       <Router>
         <ScrollToTop />
         <Routes>
+        
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<AllProjectsPage />} />
           <Route path="/events" element={<AllEventsPage />} />
           <Route path="/events/:id" element={<EventDetailPage />} />
           <Route path="/media" element={<OurMediaPage />} />
-          <Route path="/admin" element={<AdminMenu />} />
-          <Route path="/admin/add-news" element={<CreateNews />} />
-          <Route path="/admin/add-project" element={<CreateProject />} />
+          <Route path="/login" element={<Login />} />
+
+        
+          <Route
+            path="/admin/*"
+            element={
+              <RequireAuth>
+                <AdminLayout />
+              </RequireAuth>
+            }
+            >
+            <Route index element={<AdminMenu />} />
+            <Route path="add-news" element={<CreateNews />} />
+            <Route path="add-project" element={<CreateProject />} />
+          </Route>
         </Routes>
       </Router>
     </TranslationProvider>
+    </AuthProvider>
   );
 }
 
