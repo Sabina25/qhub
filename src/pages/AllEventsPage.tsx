@@ -1,40 +1,36 @@
-// src/pages/AllEventsPage.tsx
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useTranslation } from '../context/TranslationContext';
-
-import { fetchNews } from '../data/news'; 
+import { fetchNews } from '../data/news';
 
 const SKELETON_COUNT = 6;
 
 type DisplayNews = {
   id: string;
-  title: string;         
-  excerptHtml: string;   
+  title: string;
+  excerptHtml: string;
   image: string;
-  date: string;           
-  categoryKey: string;   
+  dateYMD: string;     
+  categoryKey: string;
   featured: boolean;
 };
 
 const SkeletonCard = () => (
   <div className="animate-pulse bg-gray-100 p-4 rounded-xl h-64">
-    <div className="w-full h-32 bg-gray-300 rounded mb-4"></div>
-    <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+    <div className="w-full h-32 bg-gray-300 rounded mb-4" />
+    <div className="h-4 bg-gray-300 rounded w-3/4 mb-2" />
+    <div className="h-4 bg-gray-200 rounded w-1/2" />
   </div>
 );
 
-
-function pickL10n(val: any, lang: 'ua' | 'en'): string {
-  if (typeof val === 'string') return val;
-  if (val && typeof val === 'object') {
-    return val[lang] ?? val.ua ?? val.en ?? '';
-  }
-  return '';
+function formatLocalYMD(ymd: string, locale: string) {
+  if (!ymd) return '—';
+  const [y, m, d] = ymd.split('-').map(Number);
+  if (!y || !m || !d) return '—';
+  return new Date(y, m - 1, d).toLocaleDateString(locale);
 }
 
 function toDateString(input: any): string {
@@ -49,6 +45,7 @@ function toDateString(input: any): string {
     if (typeof input === 'string') {
       if (/^\d{4}-\d{2}-\d{2}$/.test(input)) return input;
       const d = new Date(input);
+      if (isNaN(+d)) return '';
       const y = d.getUTCFullYear();
       const m = String(d.getUTCMonth() + 1).padStart(2, '0');
       const day = String(d.getUTCDate()).padStart(2, '0');
@@ -60,6 +57,11 @@ function toDateString(input: any): string {
   }
 }
 
+function pickL10n(val: any, lang: 'ua' | 'en'): string {
+  if (typeof val === 'string') return val;
+  if (val && typeof val === 'object') return val[lang] ?? val.ua ?? val.en ?? '';
+  return '';
+}
 
 const AllEventsPage: React.FC = () => {
   const { lang, t } = useTranslation();
@@ -70,31 +72,32 @@ const AllEventsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const loaderRef = useRef<HTMLDivElement | null>(null);
 
-  
   useEffect(() => {
     (async () => {
       try {
         setLoadingInitial(true);
-        const rawList: any[] = await fetchNews(/* можно передать lang, если обновлял data/news */);
+        const rawList: any[] = await fetchNews();
 
         const list: DisplayNews[] = rawList.map((r) => {
-          const date =
-            toDateString(r.date) || toDateString(r.createdAt) || toDateString(r.updatedAt) || '';
+          
+          const dateYMD =
+            (typeof r.dateYMD === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(r.dateYMD) && r.dateYMD) ||
+            toDateString(r.dateTs || r.date) ||
+            '';
 
           return {
             id: r.id,
             title: pickL10n(r.title, lang),
             excerptHtml: pickL10n(r.excerpt, lang),
             image: r.image ?? '',
-            date,
-            
+            dateYMD,
             categoryKey: r.categoryKey ?? r.category ?? '',
             featured: !!r.featured,
           };
         });
 
-        // новые сверху
-        list.sort((a, b) => (Date.parse(b.date || '') || 0) - (Date.parse(a.date || '') || 0));
+      
+        list.sort((a, b) => (a.dateYMD > b.dateYMD ? -1 : a.dateYMD < b.dateYMD ? 1 : 0));
         setItems(list);
       } catch (e: any) {
         console.error(e);
@@ -113,7 +116,7 @@ const AllEventsPage: React.FC = () => {
     setTimeout(() => {
       setVisibleCount((prev) => Math.min(prev + 6, items.length));
       setLoadingMore(false);
-    }, 400);
+    }, 300);
   };
 
   useEffect(() => {
@@ -174,7 +177,9 @@ const AllEventsPage: React.FC = () => {
 
                 <div className="flex justify-between items-center text-sm text-gray-500">
                   <span>
-                    {ev.date ? new Date(ev.date).toLocaleDateString(lang === 'ua' ? 'uk-UA' : 'en-GB') : '—'}
+                    {ev.dateYMD
+                      ? formatLocalYMD(ev.dateYMD, lang === 'ua' ? 'uk-UA' : 'en-GB')
+                      : '—'}
                   </span>
                   {ev.categoryKey && (
                     <span className="px-2 py-0.5 rounded bg-gray-100 text-gray-600">

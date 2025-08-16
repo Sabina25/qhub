@@ -18,13 +18,20 @@ export type NewsItem = {
 function toDateString(input: any): string {
   try {
     if (input && typeof input === 'object' && 'seconds' in input) {
-      const ms = input.seconds * 1000 + Math.floor((input.nanoseconds || 0) / 1e6);
-      return new Date(ms).toISOString().slice(0, 10);
+      const d = new Date(input.seconds * 1000);
+      const y = d.getUTCFullYear();
+      const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(d.getUTCDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
     }
     if (typeof input === 'string') {
       if (/^\d{4}-\d{2}-\d{2}$/.test(input)) return input;
       const d = new Date(input);
-      return isNaN(+d) ? '' : d.toISOString().slice(0, 10);
+      if (isNaN(+d)) return '';
+      const y = d.getUTCFullYear();
+      const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(d.getUTCDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
     }
     return '';
   } catch {
@@ -32,36 +39,24 @@ function toDateString(input: any): string {
   }
 }
 
-export async function fetchNews(lang: Lang): Promise<NewsItem[]> {
+export async function fetchNews() {
   const snap = await getDocs(collection(db, 'news'));
-  const items: NewsItem[] = snap.docs.map((d) => {
+  const rows = snap.docs.map((d) => {
     const data: any = d.data() || {};
-    const dateStr =
-      toDateString(data.date) ||
-      toDateString(data.createdAt) ||
-      toDateString(data.updatedAt) ||
+    const dateYMD =
+      (typeof data.dateYMD === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(data.dateYMD) && data.dateYMD) ||
+      toDateString(data.dateTs || data.date) || // Fallback для старых записей
       '';
 
     return {
       id: d.id,
-      title: pickL10n<string>(data.title, lang),
-      excerpt: pickL10n<string>(data.excerpt, lang),
-      image: data.image ?? '',
-      date: dateStr,
-      categoryKey: data.categoryKey ?? '',
-      featured: Boolean(data.featured),
-      slug: pickL10n<string>(data.slug, lang),
-      authorEmail: data.authorEmail ?? null,
+      ...data,
+      dateYMD,
     };
   });
 
-  items.sort((a, b) => {
-    const ta = a.date ? Date.parse(a.date) : 0;
-    const tb = b.date ? Date.parse(b.date) : 0;
-    return tb - ta;
-  });
-
-  return items;
+  rows.sort((a: any, b: any) => (a.dateYMD > b.dateYMD ? -1 : a.dateYMD < b.dateYMD ? 1 : 0));
+  return rows;
 }
 
 export async function fetchNewsById(id: string, lang: Lang): Promise<NewsItem | null> {

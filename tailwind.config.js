@@ -17,6 +17,19 @@ export default {
         heading: ['Raleway', 'sans-serif'],
         raleway: ['Raleway', 'sans-serif'],
       },
+      typography: ({ theme }) => ({
+        DEFAULT: {
+          css: {
+            a: {
+              color: theme('colors.blue.600'),
+              textDecoration: 'underline',
+              textUnderlineOffset: '2px',
+              textDecorationThickness: '2px',
+              '&:hover': { color: theme('colors.blue.700') },
+            },
+          },
+        },
+      }),
     },
   },
   plugins: [],

@@ -1,200 +1,128 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from 'firebase/storage';
-import {
-  collection,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  getDocs,
-  serverTimestamp,
-  Timestamp,
-  doc,
-  query,
-  orderBy,
-} from 'firebase/firestore';
-
-import { storage, db } from '../../firebase';
 import { useAuth } from '../auth/AuthContext';
 import { useTranslation } from '../context/TranslationContext';
-
-type Lang = 'ua' | 'en';
-type L10n<T> = Record<Lang, T>;
-
-type FormState = {
-  title: L10n<string>;
-  excerpt: L10n<string>;
-  image: string;
-  date: string;           // YYYY-MM-DD
-  categoryKey: string;    // ключ категории
-  featured: boolean;
-};
-
-type Row = {
-  id: string;
-  title: L10n<string> | string; // поддержим старые записи
-  image: string;
-  date: string;                 // YYYY-MM-DD
-  categoryKey?: string;
-  featured: boolean;
-  excerpt?: L10n<string> | string;
-};
+import { useImageUpload } from '../hooks/useImageUpload';
+import { FormState, Lang, L10n, Row, useNews } from '../hooks/useNews';
+import { NewsTable } from '../components/NewsTable';
 
 const langs: Lang[] = ['ua', 'en'];
 
-// ---- helpers
+const quillFormats = [
+  'header',
+  'bold', 'italic', 'underline', 'strike',
+  'blockquote', 'code-block',
+  'list', 'bullet', 'indent',
+  'align', 'color', 'background',
+  'link',
+];
 
-function pickL10n(val: any, lang: Lang): string {
-  if (typeof val === 'string') return val;
-  if (val && typeof val === 'object') return val[lang] ?? val.ua ?? val.en ?? '';
-  return '';
-}
-function toDateString(input: any): string {
-  try {
-    if (input && typeof input === 'object' && 'seconds' in input) {
-      const d = new Date(input.seconds * 1000);
-      const y = d.getUTCFullYear();
-      const m = String(d.getUTCMonth() + 1).padStart(2, '0');
-      const day = String(d.getUTCDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
-    }
-    if (typeof input === 'string') {
-      if (/^\d{4}-\d{2}-\d{2}$/.test(input)) return input;
-      const d = new Date(input);
-      const y = d.getUTCFullYear();
-      const m = String(d.getUTCMonth() + 1).padStart(2, '0');
-      const day = String(d.getUTCDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
-    }
-    return '';
-  } catch {
-    return '';
-  }
-}
+const defaultForm: FormState = {
+  title: { ua: '', en: '' },
+  excerpt: { ua: '', en: '' },
+  image: '',
+  date: '',
+  categoryKey: '',
+  featured: false,
+};
 
-
-
-function slugify(s: string): string {
-  const t = s.toLowerCase().trim()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  return t.replace(/[\s_]+/g, '-')
-    .replace(/[^a-z0-9-]+/g, '')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
+// ——— helpers for links in editor HTML ———
+function ensureAnchorAttrs(html: string): string {
+  if (!html) return html;
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  doc.querySelectorAll('a[href]').forEach(a => {
+    a.setAttribute('target', '_blank');
+    a.setAttribute('rel', 'noopener noreferrer');
+  });
+  return doc.body.innerHTML;
 }
 
 const CreateNews: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { lang, t } = useTranslation();
+  const { lang } = useTranslation();
 
-  // form
+  const { rows, loading, loadRows, addOrUpdate, remove } = useNews();
+  const { uploading, progress, uploadImage, resetUpload } = useImageUpload();
+
   const [activeLang, setActiveLang] = useState<Lang>('ua');
-  const [form, setForm] = useState<FormState>({
-    title:   { ua: '', en: '' },
-    excerpt: { ua: '', en: '' },
-    image: '',
-    date: '',
-    categoryKey: '',
-    featured: false,
-  });
+  const [form, setForm] = useState<FormState>(defaultForm);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // table
-  const [rows, setRows] = useState<Row[]>([]);
-  const [loadingRows, setLoadingRows] = useState(true);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  const [fileKey, setFileKey] = useState(0);
 
-  const modules = useMemo(() => ({
-    toolbar: [
-      [{ header: [1, 2, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'link'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['clean'],
-    ],
+  // —— Rich toolbar + custom link handler ——
+  const quillModules = useMemo(() => ({
+    toolbar: {
+      container: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block'],
+        [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
+        [{ align: [] }],
+        [{ color: [] }, { background: [] }],
+        ['link'],
+        ['clean'],
+      ],
+      handlers: {
+        link: function (this: any, value: boolean) {
+          const range = this.quill.getSelection();
+          if (!range) return;
+          if (value) {
+            let href = prompt('URL (https://...)') || '';
+            if (href && !/^(https?:)?\/\//i.test(href)) href = 'https://' + href;
+            if (href) this.quill.format('link', href);
+          } else {
+            this.quill.format('link', false);
+          }
+        },
+      },
+    },
     clipboard: { matchVisual: false },
   }), []);
-  const formats = useMemo(() => [
-    'header', 'bold', 'italic', 'underline', 'strike',
-    'list', 'bullet', 'link'
-  ], []);
 
-  // list loader
-  const loadRows = async () => {
-    setLoadingRows(true);
-    try {
-      let snap;
-      try {
-        snap = await getDocs(query(collection(db, 'news'), orderBy('date', 'desc')));
-      } catch {
-        snap = await getDocs(collection(db, 'news')); 
-      }
-      const list: Row[] = snap.docs.map(d => {
-        const data: any = d.data() || {};
-        return {
-          id: d.id,
-          title: data.title ?? data.slug ?? '',
-          image: data.image ?? '',
-          date: toDateString(data.date) || toDateString(data.createdAt) || '',
-          categoryKey: data.categoryKey ?? data.category ?? '',
-          featured: !!data.featured,
-          excerpt: data.excerpt ?? '',
-        };
-      });
-      list.sort((a,b)=> (Date.parse(b.date||'')||0) - (Date.parse(a.date||'')||0));
-      setRows(list);
-    } finally {
-      setLoadingRows(false);
-    }
-  };
-
-  useEffect(() => { loadRows(); }, []);
-
-  // image preview
+  // Preview lifecycle
   useEffect(() => {
-    if (imageFile) setPreviewUrl(URL.createObjectURL(imageFile));
+    if (!imageFile) return;
+    const url = URL.createObjectURL(imageFile);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
   }, [imageFile]);
 
-  // form setters
-  const setTitle = (l: Lang, v: string) =>
-    setForm(p => ({ ...p, title: { ...p.title, [l]: v }}));
-  const setExcerpt = (l: Lang, v: string) =>
-    setForm(p => ({ ...p, excerpt: { ...p.excerpt, [l]: v }}));
+  const setTitle = useCallback((l: Lang, v: string) =>
+    setForm(p => ({ ...p, title: { ...p.title, [l]: v } })), []);
 
-  const resetForm = () => {
+  // Single handler for Quill: normalize anchors, keep HTML
+  const onQuillChange = useCallback((html: string) => {
+    const cleanHtml = ensureAnchorAttrs(html);
+    setForm(p => ({ ...p, excerpt: { ...p.excerpt, [activeLang]: cleanHtml } }));
+  }, [activeLang]);
+
+  const resetForm = useCallback(() => {
     setEditingId(null);
-    setForm({
-      title: { ua: '', en: '' },
-      excerpt: { ua: '', en: '' },
-      image: '',
-      date: '',
-      categoryKey: '',
-      featured: false,
-    });
+    setForm(defaultForm);
     setImageFile(null);
     setPreviewUrl('');
     setError(null);
     setActiveLang('ua');
-  };
+    resetUpload();
+    setFileKey(k => k + 1);
+    if (fileRef.current) fileRef.current.value = '';
+  }, [resetUpload]);
 
-  const startEdit = (r: Row) => {
+  const startEdit = useCallback((r: Row) => {
     setEditingId(r.id);
     setForm({
       title:   typeof r.title === 'string' ? { ua: r.title, en: r.title } : (r.title as L10n<string>),
       excerpt: typeof r.excerpt === 'string' ? { ua: r.excerpt || '', en: r.excerpt || '' } : (r.excerpt as L10n<string>),
       image:   r.image || '',
-      date:    r.date || '',
+      date:    r.dateYMD || '',
       categoryKey: r.categoryKey || '',
       featured: r.featured,
     });
@@ -202,98 +130,45 @@ const CreateNews: React.FC = () => {
     setPreviewUrl(r.image || '');
     setActiveLang('ua');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  }, []);
 
-  const onDelete = async (id: string) => {
+  const onDelete = useCallback(async (id: string) => {
     if (!confirm('Удалить новость?')) return;
-    await deleteDoc(doc(db, 'news', id));
-   
+    await remove(id);
     await loadRows();
     if (editingId === id) resetForm();
-  };
+  }, [remove, loadRows, editingId, resetForm]);
 
-  // SAVE
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
-    const anyTitle = (form.title.ua || form.title.en).trim();
-    if (!anyTitle) return setError('Введите заголовок (UA или EN).');
-    if (!form.date) return setError('Выберите дату.');
-    if (!form.categoryKey.trim()) return setError('Укажите категорию.');
-
     try {
-      setUploading(true);
-      setProgress(0);
-
       let imageUrl = form.image || '';
-      if (imageFile) {
-        const safeName = imageFile.name.replace(/\s+/g, '-');
-        const path = `news/${Date.now()}-${safeName}`;
-        const storageRef = ref(storage, path);
-        const uploadTask = uploadBytesResumable(storageRef, imageFile, {
-          contentType: imageFile.type || 'image/jpeg',
-        });
-        imageUrl = await new Promise<string>((resolve, reject) => {
-          uploadTask.on(
-            'state_changed',
-            s => setProgress(Math.round((s.bytesTransferred / s.totalBytes) * 100)),
-            reject,
-            async () => resolve(await getDownloadURL(uploadTask.snapshot.ref))
-          );
-        });
-      }
+      if (imageFile) imageUrl = await uploadImage(imageFile);
 
-      const [y, m, d] = form.date.split('-').map(Number);
-      const dateTs = Timestamp.fromDate(new Date(y, m - 1, d));
-      const slugs: L10n<string> = {
-        ua: slugify(form.title.ua || form.title.en),
-        en: slugify(form.title.en || form.title.ua),
-      };
-
-      const payload = {
-        title: form.title,
-        excerpt: form.excerpt,
-        slug: slugs,
-        image: imageUrl,
-        date: dateTs,
-        categoryKey: form.categoryKey,
-        featured: form.featured,
+      await addOrUpdate(form, {
+        editingId: editingId || undefined,
         authorEmail: user?.email || null,
-        updatedAt: serverTimestamp(),
-        ...(editingId ? {} : { createdAt: serverTimestamp() }),
-      };
-
-      if (editingId) {
-        await updateDoc(doc(db, 'news', editingId), payload as any);
-      } else {
-        await addDoc(collection(db, 'news'), payload as any);
-      }
+        imageUrl,
+      });
 
       await loadRows();
       resetForm();
-      // navigate('/admin')  // если нужно
     } catch (err: any) {
       console.error(err);
       setError(err?.message || 'Не удалось сохранить.');
-    } finally {
-      setUploading(false);
     }
-  };
+  }, [form, imageFile, uploadImage, addOrUpdate, editingId, user?.email, loadRows, resetForm]);
 
   return (
     <div className="max-w-5xl mx-auto p-6 md:p-8 bg-white shadow-md mt-10 rounded-2xl">
-      <h2 className="text-3xl font-semibold mb-6">
-        {editingId ? 'Edit News' : 'Create News'}
-      </h2>
+      <h2 className="text-3xl font-semibold mb-6">{editingId ? 'Edit News' : 'Create News'}</h2>
 
       {error && (
-        <div className="mb-4 rounded border border-red-200 bg-red-50 px-4 py-2 text-red-700">
-          {error}
-        </div>
+        <div className="mb-4 rounded border border-red-200 bg-red-50 px-4 py-2 text-red-700">{error}</div>
       )}
 
-      {/* Табы языков */}
+      {/* Lang tabs */}
       <div className="mb-4 flex gap-2">
         {langs.map(l => (
           <button
@@ -309,7 +184,6 @@ const CreateNews: React.FC = () => {
 
       {/* FORM */}
       <form onSubmit={onSubmit} className="space-y-6">
-        {/* Title */}
         <div>
           <label className="block mb-2 font-medium">Title ({activeLang.toUpperCase()})</label>
           <input
@@ -318,15 +192,18 @@ const CreateNews: React.FC = () => {
             className="w-full border p-2 rounded"
             placeholder={activeLang === 'ua' ? 'Заголовок' : 'Title'}
             minLength={3}
+            required
           />
         </div>
 
-        {/* Image */}
         <div>
           <label className="block mb-2 font-medium">Image</label>
           <input
+            key={fileKey}
+            ref={fileRef}
             type="file"
             accept="image/*"
+            onClick={(e) => { (e.target as HTMLInputElement).value = ''; }}
             onChange={(e) => {
               const f = e.target.files?.[0] || null;
               if (f && !f.type.startsWith('image/')) {
@@ -339,17 +216,24 @@ const CreateNews: React.FC = () => {
             {...(editingId ? {} : { required: true })}
           />
           {(previewUrl || form.image) && (
-            <div className="mt-3">
-              <img
-                src={previewUrl || form.image}
-                alt="Preview"
-                className="max-h-56 rounded-lg border object-contain"
-              />
+            <div className="mt-3 space-y-3">
+              <img src={previewUrl || form.image} alt="Preview" className="max-h-56 rounded-lg border object-contain" />
+              <button
+                type="button"
+                onClick={() => {
+                  setImageFile(null);
+                  setPreviewUrl('');
+                  if (fileRef.current) fileRef.current.value = '';
+                  setFileKey(k => k + 1);
+                }}
+                className="border px-3 py-1 rounded hover:bg-gray-50 text-sm"
+              >
+                Clear image
+              </button>
             </div>
           )}
         </div>
 
-        {/* Date & Category */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block mb-2 font-medium">Date</label>
@@ -373,33 +257,26 @@ const CreateNews: React.FC = () => {
           </div>
         </div>
 
-        {/* Content */}
         <div>
           <label className="block mb-2 font-medium">Content ({activeLang.toUpperCase()})</label>
           <ReactQuill
             theme="snow"
             value={form.excerpt[activeLang]}
-            onChange={(html) => setExcerpt(activeLang, html)}
+            onChange={onQuillChange}
             className="bg-white rounded"
-            modules={modules}
-            formats={formats}
+            modules={quillModules}
+            formats={quillFormats}
           />
           <p className="text-xs text-gray-500 mt-1">
-            Подсказка: для ссылки выделите текст → кнопка “link” → вставьте URL (например, https://…).
+            Подсказка: выделите текст → кнопка “link” → вставьте URL (https://…).
           </p>
         </div>
 
-        {/* Featured */}
         <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={form.featured}
-            onChange={(e) => setForm(p => ({ ...p, featured: e.target.checked }))}
-          />
+          <input type="checkbox" checked={form.featured} onChange={(e) => setForm(p => ({ ...p, featured: e.target.checked }))} />
           Featured
         </label>
 
-        {/* Progress */}
         {uploading && (
           <div className="w-full">
             <div className="mb-2 text-sm text-gray-600">Uploading: {progress}%</div>
@@ -410,72 +287,23 @@ const CreateNews: React.FC = () => {
         )}
 
         <div className="flex gap-3">
-          <button
-            type="submit"
-            disabled={uploading}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-60"
-          >
+          <button type="submit" disabled={uploading} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-60">
             {editingId ? 'Save' : 'Create'}
           </button>
           {editingId && (
-            <button
-              type="button"
-              onClick={resetForm}
-              className="border px-4 py-2 rounded hover:bg-gray-50"
-            >
-              Cancel edit
-            </button>
+            <button type="button" onClick={resetForm} className="border px-4 py-2 rounded hover:bg-gray-50">Cancel edit</button>
           )}
         </div>
       </form>
 
-      {/* TABLE */}
       <h3 className="text-2xl font-semibold mt-10 mb-4">Existing news</h3>
-      <div className="border rounded-xl overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="p-3">Title</th>
-              <th className="p-3">Date</th>
-              <th className="p-3">Featured</th>
-              <th className="p-3 w-40">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loadingRows ? (
-              <tr><td className="p-3" colSpan={4}>Loading…</td></tr>
-            ) : rows.length === 0 ? (
-              <tr><td className="p-3" colSpan={4}>No news yet</td></tr>
-            ) : (
-              rows.map(r => (
-                <tr key={r.id} className="border-t">
-                  <td className="p-3">
-                    <div className="font-medium">{pickL10n(r.title, lang) || '—'}</div>
-                  </td>
-                  <td className="p-3">{r.date ? new Date(r.date).toLocaleDateString(lang==='ua'?'uk-UA':'en-GB') : '—'}</td>
-                  <td className="p-3">{r.featured ? 'Yes' : 'No'}</td>
-                  <td className="p-3">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => startEdit(r)}
-                        className="px-3 py-1 rounded border hover:bg-gray-50"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => onDelete(r.id)}
-                        className="px-3 py-1 rounded border border-red-300 text-red-600 hover:bg-red-50"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <NewsTable
+        rows={rows}
+        lang={lang as Lang}
+        loading={loading}
+        onEdit={startEdit}
+        onDelete={onDelete}
+      />
     </div>
   );
 };
