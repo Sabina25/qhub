@@ -184,7 +184,7 @@ const News: React.FC = () => {
                 key={item.id}
                 className="bg-white overflow-hidden transition-all duration-300 group hover:-translate-y-1 rounded-xl"
               >
-                {/* crop для карточек */}
+                {/* crop */}
                 <div className="relative h-48 overflow-hidden">
                   {item.image ? (
                     <img
