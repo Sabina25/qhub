@@ -75,7 +75,7 @@ const News: React.FC = () => {
             featured: !!r.featured,
           };
         });
-        // новые сверху
+        
         list.sort((a, b) => (a.dateYMD > b.dateYMD ? -1 : a.dateYMD < b.dateYMD ? 1 : 0));
         setItems(list);
       } finally {
@@ -106,11 +106,11 @@ const News: React.FC = () => {
           </p>
         </div>
 
-        {/* Featured Article (верх обрезан) */}
+        {/* Featured Article */}
         {!loading && featured && (
           <div className="bg-white overflow-hidden mb-12 rounded-xl">
             <div className="grid lg:grid-cols-2">
-              {/* фиксированная высота + crop */}
+              
               <div className="relative h-60 sm:h-72 lg:h-[480px] overflow-hidden">
                 {featured.image ? (
                   <img
@@ -148,7 +148,7 @@ const News: React.FC = () => {
                 </h3>
 
                 <div
-                  className="font-sans text-gray-600 mb-6 text-lg leading-relaxed line-clamp-4 prose"
+                  className="font-sans text-gray-600 mb-6 text-lg leading-relaxed line-clamp-6 prose"
                   dangerouslySetInnerHTML={{ __html: featured.excerptHtml }}
                 />
 
