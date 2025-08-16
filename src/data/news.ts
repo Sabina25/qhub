@@ -2,6 +2,8 @@ import { db } from '../../firebase';
 import { collection, getDocs, getDoc, doc } from 'firebase/firestore';
 import { pickL10n, Lang } from '../i18n/newsL10n';
 
+import { toDateString } from '../utils/dates'; 
+
 export type NewsItem = {
   id: string;
   title: string;    
@@ -14,38 +16,13 @@ export type NewsItem = {
   authorEmail?: string | null;
 };
 
-// Timestamp | string → 'YYYY-MM-DD'
-function toDateString(input: any): string {
-  try {
-    if (input && typeof input === 'object' && 'seconds' in input) {
-      const d = new Date(input.seconds * 1000);
-      const y = d.getUTCFullYear();
-      const m = String(d.getUTCMonth() + 1).padStart(2, '0');
-      const day = String(d.getUTCDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
-    }
-    if (typeof input === 'string') {
-      if (/^\d{4}-\d{2}-\d{2}$/.test(input)) return input;
-      const d = new Date(input);
-      if (isNaN(+d)) return '';
-      const y = d.getUTCFullYear();
-      const m = String(d.getUTCMonth() + 1).padStart(2, '0');
-      const day = String(d.getUTCDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
-    }
-    return '';
-  } catch {
-    return '';
-  }
-}
-
 export async function fetchNews() {
   const snap = await getDocs(collection(db, 'news'));
   const rows = snap.docs.map((d) => {
     const data: any = d.data() || {};
     const dateYMD =
       (typeof data.dateYMD === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(data.dateYMD) && data.dateYMD) ||
-      toDateString(data.dateTs || data.date) || // Fallback для старых записей
+      toDateString(data.dateTs || data.date) || 
       '';
 
     return {

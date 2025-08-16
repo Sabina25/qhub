@@ -6,6 +6,8 @@ import Footer from '../components/Footer';
 import { useTranslation } from '../context/TranslationContext';
 import { fetchNews } from '../data/news';
 
+import { toDateString } from '../utils/dates'; 
+
 const SKELETON_COUNT = 6;
 
 type DisplayNews = {
@@ -31,30 +33,6 @@ function formatLocalYMD(ymd: string, locale: string) {
   const [y, m, d] = ymd.split('-').map(Number);
   if (!y || !m || !d) return '—';
   return new Date(y, m - 1, d).toLocaleDateString(locale);
-}
-
-function toDateString(input: any): string {
-  try {
-    if (input && typeof input === 'object' && 'seconds' in input) {
-      const d = new Date(input.seconds * 1000);
-      const y = d.getUTCFullYear();
-      const m = String(d.getUTCMonth() + 1).padStart(2, '0');
-      const day = String(d.getUTCDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
-    }
-    if (typeof input === 'string') {
-      if (/^\d{4}-\d{2}-\d{2}$/.test(input)) return input;
-      const d = new Date(input);
-      if (isNaN(+d)) return '';
-      const y = d.getUTCFullYear();
-      const m = String(d.getUTCMonth() + 1).padStart(2, '0');
-      const day = String(d.getUTCDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
-    }
-    return '';
-  } catch {
-    return '';
-  }
 }
 
 function pickL10n(val: any, lang: 'ua' | 'en'): string {

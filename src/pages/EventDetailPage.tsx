@@ -10,29 +10,7 @@ import ParallaxBanner from '../components/ParallaxBannerProps.tsx';
 
 import { fetchNewsById, NewsItem } from '../data/news';
 
-function toDateString(input: any): string {
-  try {
-    if (input && typeof input === 'object' && 'seconds' in input) {
-      const d = new Date(input.seconds * 1000);
-      const y = d.getUTCFullYear();
-      const m = String(d.getUTCMonth() + 1).padStart(2, '0');
-      const day = String(d.getUTCDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
-    }
-    if (typeof input === 'string') {
-      if (/^\d{4}-\d{2}-\d{2}$/.test(input)) return input;
-      const d = new Date(input);
-      if (isNaN(+d)) return '';
-      const y = d.getUTCFullYear();
-      const m = String(d.getUTCMonth() + 1).padStart(2, '0');
-      const day = String(d.getUTCDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
-    }
-    return '';
-  } catch {
-    return '';
-  }
-}
+import { toDateString } from '../utils/dates'; 
 
 function formatLocalYMD(ymd: string, locale: string) {
   if (!ymd) return '';
@@ -41,13 +19,8 @@ function formatLocalYMD(ymd: string, locale: string) {
   // ЛОКАЛЬНАЯ дата (без UTC-сдвига)
   return new Date(y, m - 1, d).toLocaleDateString(locale);
 }
-
-// Санитизация + нормализация ссылок + ЖЁСТКАЯ стилизация inline-стилями
 function sanitizeAndEnhance(html: string): string {
-  // 1) Санитизируем (оставляем только target/rel; style мы выставим сами)
   const clean = DOMPurify.sanitize(html, { ADD_ATTR: ['target', 'rel'] });
-
-  // 2) Парсим и дополняем <a>
   const doc = new DOMParser().parseFromString(clean, 'text/html');
 
   doc.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((a) => {
