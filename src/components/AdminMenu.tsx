@@ -24,13 +24,13 @@ const AdminMenu: React.FC = () => {
       icon: <PlusCircle className="w-8 h-8" />,
       external: false,
     },
-    {
-      label: 'Open Website',
-      route: '/',
-      color: 'bg-purple-100 text-purple-800 hover:bg-purple-200',
-      icon: <Globe className="w-8 h-8" />,
-      external: true,
-    },
+    // {
+    //   label: 'Open Website',
+    //   route: '/',
+    //   color: 'bg-purple-100 text-purple-800 hover:bg-purple-200',
+    //   icon: <Globe className="w-8 h-8" />,
+    //   external: true,
+    // },
   ];
 
   return (

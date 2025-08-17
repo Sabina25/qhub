@@ -4,6 +4,9 @@ import { LogOut, PlusCircle, Home, Newspaper, FolderPlus, Menu, X } from "lucide
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 
+import { IdleWarning } from "./IdleWarning";
+import { useIdleLogout } from '../hooks/useIdleLogout';
+
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: Home, end: true },
   { to: "/admin/add-news", label: "Add News", icon: Newspaper },
@@ -13,6 +16,18 @@ const navItems = [
 export default function AdminLayout() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+
+  const { isWarning, timeLeftMs, markActivity } = useIdleLogout({
+    timeoutMs: 60 * 60 * 1000,      
+    warnMs: 60 * 1000,              
+    onLogout: async () => {
+      try {
+        await signOut(auth);
+      } finally {
+        navigate('/login?reason=idle');
+      }
+    },
+  });
 
   const handleLogout = async () => {
     try {
@@ -88,6 +103,11 @@ export default function AdminLayout() {
           </div>
         </main>
       </div>
+      <IdleWarning
+        visible={isWarning}
+        timeLeftMs={timeLeftMs}
+        onStay={markActivity}
+      />
     </div>
   );
 }
