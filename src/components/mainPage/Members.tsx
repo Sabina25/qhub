@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import memberLogos from '../data/members';
-import LogoMarquee from './LogoMarquee';
-import { useTranslation } from '../context/TranslationContext';
+import memberLogos from '../../data/members';
+import LogoMarquee from '../LogoMarquee';
+import { useTranslation } from '../../context/TranslationContext';
 
 const Members = () => {
   const [showAll, setShowAll] = useState(false);

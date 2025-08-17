@@ -3,10 +3,10 @@ import { Calendar, ArrowRight, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 
-import { useTranslation } from '../context/TranslationContext';
-import { fetchNews } from '../data/news';
+import { useTranslation } from '../../context/TranslationContext';
+import { fetchNews } from '../../data/news';
 
-import { toDateString } from '../utils/dates'; 
+import { toDateString } from '../../utils/dates'; 
 
 // --- types for local mapping ---
 type DisplayNews = {

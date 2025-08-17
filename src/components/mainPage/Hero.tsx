@@ -1,5 +1,5 @@
 import { ArrowRight, Users } from 'lucide-react';
-import { useTranslation } from '../context/TranslationContext'; 
+import { useTranslation } from '../../context/TranslationContext'; 
 import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {

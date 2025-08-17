@@ -1,5 +1,5 @@
 import { Target, Heart, Globe, Award } from 'lucide-react';
-import { useTranslation } from '../context/TranslationContext';
+import { useTranslation } from '../../context/TranslationContext';
 
 const Mission = () => {
   const { t } = useTranslation();
