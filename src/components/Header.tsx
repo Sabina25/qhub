@@ -6,10 +6,15 @@ import { useAuth } from '../auth/AuthContext';
 import { ADMIN_EMAIL } from '../auth/constants';
 
 type Language = 'ua' | 'en';
+type Appearance = 'auto' | 'solid' | 'transparent';
 
-const Header: React.FC = () => {
+type HeaderProps = {
+  appearance?: Appearance; // 'auto' | 'solid' | 'transparent'
+};
+
+const Header: React.FC<HeaderProps> = ({ appearance = 'auto' }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [activeAnchor, setActiveAnchor] = useState<string>('');
 
   const navigate = useNavigate();
@@ -19,11 +24,12 @@ const Header: React.FC = () => {
   const isAdmin = user?.email === ADMIN_EMAIL;
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 8);
+    if (appearance !== 'auto') return;
+    const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [appearance]);
 
   useEffect(() => {
     const onHash = () => setActiveAnchor(window.location.hash);
@@ -31,6 +37,12 @@ const Header: React.FC = () => {
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
+
+
+  const isSolid =
+    appearance === 'solid' ? true :
+    appearance === 'transparent' ? false :
+    scrolled; // auto
 
   const mainNav = [
     { label: t('header.nav_main.home'), to: '/' },
@@ -49,7 +61,7 @@ const Header: React.FC = () => {
   ];
 
   const handleNavClick = (
-    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    e: React.MouseEvent<HTMLAnchorElement>,
     item: { label: string; to: string; isRoute?: boolean }
   ) => {
     e.preventDefault();
@@ -74,18 +86,17 @@ const Header: React.FC = () => {
     setIsMenuOpen(false);
   };
 
-  // десктопные цвета ссылок: сверху — белые, после скролла — тёмные
-  const desktopLinkIdle = isScrolled
+  const desktopLinkIdle = isSolid
     ? 'lg:text-gray-900 lg:hover:text-blue-600'
     : 'lg:text-white lg:hover:text-white/80';
-  const desktopLinkActive = isScrolled ? 'lg:text-blue-600' : 'lg:text-white';
+  const desktopLinkActive = isSolid ? 'lg:text-blue-600' : 'lg:text-white';
 
   const headerClasses = [
     'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-    // на мобиле — белая шапка всегда
+    // мобильный фон всегда белый
     'bg-white',
-    // на десктопе: прозрачная сверху, проявляется при скролле
-    isScrolled
+    // десктоп: по appearance
+    isSolid
       ? 'lg:bg-white/80 lg:backdrop-blur-md lg:shadow-md lg:border-b lg:border-black/5'
       : 'lg:bg-transparent lg:backdrop-blur-0 lg:shadow-none lg:border-b-0',
   ].join(' ');
@@ -114,9 +125,7 @@ const Header: React.FC = () => {
                   onClick={(e) => handleNavClick(e, item)}
                   className={[
                     'font-notosans font-medium uppercase transition',
-                    // мобильная палитра (не влияет — меню спрятано)
                     'text-gray-800 hover:text-blue-600',
-                    // десктопная палитра по состоянию скролла
                     desktopLinkIdle,
                     isActiveRoute && desktopLinkActive,
                     isActiveRoute ? 'lg:font-semibold' : '',
@@ -130,14 +139,19 @@ const Header: React.FC = () => {
 
           {/* Language (desktop) */}
           <div className="hidden md:flex items-center space-x-2">
-            <Globe className={['h-4 w-4', isScrolled ? 'lg:text-gray-600' : 'lg:text-white', 'text-gray-600'].join(' ')} />
+            <Globe
+              className={[
+                'h-4 w-4 text-gray-600', // моб
+                isSolid ? 'lg:text-gray-600' : 'lg:text-white',
+              ].join(' ')}
+            />
             <select
               value={lang}
               onChange={(e) => setLang(e.target.value as Language)}
               className={[
                 'font-notosans text-sm bg-transparent border-none focus:outline-none cursor-pointer',
-                'text-gray-700',
-                isScrolled ? 'lg:text-gray-800' : 'lg:text-white',
+                'text-gray-700', // моб
+                isSolid ? 'lg:text-gray-800' : 'lg:text-white',
               ].join(' ')}
             >
               <option value="en">EN</option>
@@ -169,8 +183,11 @@ const Header: React.FC = () => {
                   onClick={(e) => handleNavClick(e, item as any)}
                   className={[
                     'transition capitalize lowercase',
-                    isScrolled ? 'text-gray-500 hover:text-blue-600' : 'text-white/90 hover:text-white',
-                    active && (isScrolled ? 'text-blue-600 font-semibold' : 'text-white font-semibold underline underline-offset-4 decoration-2'),
+                    isSolid ? 'text-gray-500 hover:text-blue-600'
+                            : 'text-white/90 hover:text-white',
+                    active && (isSolid
+                      ? 'text-blue-600 font-semibold'
+                      : 'text-white font-semibold underline underline-offset-4 decoration-2'),
                   ].join(' ')}
                 >
                   {item.label}

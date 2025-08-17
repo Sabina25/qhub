@@ -80,7 +80,7 @@ const AllProjectsPage: React.FC = () => {
 
   return (
     <>
-      <Header />
+      <Header appearance="solid" />
       <main className="max-w-7xl mx-auto px-4 py-20">
         <h1 className="text-4xl font-bold mb-10 text-center">All Projects</h1>
 
