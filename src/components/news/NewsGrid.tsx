@@ -12,8 +12,8 @@ const SkeletonCard = () => (
   </div>
 );
 
-export const NewsGrid = ({
-  items,
+export function NewsGrid({
+  items = [],
   loadingInitial,
   loadingMore,
   error,
@@ -22,7 +22,7 @@ export const NewsGrid = ({
   loaderRef,
   labels,
 }: {
-  items: NewsCardVM[];
+  items?: NewsCardVM[];
   loadingInitial: boolean;
   loadingMore: boolean;
   error: string | null;
@@ -32,9 +32,10 @@ export const NewsGrid = ({
   labels: {
     featured: string;
     loadMore: string;
+    empty?: string;
     category: (key: string) => string;
   };
-}) => {
+}) {
   return (
     <>
       {error && (
@@ -43,29 +44,35 @@ export const NewsGrid = ({
         </div>
       )}
 
-      <div className="grid md:grid-cols-3 gap-8">
-        {loadingInitial &&
-          Array.from({ length: SKELETON_COUNT }).map((_, i) => <SkeletonCard key={`skel-${i}`} />)}
+      {(!loadingInitial && items.length === 0) ? (
+        <div className="text-center text-gray-500 py-10">
+          {labels.empty ?? 'No news yet'}
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-3 gap-8">
+          {loadingInitial &&
+            Array.from({ length: SKELETON_COUNT }).map((_, i) => <SkeletonCard key={`skel-${i}`} />)}
 
-        {!loadingInitial &&
-          items.map((ev) => (
-            <NewsCard
-              key={ev.id}
-              item={ev}
-              featuredLabel={labels.featured}
-              categoryLabel={ev.categoryKey ? labels.category(ev.categoryKey) : undefined}
-            />
-          ))}
+          {!loadingInitial &&
+            items.map((ev) => (
+              <NewsCard
+                key={ev.id}
+                item={ev}
+                featuredLabel={labels.featured}
+                categoryLabel={ev.categoryKey ? labels.category(ev.categoryKey) : undefined}
+              />
+            ))}
 
-        {!loadingInitial && loadingMore &&
-          Array.from({ length: Math.min(SKELETON_COUNT, Math.max(0, items.length)) }).map((_, i) => (
-            <SkeletonCard key={`skel-more-${i}`} />
-          ))}
-      </div>
+          {!loadingInitial && loadingMore &&
+            Array.from({ length: Math.min(SKELETON_COUNT, Math.max(0, items.length)) }).map((_, i) => (
+              <SkeletonCard key={`skel-more-${i}`} />
+            ))}
+        </div>
+      )}
 
       <div ref={loaderRef} className="h-10 mt-10" />
 
-      {!loadingInitial && canLoadMore && !loadingMore && (
+      {!loadingInitial && canLoadMore && !loadingMore && items.length > 0 && (
         <div className="flex justify-center mt-4">
           <button onClick={onLoadMore} className="px-4 py-2 rounded border hover:bg-gray-50">
             {labels.loadMore}
@@ -74,4 +81,4 @@ export const NewsGrid = ({
       )}
     </>
   );
-};
+}

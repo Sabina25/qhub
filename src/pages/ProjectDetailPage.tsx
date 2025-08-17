@@ -82,7 +82,6 @@ const ProjectDetailPage: React.FC = () => {
 
   const dateStr = useMemo(() => (proj ? formatRange(proj, locale) : ''), [proj, locale]);
 
-  // если есть плейлист без конкретного видео — показываем embed плейлиста первым
   const playlistEmbed = useMemo(() => {
     const parsed = (proj?.youtubeUrls || []).map(parseYouTube);
     const p = parsed.find((x) => x.playlistId && !x.videoId);
@@ -103,8 +102,7 @@ const ProjectDetailPage: React.FC = () => {
 
   return (
     <>
-      <Header />
-
+      <Header appearance="solid" />
       <main className="max-w-5xl mx-auto px-4 py-10">
         {/* Cover */}
         {proj.image && (

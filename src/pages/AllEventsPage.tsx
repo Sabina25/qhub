@@ -6,7 +6,7 @@ import { useAllNews } from '../hooks/useAllNews';
 import { NewsGrid } from '../components/news/NewsGrid';
 
 const AllEventsPage: React.FC = () => {
-  const { lang, t } = useTranslation(); // lang: 'ua' | 'en'
+  const { lang, t } = useTranslation(); // 'ua' | 'en'
   const {
     visibleItems,
     loadingInitial,
@@ -37,7 +37,8 @@ const AllEventsPage: React.FC = () => {
           labels={{
             featured: t('news.featured') || 'Featured',
             loadMore: t('common.loadMore') || 'Load more',
-            category: (key) => t(`${key}`) || key,
+            empty: t('news.empty') || 'No news yet',
+            category: (k) => t(k) || k,
           }}
         />
       </main>

@@ -42,7 +42,7 @@ function formatRange(p: ProjectDoc, locale: string): string {
 }
 
 function bestSortKey(p: ProjectDoc): string {
-  // чтобы новые сверху: берём самое "позднее" что есть
+
   return String(p.dateYMD || p.dateEndYMD || p.dateStartYMD || '');
 }
 
@@ -138,8 +138,6 @@ const AllProjectsPage: React.FC = () => {
                     )}
 
                     <p className="text-gray-700 mb-3 line-clamp-3">{descText}</p>
-
-                    {/* Если у документа есть дополнительные поля — покажем их */}
                     <div className="space-y-1 text-sm text-gray-500">
                       {'funding' in project && (project as any).funding && (
                         <p>Funding: {(project as any).funding}</p>
