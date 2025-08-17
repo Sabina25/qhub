@@ -13,24 +13,32 @@ type FancyCarouselProps = {
   pauseOnHover?: boolean; 
 };
 
-function ScaleSlides() {
+function ScaleSlides({ dimInactive = false } = {}) {
   return (slider: any) => {
     const apply = () => {
       const rel = slider.track.details.rel;
       const total = slider.slides.length;
+
       slider.slides.forEach((el: HTMLElement, i: number) => {
         let dist = Math.abs(i - rel);
         if (slider.options.loop) dist = Math.min(dist, total - dist);
-        const scale = 1 - Math.min(0.18, dist * 0.12);
-        const opacity = 0.6 + (scale - 0.82) * 1.2;
+
+        const isActive = dist === 0;
+        const scale = isActive ? 1 : 1 - Math.min(0.12, dist * 0.08);
         el.style.transform = `scale(${scale})`;
-        el.style.opacity = String(Math.max(0.4, Math.min(1, opacity)));
+        if (dimInactive) {
+          el.style.opacity = isActive ? '1' : String(Math.max(0.7, 1 - dist * 0.25));
+        } else {
+          el.style.opacity = '1';
+        }
       });
     };
+
     slider.on('created', apply);
     slider.on('detailsChanged', apply);
   };
 }
+
 
 function defaultFormatDate(d: string | Date) {
   if (d instanceof Date) return d.toLocaleDateString();
@@ -71,7 +79,7 @@ export const FancyCarousel: React.FC<FancyCarouselProps> = ({
       slideChanged: (s) => setCurrent(s.track.details.rel),
       breakpoints: { '(min-width: 1024px)': { slides: { perView: 1, spacing: 32 } } },
     },
-    [ScaleSlides()]
+    [ScaleSlides({ dimInactive: false })]
   );
 
   const [progress, setProgress] = useState(0);
