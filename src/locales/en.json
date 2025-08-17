@@ -52,10 +52,15 @@
   "news": {
     "title": "Latest News",
     "subtitle": "Stay up to date with the latest events and stories from our community.",
-    "featured": "Featured",
     "read_full": "Read Full Story",
     "read_more": "Read More",
-    "view_all": "View All News"
+    "view_all": "View All News",
+    "allNews": "All news",
+    "featured": "Featured",
+    "empty": "No news yet"
+  },
+  "common": {
+    "loadMore": "Load more"
   },
   "members": {
     "title": "Our Partners",
