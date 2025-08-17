@@ -1,4 +1,7 @@
-/** @type {import('tailwindcss').Config} */
+// tailwind.config.ts
+import type { Config } from 'tailwindcss'
+import typography from '@tailwindcss/typography'
+
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
@@ -8,16 +11,17 @@ export default {
       },
       keyframes: {
         marquee: {
-          '0%': { transform: 'translateX(0)' },
+          '0%':   { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
         },
       },
       fontFamily: {
-        sans: ['Lato', 'sans-serif'], 
+        sans: ['Lato', 'sans-serif'],
         heading: ['Raleway', 'sans-serif'],
         raleway: ['Raleway', 'sans-serif'],
       },
-      typography: ({ theme }) => ({
+      
+      typography: (theme) => ({
         DEFAULT: {
           css: {
             a: {
@@ -32,5 +36,5 @@ export default {
       }),
     },
   },
-  plugins: [],
-};
+  plugins: [typography],  
+} satisfies Config

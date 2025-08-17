@@ -16,7 +16,7 @@ function formatLocalYMD(ymd: string, locale: string) {
   if (!ymd) return '';
   const [y, m, d] = ymd.split('-').map(Number);
   if (!y || !m || !d) return '';
-  // ЛОКАЛЬНАЯ дата (без UTC-сдвига)
+  
   return new Date(y, m - 1, d).toLocaleDateString(locale);
 }
 function sanitizeAndEnhance(html: string): string {

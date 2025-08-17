@@ -20,7 +20,8 @@ import EventDetailPage from './pages/EventDetailPage';
 import OurMediaPage from './pages/OurMediaPage';
 import CreateNews from './pages/CreateNewsPage';
 import AdminMenu from './components/AdminMenu';
-import CreateProject from './pages/ CreateProjectPage';
+import CreateProject from './pages/CreateProjectPage';
+import ProjectDetailPage from './pages/ProjectDetailPage';
 import Login from './pages/Login';
 
 import ScrollToTop from './ScrollToTop';
@@ -51,11 +52,11 @@ function App() {
         
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<AllProjectsPage />} />
+          <Route path="/projects/:id" element={<ProjectDetailPage />} />
           <Route path="/events" element={<AllEventsPage />} />
           <Route path="/events/:id" element={<EventDetailPage />} />
           <Route path="/media" element={<OurMediaPage />} />
           <Route path="/login" element={<Login />} />
-
         
           <Route
             path="/admin/*"

@@ -23,12 +23,10 @@ export const NewsTable: React.FC<{
   const [toYmd, setToYmd] = useState('');
   const [page, setPage] = useState(1);
 
-  // сбрасываем на 1-ю страницу при изменении фильтров
   useEffect(() => {
     setPage(1);
   }, [q, fromYmd, toYmd]);
 
-  // отфильтрованный список
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
     return rows.filter((r) => {
@@ -50,11 +48,10 @@ export const NewsTable: React.FC<{
     return filtered.slice(start, start + PER_PAGE);
   }, [filtered, currentPage]);
 
-  // helper: номера страниц с «…»
   function pageNumbers(totalPages: number, current: number) {
     const nums: (number | '…')[] = [];
     const add = (n: number | '…') => nums.push(n);
-    const windowSize = 2; // по 2 слева/справа от текущей
+    const windowSize = 2;
 
     if (totalPages <= 7) {
       for (let i = 1; i <= totalPages; i++) add(i);
@@ -75,7 +72,6 @@ export const NewsTable: React.FC<{
 
   const numbers = pageNumbers(totalPages, currentPage);
 
-  // ---- UI фильтров
   const Filters = (
     <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
       <div>
