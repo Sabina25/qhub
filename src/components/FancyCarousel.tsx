@@ -1,34 +1,17 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useKeenSlider } from 'keen-slider/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import 'keen-slider/keen-slider.min.css';
 
 type FancyCarouselProps = {
-  children: React.ReactNode[];         
-  autoplayMs?: number;                
+  children: React.ReactNode[];
+  autoplayMs?: number;
   className?: string;
   dates?: Array<string | Date>;
   formatDate?: (d: string | Date, index: number) => string;
   datePlacement?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  pauseOnHover?: boolean; 
 };
-
-function Autoplay(ms = 6000) {
-  return (slider: any) => {
-    let timeout: any;
-    let mouseOver = false;
-    const clear = () => timeout && clearTimeout(timeout);
-    const next = () => { clear(); if (!mouseOver && slider) timeout = setTimeout(() => slider.next(), ms); };
-    slider.on('created', () => {
-      slider.container.addEventListener('mouseover', () => { mouseOver = true; clear(); });
-      slider.container.addEventListener('mouseout', () => { mouseOver = false; next(); });
-      next();
-    });
-    slider.on('dragStarted', clear);
-    slider.on('animationEnded', next);
-    slider.on('updated', next);
-    slider.on('destroyed', clear);
-  };
-}
 
 function ScaleSlides() {
   return (slider: any) => {
@@ -49,23 +32,22 @@ function ScaleSlides() {
   };
 }
 
-// автоформат "YYYY-MM-DD" -> локальная дата; иначе — как есть
-function defaultFormatDate(d: string | Date, _i: number) {
+function defaultFormatDate(d: string | Date) {
   if (d instanceof Date) return d.toLocaleDateString();
-  const m = d.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const m = d.match?.(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (m) {
     const [_, y, mo, da] = m;
-    return new Date(Number(y), Number(mo) - 1, Number(da)).toLocaleDateString();
+    return new Date(+y, +mo - 1, +da).toLocaleDateString();
   }
-  return d; // уже отформатировано человеком
+  return String(d);
 }
 
-const placementToClass: Record<NonNullable<FancyCarouselProps['datePlacement']>, string> = {
+const placementToClass = {
   'top-left': 'top-3 left-3',
   'top-right': 'top-3 right-3',
   'bottom-left': 'bottom-3 left-3',
   'bottom-right': 'bottom-3 right-3',
-};
+} as const;
 
 export const FancyCarousel: React.FC<FancyCarouselProps> = ({
   children,
@@ -74,6 +56,7 @@ export const FancyCarousel: React.FC<FancyCarouselProps> = ({
   dates,
   formatDate = defaultFormatDate,
   datePlacement = 'top-right',
+  pauseOnHover = true,
 }) => {
   const [current, setCurrent] = useState(0);
   const slidesCount = useMemo(() => React.Children.count(children), [children]);
@@ -88,15 +71,56 @@ export const FancyCarousel: React.FC<FancyCarouselProps> = ({
       slideChanged: (s) => setCurrent(s.track.details.rel),
       breakpoints: { '(min-width: 1024px)': { slides: { perView: 1, spacing: 32 } } },
     },
-    [Autoplay(autoplayMs), ScaleSlides()]
+    [ScaleSlides()]
   );
 
   const [progress, setProgress] = useState(0);
+  const pausedRef = useRef(false);
+  const rafRef = useRef<number | null>(null);
+  const startRef = useRef<number>(0);
+
   useEffect(() => {
-    const id = setInterval(() => setProgress((p) => (p >= 100 ? 0 : p + 2)), 120);
-    return () => clearInterval(id);
+    const onVis = () => { pausedRef.current = document.hidden; };
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
   }, []);
-  useEffect(() => setProgress(0), [current]);
+
+  useEffect(() => {
+    startRef.current = performance.now();
+    setProgress(0);
+  }, [current, autoplayMs]);
+
+  useEffect(() => {
+    const tick = (t: number) => {
+      const inst = instanceRef.current;
+      if (!inst) { rafRef.current = requestAnimationFrame(tick); return; }
+
+      if (!pausedRef.current) {
+        const elapsed = t - startRef.current;
+        const p = Math.min(100, (elapsed / autoplayMs) * 100);
+        setProgress(p);
+
+        if (elapsed >= autoplayMs) {
+          inst.next();
+          startRef.current = t;
+          setProgress(0);
+        }
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [instanceRef, autoplayMs]);
+
+  const wrapperProps = pauseOnHover
+    ? {
+        onMouseEnter: () => { pausedRef.current = true; },
+        onMouseLeave: () => { pausedRef.current = false; startRef.current = performance.now(); setProgress(0); },
+        onTouchStart: () => { pausedRef.current = true; },
+        onTouchEnd: () => { pausedRef.current = false; startRef.current = performance.now(); setProgress(0); },
+      }
+    : {};
 
   const dateChip =
     dates && dates.length > 0 && dates[current] != null
@@ -104,11 +128,10 @@ export const FancyCarousel: React.FC<FancyCarouselProps> = ({
       : null;
 
   return (
-    <div className={`relative ${className}`}>
-      {/* Слайдер */}
+    <div className={`relative ${className}`} {...wrapperProps}>
       <div ref={sliderRef} className="keen-slider">
         {React.Children.map(children, (child, i) => (
-          <div className="keen-slider__slide p-1">
+          <div key={i} className="keen-slider__slide p-1">
             <div className="relative rounded-2xl overflow-hidden shadow-xl bg-white ring-1 ring-black/5 transition-transform will-change-transform">
               {dateChip && current === i && (
                 <div className={`absolute ${placementToClass[datePlacement]} z-20`}>
@@ -126,7 +149,7 @@ export const FancyCarousel: React.FC<FancyCarouselProps> = ({
       {/* Стрелки */}
       <button
         type="button"
-        onClick={() => instanceRef.current?.prev()}
+        onClick={() => { instanceRef.current?.prev(); startRef.current = performance.now(); setProgress(0); }}
         className="absolute top-1/2 left-2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg hover:scale-105 transition z-20 hidden md:inline-flex"
         aria-label="Prev"
       >
@@ -134,31 +157,29 @@ export const FancyCarousel: React.FC<FancyCarouselProps> = ({
       </button>
       <button
         type="button"
-        onClick={() => instanceRef.current?.next()}
+        onClick={() => { instanceRef.current?.next(); startRef.current = performance.now(); setProgress(0); }}
         className="absolute top-1/2 right-2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg hover:scale-105 transition z-20 hidden md:inline-flex"
         aria-label="Next"
       >
         <ChevronRight className="w-6 h-6" />
       </button>
 
-      {/* Точки */}
+      {/* Дотсы */}
       <div className="mt-4 flex justify-center gap-2">
         {Array.from({ length: slidesCount }).map((_, i) => (
           <button
             key={i}
-            onClick={() => instanceRef.current?.moveToIdx(i)}
-            className={`h-2 w-2 rounded-full transition ${
-              current === i ? 'w-6 bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'
-            }`}
+            onClick={() => { instanceRef.current?.moveToIdx(i); startRef.current = performance.now(); setProgress(0); }}
+            className={`h-2 w-2 rounded-full transition ${current === i ? 'w-6 bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'}`}
             aria-label={`Go to slide ${i + 1}`}
           />
         ))}
       </div>
 
-      {/* Прогресс автоплея */}
-      <div className="mx-auto mt-3 h-1 w-40 overflow-hidden rounded bg-gray-200">
+      {/* Прогресс */}
+      {/* <div className="mx-auto mt-3 h-1 w-40 overflow-hidden rounded bg-gray-200">
         <div className="h-full bg-blue-600 transition-[width]" style={{ width: `${progress}%` }} />
-      </div>
+      </div> */}
     </div>
   );
 };
