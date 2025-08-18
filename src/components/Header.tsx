@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Globe } from 'lucide-react';
 import { useTranslation } from '../context/TranslationContext';
@@ -9,7 +9,7 @@ type Language = 'ua' | 'en';
 type Appearance = 'auto' | 'solid' | 'transparent';
 
 type HeaderProps = {
-  appearance?: Appearance; // 'auto' | 'solid' | 'transparent'
+  appearance?: Appearance;
 };
 
 const Header: React.FC<HeaderProps> = ({ appearance = 'auto' }) => {
@@ -23,13 +23,13 @@ const Header: React.FC<HeaderProps> = ({ appearance = 'auto' }) => {
   const { user } = useAuth();
   const isAdmin = user?.email === ADMIN_EMAIL;
 
+  // Отслеживаем скролл всегда (и для 'solid' тоже, чтобы включать фон/тень)
   useEffect(() => {
-    if (appearance !== 'auto') return;
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [appearance]);
+  }, []);
 
   useEffect(() => {
     const onHash = () => setActiveAnchor(window.location.hash);
@@ -38,11 +38,18 @@ const Header: React.FC<HeaderProps> = ({ appearance = 'auto' }) => {
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
+  // 1) Когда делать “хром” (фон/blur/тень)
+  //  - transparent: никогда
+  //  - auto / solid: только после скролла
+  const chromeSolid =
+    appearance === 'transparent' ? false : scrolled;
 
-  const isSolid =
-    appearance === 'solid' ? true :
-    appearance === 'transparent' ? false :
-    scrolled; // auto
+  // 2) Когда текст должен быть тёмным
+  //  - solid: всегда
+  //  - auto: только после скролла
+  //  - transparent: всегда светлый
+  const textDark =
+    appearance === 'solid' || (appearance === 'auto' && scrolled);
 
   const mainNav = [
     { label: t('header.nav_main.home'), to: '/' },
@@ -86,17 +93,17 @@ const Header: React.FC<HeaderProps> = ({ appearance = 'auto' }) => {
     setIsMenuOpen(false);
   };
 
-  const desktopLinkIdle = isSolid
+  const desktopLinkIdle = textDark
     ? 'lg:text-gray-900 lg:hover:text-blue-600'
     : 'lg:text-white lg:hover:text-white/80';
-  const desktopLinkActive = isSolid ? 'lg:text-blue-600' : 'lg:text-white';
+  const desktopLinkActive = textDark ? 'lg:text-blue-600' : 'lg:text-white';
 
   const headerClasses = [
     'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
     // мобильный фон всегда белый
     'bg-white',
-    // десктоп: по appearance
-    isSolid
+    // десктоп-хром по скроллу
+    chromeSolid
       ? 'lg:bg-white/80 lg:backdrop-blur-md lg:shadow-md lg:border-b lg:border-black/5'
       : 'lg:bg-transparent lg:backdrop-blur-0 lg:shadow-none lg:border-b-0',
   ].join(' ');
@@ -125,8 +132,8 @@ const Header: React.FC<HeaderProps> = ({ appearance = 'auto' }) => {
                   onClick={(e) => handleNavClick(e, item)}
                   className={[
                     'font-notosans font-medium uppercase transition',
-                    'text-gray-800 hover:text-blue-600',
-                    desktopLinkIdle,
+                    'text-gray-800 hover:text-blue-600', // базово для мобильной
+                    desktopLinkIdle,                      // для десктопа
                     isActiveRoute && desktopLinkActive,
                     isActiveRoute ? 'lg:font-semibold' : '',
                   ].join(' ')}
@@ -141,8 +148,8 @@ const Header: React.FC<HeaderProps> = ({ appearance = 'auto' }) => {
           <div className="hidden md:flex items-center space-x-2">
             <Globe
               className={[
-                'h-4 w-4 text-gray-600', // моб
-                isSolid ? 'lg:text-gray-600' : 'lg:text-white',
+                'h-4 w-4 text-gray-600',           // моб
+                textDark ? 'lg:text-gray-600' : 'lg:text-white', // десктоп
               ].join(' ')}
             />
             <select
@@ -150,8 +157,8 @@ const Header: React.FC<HeaderProps> = ({ appearance = 'auto' }) => {
               onChange={(e) => setLang(e.target.value as Language)}
               className={[
                 'font-notosans text-sm bg-transparent border-none focus:outline-none cursor-pointer',
-                'text-gray-700', // моб
-                isSolid ? 'lg:text-gray-800' : 'lg:text-white',
+                'text-gray-700',                   // моб
+                textDark ? 'lg:text-gray-800' : 'lg:text-white', // десктоп
               ].join(' ')}
             >
               <option value="en">EN</option>
@@ -183,9 +190,9 @@ const Header: React.FC<HeaderProps> = ({ appearance = 'auto' }) => {
                   onClick={(e) => handleNavClick(e, item as any)}
                   className={[
                     'transition capitalize lowercase',
-                    isSolid ? 'text-gray-500 hover:text-blue-600'
-                            : 'text-white/90 hover:text-white',
-                    active && (isSolid
+                    textDark ? 'text-gray-500 hover:text-blue-600'
+                             : 'text-white/90 hover:text-white',
+                    active && (textDark
                       ? 'text-blue-600 font-semibold'
                       : 'text-white font-semibold underline underline-offset-4 decoration-2'),
                   ].join(' ')}
