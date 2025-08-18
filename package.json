@@ -12,6 +12,8 @@
   "dependencies": {
     "dompurify": "^3.2.6",
     "firebase": "^11.10.0",
+    "firebase-admin": "^13.4.0",
+    "firebase-functions": "^6.4.0",
     "framer-motion": "^12.23.6",
     "keen-slider": "^6.8.6",
     "lucide-react": "^0.344.0",
