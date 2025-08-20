@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { formatLocaleDate, Lang } from '../utils/dates';
-import { Row } from '../hooks/useNews';
+import { formatLocaleDate, Lang } from '../../utils/dates';
+import { Row } from '../../hooks/useNews';
 
 function pickL10n(val: any, lang: Lang): string {
   if (typeof val === 'string') return val;

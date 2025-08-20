@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { ProjectDoc } from '../data/projects';
-import { Lang, pickL10n } from '../types/l10n';
+import { ProjectDoc } from '../../data/projects';
+import { Lang, pickL10n } from '../../types/l10n';
 
 function formatYMDLocal(ymd?: string): string {
   if (!ymd) return '—';

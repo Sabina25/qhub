@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactQuill from 'react-quill';
-import { Lang } from '../types/l10n';
-import { ProjectForm } from '../hooks/useProjectForm';
+import { Lang } from '../../types/l10n';
+import { ProjectForm } from '../../hooks/useProjectForm';
 
 const quillModules = {
   toolbar: {

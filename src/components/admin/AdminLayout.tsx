@@ -2,10 +2,10 @@ import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { LogOut, PlusCircle, Home, Newspaper, FolderPlus, Menu, X } from "lucide-react";
 import { signOut } from "firebase/auth";
-import { auth } from "../../firebase";
+import { auth } from "../../../firebase";
 
-import { IdleWarning } from "./IdleWarning";
-import { useIdleLogout } from '../hooks/useIdleLogout';
+import { IdleWarning } from "./../IdleWarning";
+import { useIdleLogout } from '../../hooks/useIdleLogout';
 
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: Home, end: true },
