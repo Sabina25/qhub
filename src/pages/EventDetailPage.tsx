@@ -5,7 +5,7 @@ import DOMPurify from 'dompurify';
 import { useTranslation } from '../context/TranslationContext';
 
 import Footer from '../components/Footer';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 import ParallaxBanner from '../components/ParallaxBannerProps.tsx';
 
 import { fetchNewsById, NewsItem } from '../data/news';

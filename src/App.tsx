@@ -5,7 +5,7 @@ import RequireAuth from './auth/RequireAuth';
 import AdminLayout from './components/AdminLayout';
 import { AuthProvider } from './auth/AuthContext';  
 
-import Header from './components/Header';
+import Header from './components/header/Header';
 import Hero from './components/mainPage/Hero';
 import Mission from './components/mainPage/Mission';
 import Projects from './components/mainPage/Projects';

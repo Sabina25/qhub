@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 import Footer from '../components/Footer';
 import { useYouTubeFeed } from '../hooks/useYouTubeFeed';
 import { ShortsRail } from '../components/media/ShortsRail';
