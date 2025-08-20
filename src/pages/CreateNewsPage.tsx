@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCreateNewsLogic, langs } from '../hooks/useCreateNews';
-import { CreateNewsForm } from '../components/news/CreateNewsForm';
-import { NewsTable } from '../components/NewsTable';
+import { CreateNewsForm } from '../components/admin/CreateNewsForm';
+import { NewsTable } from '../components/admin/NewsTable';
 import { Lang } from '../hooks/useNews';
 
 const CreateNewsPage: React.FC = () => {

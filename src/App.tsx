@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { TranslationProvider } from './context/TranslationContext';
 
 import RequireAuth from './auth/RequireAuth';
-import AdminLayout from './components/AdminLayout';
+import AdminLayout from './components/admin/AdminLayout';
 import { AuthProvider } from './auth/AuthContext';  
 
 import Header from './components/header/Header';
@@ -19,7 +19,7 @@ import WaveDivider from './components/mainPage/WaveDivider';
 import EventDetailPage from './pages/EventDetailPage';
 import OurMediaPage from './pages/OurMediaPage';
 import CreateNews from './pages/CreateNewsPage';
-import AdminMenu from './components/AdminMenu';
+import AdminMenu from './components/admin/AdminMenu';
 import CreateProject from './pages/CreateProjectPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
 import Login from './pages/Login';

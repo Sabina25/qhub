@@ -4,8 +4,8 @@ import { ProjectDoc } from '../data/projects';
 import { sanitizeAndEnhance, extractLinks } from '../utils/html';
 import { uploadFile, uploadFiles } from '../services/storage';
 import { ProjectForm, useProjectForm } from '../hooks/useProjectForm';
-import { ProjectFormUI } from '../components/ProjectForm';
-import { ProjectsTable } from '../components/ProjectsTable';
+import { ProjectFormUI } from '../components/admin/ProjectForm';
+import { ProjectsTable } from '../components/admin/ProjectsTable';
 
 const PREFIX = 'projects';
 

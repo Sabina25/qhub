@@ -3,7 +3,7 @@ import Header from '../components/header/Header';
 import Footer from '../components/Footer';
 import { useTranslation } from '../context/TranslationContext';
 import { useAllNews } from '../hooks/useAllNews';
-import { NewsGrid } from '../components/news/NewsGrid';
+import { NewsGrid } from '../components/admin/NewsGrid';
 
 const AllEventsPage: React.FC = () => {
   const { lang, t } = useTranslation(); // 'ua' | 'en'
