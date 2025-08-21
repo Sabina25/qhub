@@ -75,7 +75,7 @@ const LogoMarquee = () => {
         <div
           ref={scrollRef}
           className="flex gap-10 overflow-x-auto touch-auto px-6 whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          style={{ scrollBehavior: "auto" }} // Важно: убрать scroll-smooth!
+          style={{ scrollBehavior: "auto" }} // Важно: убрать scroll-!
         >
           {[...logos, ...logos].map((logo, index) => (
             <a

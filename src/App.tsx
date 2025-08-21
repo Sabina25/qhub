@@ -25,6 +25,7 @@ import ProjectDetailPage from './pages/ProjectDetailPage';
 import Login from './pages/Login';
 
 import ScrollToTop from './ScrollToTop';
+import ScrollManager from './components/routing/ScrollManager';
 
 const Home = () => (
   <>
@@ -37,6 +38,7 @@ const Home = () => (
       <News />
       <Members />
       <Contact />
+      <ScrollManager headerSelector="#site-header" /> 
     </main>
     <Footer />
   </>
@@ -47,9 +49,8 @@ function App() {
     <AuthProvider>   
     <TranslationProvider>
       <Router>
-        <ScrollToTop />
+      <ScrollManager headerSelector="#site-header" /* scrollContainerSelector="#app-scroll" */ />
         <Routes>
-        
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<AllProjectsPage />} />
           <Route path="/projects/:id" element={<ProjectDetailPage />} />
