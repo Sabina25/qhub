@@ -6,7 +6,7 @@ type UIItem = { label: string; to: string; isRoute?: boolean };
 type Props = {
   navRef: React.RefObject<HTMLElement>;
   textDark: boolean;
-  chromeSolid: boolean;
+  chromeSolid: boolean;   // ← используем для смены логотипа при скролле
   isHome: boolean;
 
   mainNav: UIItem[];
@@ -53,6 +53,10 @@ export const HeaderUI: React.FC<Props> = ({
       : 'lg:bg-transparent lg:backdrop-blur-0 lg:shadow-none lg:border-b-0',
   ].join(' ');
 
+  // логотипы: изначальный и «после скролла»
+  const logoSrc = chromeSolid ? '/images/Qlogo-l.png' : '/images/QLogo.png';
+  const logoAlt = 'Q-hub';
+
   return (
     <header className={headerClasses}>
       <a
@@ -64,18 +68,14 @@ export const HeaderUI: React.FC<Props> = ({
 
       <nav ref={navRef as any} aria-label="Primary" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 lg:h-16">
-          {/* Logo */}
-          <button
+          {/* Logo (меняем src по chromeSolid + курсор при наведении) */}
+          <img
             onClick={onLogoClick}
-            className={`text-2xl font-bold transition ${
-              textDark
-                ? 'text-blue-700 hover:text-blue-800'
-                : 'text-blue-600 hover:text-blue-700 lg:text-white lg:hover:text-white/90'
-            }`}
-            aria-label="Go home"
-          >
-            Q<span className="text-orange-500">hub</span>
-          </button>
+            src={logoSrc}
+            alt={logoAlt}
+            className="h-10 lg:h-12 cursor-pointer select-none transition-opacity duration-200"
+            draggable={false}
+          />
 
           {/* Desktop main nav */}
           <div className="hidden lg:flex items-center gap-6 ml-auto pr-[160px]">
@@ -180,7 +180,7 @@ export const HeaderUI: React.FC<Props> = ({
                   key={`${item.to}-${isRoute ? 'route' : 'anchor'}`}
                   href={isRoute ? item.to : `#${item.to}`}
                   onClick={(e) => { e.preventDefault(); onNavClick(item); }}
-                  className={`block px-4 py-2 text-base uppercase transition ${
+                  className={`block px-4 py-2 text-base transition ${
                     isActive ? 'text-blue-600 font-semibold' : 'text-gray-800 hover:text-blue-600'
                   }`}
                 >

@@ -32,7 +32,7 @@ const Home = () => (
     <Header />
     <main>
       <Hero />
-      <WaveDivider />
+      {/* <WaveDivider /> */}
       <Mission />
       <Projects />
       <News />
