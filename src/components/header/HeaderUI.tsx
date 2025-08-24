@@ -3,10 +3,13 @@ import { Menu, X, Globe } from 'lucide-react';
 import type { Language } from './useHeaderLogic';
 
 type UIItem = { label: string; to: string; isRoute?: boolean };
+
 type Props = {
   navRef: React.RefObject<HTMLElement>;
   textDark: boolean;
-  chromeSolid: boolean;   // ← используем для смены логотипа при скролле
+  chromeSolid: boolean;        // авто-смена по скроллу
+  /** Если true — всегда использовать «скролльный» логотип (для отдельных страниц) */
+  forceSolidLogo?: boolean;    // ← НОВЫЙ ПРОП
   isHome: boolean;
 
   mainNav: UIItem[];
@@ -28,6 +31,7 @@ export const HeaderUI: React.FC<Props> = ({
   navRef,
   textDark,
   chromeSolid,
+  forceSolidLogo = false, // ← default
   isHome,
   mainNav,
   anchorNav,
@@ -48,13 +52,14 @@ export const HeaderUI: React.FC<Props> = ({
   const headerClasses = [
     'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
     'bg-white/95 shadow-sm', // mobile
-    chromeSolid
+    (chromeSolid || forceSolidLogo)
       ? 'lg:bg-white/80 lg:backdrop-blur-md lg:shadow-md lg:border-b lg:border-black/5'
       : 'lg:bg-transparent lg:backdrop-blur-0 lg:shadow-none lg:border-b-0',
   ].join(' ');
 
-  // логотипы: изначальный и «после скролла»
-  const logoSrc = chromeSolid ? '/images/Qlogo-l.png' : '/images/QLogo-3.png';
+  // если forceSolidLogo=true → берём «скролльный» вариант
+  const useSolid = forceSolidLogo || chromeSolid;
+  const logoSrc = useSolid ? '/images/Qlogo-l.png' : '/images/QLogo-3.png';
   const logoAlt = 'Q-hub';
 
   return (
@@ -68,7 +73,7 @@ export const HeaderUI: React.FC<Props> = ({
 
       <nav ref={navRef as any} aria-label="Primary" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 lg:h-16">
-          {/* Logo (меняем src по chromeSolid + курсор при наведении) */}
+          {/* Logo */}
           <img
             onClick={onLogoClick}
             src={logoSrc}

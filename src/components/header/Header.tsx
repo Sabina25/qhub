@@ -32,6 +32,7 @@ const Header: React.FC<Props> = ({ appearance = 'auto' }) => {
       anchorNav={anchorNav}
       activeAnchor={activeAnchor}
       isMenuOpen={isMenuOpen}
+      forceSolidLogo={appearance != 'auto'} 
       lang={lang}
       onNavClick={onNavClick}
       onToggleMenu={toggleMenu}
