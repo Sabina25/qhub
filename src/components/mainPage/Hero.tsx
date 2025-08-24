@@ -27,16 +27,16 @@ const Hero = () => {
           loading="eager"
           fetchPriority="high"
         />
-        {/* overlay градиент в цвет логотипа */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-teal-900/90 via-teal-800/85 to-cyan-700/80" />
+        {/* overlay градиент — зелёно-бирюзовый */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-emerald-950/90 via-teal-800/85 to-emerald-600/75" />
       </div>
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
         <div className="animate-fade-in">
           <div className="mb-6 flex justify-center">
-            {/* иконка Users в оттенке логотипа */}
-            <Users className="h-16 w-16 text-cyan-400" aria-hidden="true" />
+            {/* иконка Users — бирюзовый акцент */}
+            <Users className="h-16 w-16 text-emerald-400" aria-hidden="true" />
           </div>
 
           <h1 className="font-raleway text-white leading-tight mb-6 text-4xl md:text-6xl lg:text-7xl">
@@ -67,7 +67,7 @@ const Hero = () => {
               onClick={() => navigate('/media')}
               className="inline-flex h-14 sm:h-16 items-center justify-center rounded-xl 
               border-2 border-white/90 px-6 sm:px-8 font-semibold text-base sm:text-lg 
-              text-teal-50 transition-all duration-200 hover:bg-white hover:text-teal-900 
+              text-teal-50 transition-all duration-200 hover:bg-white hover:text-emerald-900 
               hover:shadow-lg hover:scale-[1.02] focus:outline-none focus-visible:ring-4 
               focus-visible:ring-white/40 active:scale-[0.99]"
             >
