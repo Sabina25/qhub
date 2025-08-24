@@ -54,7 +54,7 @@ export const HeaderUI: React.FC<Props> = ({
   ].join(' ');
 
   // логотипы: изначальный и «после скролла»
-  const logoSrc = chromeSolid ? '/images/Qlogo-l.png' : '/images/QLogo.png';
+  const logoSrc = chromeSolid ? '/images/Qlogo-l.png' : '/images/QLogo-3.png';
   const logoAlt = 'Q-hub';
 
   return (
@@ -73,7 +73,7 @@ export const HeaderUI: React.FC<Props> = ({
             onClick={onLogoClick}
             src={logoSrc}
             alt={logoAlt}
-            className="h-10 lg:h-12 cursor-pointer select-none transition-opacity duration-200"
+            className="h-10 lg:h-14 cursor-pointer select-none transition-opacity duration-200"
             draggable={false}
           />
 

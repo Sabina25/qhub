@@ -27,16 +27,22 @@ const Hero = () => {
           loading="eager"
           fetchPriority="high"
         />
-        {/* overlay градиент — зелёно-бирюзовый */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-emerald-950/90 via-teal-800/85 to-emerald-600/75" />
+        {/* кастомный градиент как в логотипе */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(to top right, #234E52 0%, #319795 50%, #4FD1C5 100%)',
+            opacity: 0.85,
+          }}
+        />
       </div>
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
         <div className="animate-fade-in">
           <div className="mb-6 flex justify-center">
-            {/* иконка Users — бирюзовый акцент */}
-            <Users className="h-16 w-16 text-emerald-400" aria-hidden="true" />
+            <Users className="h-16 w-16 text-teal-300" aria-hidden="true" />
           </div>
 
           <h1 className="font-raleway text-white leading-tight mb-6 text-4xl md:text-6xl lg:text-7xl">
