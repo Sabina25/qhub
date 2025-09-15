@@ -57,7 +57,8 @@
     "view_all": "View All News",
     "allNews": "All news",
     "featured": "Featured",
-    "empty": "No news yet"
+    "empty": "No news yet",
+    "back": "Back to News"
   },
   "common": {
     "loadMore": "Load more"

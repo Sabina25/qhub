@@ -70,7 +70,15 @@ const EventDetailPage = () => {
       (item && typeof (item as any).dateYMD === 'string' && (item as any).dateYMD) ||
       (item && toDateString((item as any).dateTs || (item as any).date)) ||
       '';
-    return formatLocalYMD(ymd, locale);
+  
+    if (!ymd) return '';
+  
+    const date = new Date(ymd);
+    return new Intl.DateTimeFormat(locale, {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    }).format(date);
   }, [item, locale]);
 
   const sanitizedHtml = useMemo(

@@ -41,7 +41,6 @@ const Projects: React.FC = () => {
         setLoading(true);
         const list = await fetchProjects();
         list.sort((a, b) => {
-          // сначала featured, потом по дате
           const fa = a.featured ? 1 : 0;
           const fb = b.featured ? 1 : 0;
           if (fa !== fb) return fb - fa;
@@ -100,21 +99,22 @@ const Projects: React.FC = () => {
         ) : items.length === 0 ? (
           <div className="text-center text-gray-500">No projects yet</div>
         ) : (
-          <FancyCarousel  className="mt-4"
-                autoplayMs={7000}
-                dates={slides.map(pr => pr.dateYMD || '')} // можно и Date
-                formatDate={(d) => {
-                  // локаль из i18n
-                  const locale = lang === 'ua' ? 'uk-UA' : 'en-GB';
-                  if (d instanceof Date) return d.toLocaleDateString(locale);
-                  const m = String(d).match(/^(\d{4})-(\d{2})-(\d{2})$/);
-                  if (m) {
-                    const [_, y, mo, da] = m;
-                    return new Date(+y, +mo - 1, +da).toLocaleDateString(locale);
-                  }
-                  return String(d);
-                }}
-                datePlacement="top-right">
+          <FancyCarousel
+            className="mt-4"
+            autoplayMs={7000}
+            dates={slides.map(pr => pr.dateYMD || '')}
+            formatDate={(d) => {
+              const locale = lang === 'ua' ? 'uk-UA' : 'en-GB';
+              if (d instanceof Date) return d.toLocaleDateString(locale);
+              const m = String(d).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+              if (m) {
+                const [_, y, mo, da] = m;
+                return new Date(+y, +mo - 1, +da).toLocaleDateString(locale);
+              }
+              return String(d);
+            }}
+            datePlacement="top-right"
+          >
             {slides.map((pr, i) => (
               <div key={pr.id || `slide-${i}`}>
                 <div className="flex flex-col lg:flex-row min-h-[420px]">
@@ -137,7 +137,7 @@ const Projects: React.FC = () => {
                     )}
                   </div>
 
-                  {/* ПРАВАЯ ПАНЕЛЬ — контент */}
+                  {/* RIGHT — content */}
                   <div className="lg:w-1/2 w-full p-8 flex flex-col justify-between">
                     <div>
                       <h3 className="font-raleway uppercase text-3xl text-gray-900 mb-4 line-clamp-2">
@@ -145,7 +145,7 @@ const Projects: React.FC = () => {
                       </h3>
 
                       {(pr.funding || pr.duration || pr.participants) && (
-                        <div className="text-sm text-blue-600 font-semibold mb-3 flex flex-wrap gap-x-2 gap-y-1">
+                        <div className="text-sm font-semibold mb-3 flex flex-wrap gap-x-2 gap-y-1 text-[#319795]"> {/* brand */}
                           {pr.funding && <span>{pr.funding}</span>}
                           {pr.funding && pr.duration && <span>•</span>}
                           {pr.duration && <span>{pr.duration}</span>}
@@ -161,7 +161,9 @@ const Projects: React.FC = () => {
 
                     <button
                       onClick={() => navigate(`/projects/${pr.id}`)}
-                      className="mt-6 self-start rounded-lg bg-blue-600 px-5 py-2 text-white font-semibold shadow hover:bg-blue-700 transition"
+                      className="mt-6 self-start rounded-lg bg-[#319795] px-5 py-2 text-white font-semibold shadow
+                                 hover:bg-[#216664] active:scale-[0.99] transition
+                                 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#216664]/40"  // brand
                     >
                       {t('projects.button_more')}
                     </button>
