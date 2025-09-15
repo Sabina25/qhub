@@ -230,7 +230,7 @@ const News: React.FC = () => {
         <div className="text-center mt-12">
           <button
             onClick={() => navigate('/events')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md font-semibold shadow-md transition"
+            className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-md font-semibold shadow-md transition"
           >
             {t('news.view_all')}
           </button>

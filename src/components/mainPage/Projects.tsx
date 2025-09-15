@@ -161,9 +161,9 @@ const Projects: React.FC = () => {
 
                     <button
                       onClick={() => navigate(`/projects/${pr.id}`)}
-                      className="mt-6 self-start rounded-lg bg-[#319795] px-5 py-2 text-white font-semibold shadow
-                                 hover:bg-[#216664] active:scale-[0.99] transition
-                                 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#216664]/40"  // brand
+                      className="mt-6 self-start rounded-lg bg-orange-500 px-5 py-2 text-white font-semibold shadow
+                      hover:bg-orange-600 active:scale-[0.99] transition
+                      focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-400/40"  // brand
                     >
                       {t('projects.button_more')}
                     </button>

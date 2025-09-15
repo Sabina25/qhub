@@ -178,7 +178,7 @@ const Contact = () => {
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold transition"
+               className="w-full bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-lg font-semibold transition"
               >
                 <Send className="h-5 w-5 inline mr-2" />
                 {t('contact.form.submit')}
