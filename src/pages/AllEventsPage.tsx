@@ -5,8 +5,11 @@ import { useTranslation } from '../context/TranslationContext';
 import { useAllNews } from '../hooks/useAllNews';
 import { NewsGrid } from '../components/admin/NewsGrid';
 
-const AllEventsPage: React.FC = () => {
-  const { lang, t } = useTranslation(); // 'ua' | 'en'
+
+const AllNewsPage: React.FC = () => {
+ const { lang, t } = useTranslation(); // 'ua' | 'en'
+  const locale = lang === 'ua' ? 'uk-UA' : 'en-GB';
+
   const {
     visibleItems,
     loadingInitial,
@@ -22,7 +25,7 @@ const AllEventsPage: React.FC = () => {
       <Header appearance="solid" />
       <main className="max-w-7xl mx-auto px-4 py-20">
         <h1 className="text-4xl font-bold mb-10 text-center">
-          {t('news.allNews') || 'All News'}
+          {t('news.allNews')}
         </h1>
         <hr className="mb-10 border-t border-gray-300" />
 
@@ -35,11 +38,12 @@ const AllEventsPage: React.FC = () => {
           onLoadMore={loadMore}
           loaderRef={loaderRef}
           labels={{
-            featured: t('news.featured') || 'Featured',
-            loadMore: t('common.loadMore') || 'Load more',
-            empty: t('news.empty') || 'No news yet',
-            category: (k) => t(k) || k,
+            featured: t('news.featured'),
+            loadMore: t('common.loadMore'),
+            empty: t('news.empty'),
+            category: (k) => t(k),
           }}
+          locale={locale} 
         />
       </main>
       <Footer />
@@ -47,4 +51,4 @@ const AllEventsPage: React.FC = () => {
   );
 };
 
-export default AllEventsPage;
+export default AllNewsPage;

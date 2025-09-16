@@ -1,21 +1,29 @@
 import { Link } from 'react-router-dom';
 import type { NewsCardVM } from '../../hooks/useAllNews';
 
-function formatLocal(ymd?: string) {
+function formatLocal(ymd?: string, locale = 'en-GB') {
   if (!ymd) return '—';
   const [y, m, d] = (ymd || '').split('-').map(Number);
   if (!y || !m || !d) return '—';
-  return new Date(y, m - 1, d).toLocaleDateString();
+  const dt = new Date(y, m - 1, d);
+
+  return new Intl.DateTimeFormat(locale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(dt);
 }
 
 export const NewsCard = ({
   item,
   featuredLabel,
   categoryLabel,
+  locale = 'en-GB',
 }: {
   item: NewsCardVM;
   featuredLabel: string;
   categoryLabel?: string;
+  locale?: string; // 👈 добавили
 }) => (
   <Link
     to={`/events/${item.id}`}
@@ -33,6 +41,7 @@ export const NewsCard = ({
         </span>
       )}
     </div>
+
     {item.image ? (
       <img
         src={item.image}
@@ -43,10 +52,11 @@ export const NewsCard = ({
     ) : (
       <div className="w-full h-48 bg-gray-100 mb-4" />
     )}
+
     <h2 className="font-raleway text-2xl mb-2 line-clamp-2">{item.title || '—'}</h2>
 
     <div className="flex justify-between items-center text-sm text-gray-500">
-      <span>{formatLocal(item.dateYMD)}</span>
+      <span>{formatLocal(item.dateYMD, locale)}</span>
     </div>
   </Link>
 );
