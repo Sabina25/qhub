@@ -7,6 +7,7 @@ import { useTranslation } from '../context/TranslationContext';
 import Footer from '../components/Footer';
 import Header from '../components/header/Header';
 import ParallaxBanner from '../components/ParallaxBannerProps.tsx';
+import RelatedNews from '../components/RelatedNews';
 
 import { fetchNewsById, NewsItem } from '../data/news';
 
@@ -109,6 +110,7 @@ const EventDetailPage = () => {
           dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
         />
       </div>
+      <RelatedNews currentId={item.id} />
       <Footer />
     </>
   );
