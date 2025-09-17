@@ -27,7 +27,7 @@ const Hero = () => {
           loading="eager"
           fetchPriority="high"
         />
-        {/* кастомный градиент как в логотипе */}
+       
         <div
           className="absolute inset-0"
           style={{

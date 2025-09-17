@@ -21,14 +21,12 @@ const Footer = () => {
 
           {/* Brand & Contact */}
           <div className="lg:col-span-1 space-y-6">
-            <div>
-              <div className="text-2xl font-bold mb-4">
-                Q<span className="text-orange-400">hub</span>
-              </div>
-              <p className="text-gray-300 leading-relaxed">
-                Q-hub {t('footer.description')}
-              </p>
-            </div>
+               {/* Logo */}
+          <img
+            src="/images/QLogo-3.png"
+            className="h-10 lg:h-14 cursor-pointer select-none transition-opacity duration-200"
+            draggable={false}
+          />
 
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-gray-300">

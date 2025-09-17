@@ -7,9 +7,8 @@ type UIItem = { label: string; to: string; isRoute?: boolean };
 type Props = {
   navRef: React.RefObject<HTMLElement>;
   textDark: boolean;
-  chromeSolid: boolean;        // авто-смена по скроллу
-  /** Если true — всегда использовать «скролльный» логотип (для отдельных страниц) */
-  forceSolidLogo?: boolean;    // ← НОВЫЙ ПРОП
+  chromeSolid: boolean;        
+  forceSolidLogo?: boolean;
   isHome: boolean;
 
   mainNav: UIItem[];
@@ -51,13 +50,13 @@ export const HeaderUI: React.FC<Props> = ({
 
   const headerClasses = [
     'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-    'bg-white/95 shadow-sm', // mobile
+    'bg-white/95 shadow-sm', 
     (chromeSolid || forceSolidLogo)
       ? 'lg:bg-white/80 lg:backdrop-blur-md lg:shadow-md lg:border-b lg:border-black/5'
       : 'lg:bg-transparent lg:backdrop-blur-0 lg:shadow-none lg:border-b-0',
   ].join(' ');
 
-  // если forceSolidLogo=true → берём «скролльный» вариант
+
   const useSolid = forceSolidLogo || chromeSolid;
   const logoSrc = useSolid ? '/images/Qlogo-l.png' : '/images/QLogo-3.png';
   const logoAlt = 'Q-hub';
