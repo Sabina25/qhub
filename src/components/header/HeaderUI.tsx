@@ -30,7 +30,7 @@ export const HeaderUI: React.FC<Props> = ({
   navRef,
   textDark,
   chromeSolid,
-  forceSolidLogo = false, // ← default
+  forceSolidLogo = false,
   isHome,
   mainNav,
   anchorNav,
@@ -82,7 +82,7 @@ export const HeaderUI: React.FC<Props> = ({
           />
 
           {/* Desktop main nav */}
-          <div className="hidden lg:flex items-center gap-6 ml-auto pr-[160px]">
+          <div className="hidden lg:flex items-center gap-6 ml-auto pr-[135px]">
             {mainNav.map((item) => {
               const isActiveRoute = item.isRoute && typeof window !== 'undefined'
                 ? window.location.pathname === item.to
