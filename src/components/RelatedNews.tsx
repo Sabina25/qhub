@@ -11,7 +11,6 @@ type Props = {
   className?: string;
 };
 
-// хелпер под локализацию
 function pickL10n(val: any, lang: 'ua' | 'en'): string {
   if (typeof val === 'string') return val;
   if (val && typeof val === 'object') return val[lang] ?? val.ua ?? val.en ?? '';
@@ -30,10 +29,11 @@ export default function RelatedNews({ currentId, limit = 3, className = '' }: Pr
       try {
         setLoading(true);
         const raw = await fetchNews();
-
+  
         const mapped: NewsCardVM[] = raw.map((r: any) => ({
           id: r.id,
-          title: pickL10n(r.title, lang),
+          titleRaw: r.title,
+          excerptHtmlRaw: r.excerpt, 
           image: r.image ?? '',
           dateYMD:
             (typeof r.dateYMD === 'string' && r.dateYMD) ||
@@ -42,22 +42,18 @@ export default function RelatedNews({ currentId, limit = 3, className = '' }: Pr
           categoryKey: r.categoryKey ?? r.category ?? '',
           featured: !!r.featured,
         }));
-
-        mapped.sort((a, b) =>
-          a.dateYMD > b.dateYMD ? -1 : a.dateYMD < b.dateYMD ? 1 : 0
-        );
-
+  
+        mapped.sort((a, b) => (a.dateYMD > b.dateYMD ? -1 : a.dateYMD < b.dateYMD ? 1 : 0));
         const picked = mapped.filter((n) => n.id !== currentId).slice(0, limit);
-
+  
         if (alive) setItems(picked);
       } finally {
         if (alive) setLoading(false);
       }
     })();
-    return () => {
-      alive = false;
-    };
+    return () => { alive = false; };
   }, [currentId, lang, limit]);
+  
 
   if (loading) {
     return (

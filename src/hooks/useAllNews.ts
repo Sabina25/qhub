@@ -1,42 +1,40 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { fetchNews } from '../data/news';
 import { toDateString } from '../utils/dates';
-
-export type Lang = 'ua' | 'en';
+import type { Lang } from '../utils/l10n';
 
 export type NewsCardVM = {
   id: string;
-  title: string;
-  excerptHtml: string;
+  titleRaw?: { ua?: string; en?: string };       
+  excerptHtmlRaw?: { ua?: string; en?: string };  
   image: string;
-  dateYMD: string;      
-  datePretty: string;   
+  dateYMD: string;
   categoryKey: string;
   featured: boolean;
 };
 
 const PAGE = 6;
 
-function pickL10n(val: any, lang: Lang): string {
-  if (typeof val === 'string') return val;
-  if (val && typeof val === 'object') return val[lang] ?? val.ua ?? val.en ?? '';
-  return '';
-}
-
 function normalizeYMD(row: any): string {
   if (typeof row?.dateYMD === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(row.dateYMD)) return row.dateYMD;
-  const ymd = toDateString(row?.dateTs || row?.date);
-  return ymd || '';
+  return toDateString(row?.dateTs || row?.date) || '';
 }
 
-function formatLocal(ymd: string, locale: string) {
-  if (!ymd) return '';
-  const [y, m, d] = ymd.split('-').map(Number);
-  if (!y || !m || !d) return '';
-  return new Date(y, m - 1, d).toLocaleDateString(locale);
+function toL10n(val: any): { ua?: string; en?: string } | undefined {
+  if (val == null) return undefined;
+
+  if (typeof val === 'object') {
+    const out: { ua?: string; en?: string } = {};
+    if (Object.prototype.hasOwnProperty.call(val, 'ua')) out.ua = typeof val.ua === 'string' ? val.ua : String(val.ua ?? '');
+    if (Object.prototype.hasOwnProperty.call(val, 'en')) out.en = typeof val.en === 'string' ? val.en : String(val.en ?? '');
+    return Object.keys(out).length ? out : undefined;
+  }
+  if (typeof val === 'string') return { ua: val }; 
+  return undefined;
 }
 
-export function useAllNews(lang: Lang) {
+
+export function useAllNews(_lang: Lang) {
   const [items, setItems] = useState<NewsCardVM[]>([]);
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -44,33 +42,27 @@ export function useAllNews(lang: Lang) {
   const [visibleCount, setVisibleCount] = useState(PAGE);
 
   const loaderRef = useRef<HTMLDivElement | null>(null);
-  const locale = lang === 'ua' ? 'uk-UA' : 'en-GB';
 
-  // загрузка
   useEffect(() => {
     (async () => {
       try {
         setLoadingInitial(true);
         setError(null);
 
-        const raw = await fetchNews(); 
-        const mapped: NewsCardVM[] = (raw || []).map((r: any) => {
-          const dateYMD = normalizeYMD(r);
-          return {
-            id: r.id,
-            title: pickL10n(r.title, lang),
-            excerptHtml: pickL10n(r.excerpt, lang),
-            image: r.image ?? '',
-            dateYMD,
-            datePretty: formatLocal(dateYMD, locale),
-            categoryKey: r.categoryKey ?? r.category ?? '',
-            featured: !!r.featured,
-          };
-        });
+        const raw = await fetchNews();
+        const mapped: NewsCardVM[] = (raw || []).map((r: any) => ({
+          id: String(r.id),
+          titleRaw: toL10n(r.title),                 
+          excerptHtmlRaw: toL10n(r.excerpt),        
+          image: r.image ?? '',
+          dateYMD: normalizeYMD(r),
+          categoryKey: r.categoryKey ?? r.category ?? '',
+          featured: !!r.featured,
+        }));
 
         mapped.sort((a, b) => (a.dateYMD > b.dateYMD ? -1 : a.dateYMD < b.dateYMD ? 1 : 0));
         setItems(mapped);
-        setVisibleCount(PAGE); 
+        setVisibleCount(PAGE);
       } catch (e: any) {
         console.error(e);
         setError(e?.message || 'Failed to load news');
@@ -78,7 +70,7 @@ export function useAllNews(lang: Lang) {
         setLoadingInitial(false);
       }
     })();
-  }, [lang, locale]);
+  }, []); 
 
   const visibleItems = useMemo(() => items.slice(0, visibleCount), [items, visibleCount]);
   const canLoadMore = visibleCount < items.length;
@@ -95,21 +87,10 @@ export function useAllNews(lang: Lang) {
   useEffect(() => {
     const el = loaderRef.current;
     if (!el) return;
-    const io = new IntersectionObserver(
-      (entries) => entries[0]?.isIntersecting && loadMore(),
-      { threshold: 1 }
-    );
+    const io = new IntersectionObserver((entries) => entries[0]?.isIntersecting && loadMore(), { threshold: 1 });
     io.observe(el);
     return () => io.disconnect();
   }, [loadMore]);
 
-  return {
-    visibleItems,
-    loadingInitial,
-    loadingMore,
-    error,
-    canLoadMore,
-    loadMore,
-    loaderRef,
-  };
+  return { visibleItems, loadingInitial, loadingMore, error, canLoadMore, loadMore, loaderRef };
 }

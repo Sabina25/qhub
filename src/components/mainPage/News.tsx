@@ -47,6 +47,7 @@ function sanitizeAndEnhance(html: string): string {
   return doc.body.innerHTML;
 }
 
+
 const News: React.FC = () => {
   const navigate = useNavigate();
   const { t, lang } = useTranslation();

@@ -73,11 +73,26 @@ function mapDocToItem(
   };
 }
 
-export async function fetchNews(lang: 'ua' | 'en' = 'ua'): Promise<NewsItem[]> {
-  const q = query(collection(db, 'news'), orderBy('dateYMD', 'desc'));
-  const snap = await getDocs(q);
-  const list = snap.docs.map(d => mapDocToItem(d.id, d.data(), lang));
-  return list.sort((a, b) => (a.dateYMD > b.dateYMD ? -1 : a.dateYMD < b.dateYMD ? 1 : 0));
+function deepCleanKeepEmptyStrings<T>(v: T): T {
+  if (Array.isArray(v)) {
+    return v.map(deepCleanKeepEmptyStrings) as unknown as T;
+  }
+  if (v && typeof v === 'object') {
+    return Object.fromEntries(
+      Object.entries(v as Record<string, any>)
+        .map(([k, val]) => [k, deepCleanKeepEmptyStrings(val)])
+        .filter(([_, val]) => val !== undefined && val !== null)  
+    ) as unknown as T;
+  }
+  return v;
+}
+
+export async function fetchNews() {
+  const snap = await getDocs(collection(db, 'news'));
+  return snap.docs.map(d => {
+    const data = d.data({ serverTimestamps: 'estimate' }); 
+    return deepCleanKeepEmptyStrings({ id: d.id, ...data });
+  });
 }
 
 export async function fetchNewsById(id: string, lang: 'ua' | 'en' = 'ua'): Promise<NewsItem | null> {
