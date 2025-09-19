@@ -1,41 +1,16 @@
 {
   "hosting": {
+    "site": "github-b91ab",
     "public": "dist",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "/events/**",
-        "function": "ogRenderer"
-      },
-      {
-        "source": "/projects/**",
-        "function": "ogRenderer"
-      },
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
+    "ignore": ["**/.*", "**/node_modules/**"],
+    "rewrites": [{ "source": "**", "destination": "/index.html" }]
   },
   "functions": [
-    {
-      "source": "functions",
-      "codebase": "default"
-    },
+    { "source": "functions", "codebase": "default" },
     {
       "source": "qh",
       "codebase": "qh",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ],
+      "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log", "*.local"],
       "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run lint",
         "npm --prefix \"$RESOURCE_DIR\" run build"

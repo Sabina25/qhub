@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "github-b91ab"
-  }
+  },
+  "targets": {
+    "github-b91ab": {
+      "hosting": {
+        "live": [
+          "github-b91ab"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

@@ -5,13 +5,13 @@ import DOMPurify from 'dompurify';
 import Header from '../components/header/Header';
 import Footer from '../components/Footer';
 import { useTranslation } from '../context/TranslationContext';
+import VideoGallery from '../components/VideoGallery';
 
 import { fetchProjectById, ProjectDoc } from '../data/projects';
-import { buildEmbedUrl, parseYouTube } from '../utils/youtube';
-
-type Lang = 'ua' | 'en';
 
 // --- helpers ---
+type Lang = 'ua' | 'en';
+
 function pickL10n(val: any, lang: Lang): string {
   if (typeof val === 'string') return val;
   if (val && typeof val === 'object') return val[lang] ?? val.ua ?? val.en ?? '';
@@ -47,6 +47,35 @@ function formatRange(p: ProjectDoc, locale: string) {
   return formatYMD(p.dateStartYMD || p.dateEndYMD, locale);
 }
 
+// --- нормализация YouTube ссылок ---
+function extractYouTubeId(raw: string): string | null {
+  if (!raw) return null;
+  const s = raw.trim();
+
+  const mShort = s.match(/youtu\.be\/([a-zA-Z0-9_-]{6,})/);
+  if (mShort?.[1]) return mShort[1];
+
+  const mShorts = s.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{6,})/);
+  if (mShorts?.[1]) return mShorts[1];
+
+  const mEmbed = s.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{6,})/);
+  if (mEmbed?.[1]) return mEmbed[1];
+
+  try {
+    const url = new URL(s);
+    const v = url.searchParams.get('v');
+    if (v) return v;
+  } catch {
+    try {
+      const url2 = new URL('https://' + s);
+      const v2 = url2.searchParams.get('v');
+      if (v2) return v2;
+    } catch {}
+  }
+
+  return null;
+}
+
 const ProjectDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { lang } = useTranslation(); // 'ua' | 'en'
@@ -74,27 +103,13 @@ const ProjectDetailPage: React.FC = () => {
 
   const title = useMemo(() => pickL10n(proj?.title, lang as Lang), [proj?.title, lang]);
   const location = useMemo(() => pickL10n((proj as any)?.location, lang as Lang), [proj?.location, lang]);
-  const descHtml = useMemo(
-    () => pickL10n((proj as any)?.descriptionHtml, lang as Lang),
-    [proj?.descriptionHtml, lang]
-  );
+  const descHtml = useMemo(() => pickL10n((proj as any)?.descriptionHtml, lang as Lang), [proj?.descriptionHtml, lang]);
   const sanitizedHtml = useMemo(() => enhanceHtml(descHtml || ''), [descHtml]);
 
   const dateStr = useMemo(() => (proj ? formatRange(proj, locale) : ''), [proj, locale]);
 
-  const playlistEmbed = useMemo(() => {
-    const parsed = (proj?.youtubeUrls || []).map(parseYouTube);
-    const p = parsed.find((x) => x.playlistId && !x.videoId);
-    return p?.playlistId
-      ? `https://www.youtube.com/embed/videoseries?list=${encodeURIComponent(p.playlistId)}`
-      : null;
-  }, [proj?.youtubeUrls]);
+  const allVideoUrls = useMemo(() => proj?.youtubeUrls || [], [proj?.youtubeUrls]);
 
-  const videoEmbeds = useMemo(() => {
-    return (proj?.youtubeUrls || [])
-      .map((u) => buildEmbedUrl(u))
-      .filter((u): u is string => Boolean(u));
-  }, [proj?.youtubeUrls]);
 
   if (loading) return <div className="max-w-4xl mx-auto px-4 py-20">Loading…</div>;
   if (err) return <div className="max-w-4xl mx-auto px-4 py-20 text-red-600">{err}</div>;
@@ -147,38 +162,11 @@ const ProjectDetailPage: React.FC = () => {
           </section>
         )}
 
-        {/* YouTube block */}
-        {(videoEmbeds.length > 0 || playlistEmbed) && (
+        {/* Videos */}
+        {allVideoUrls.length > 0 && (
           <section className="mt-12">
             <h2 className="text-2xl font-semibold mb-4">Videos</h2>
-
-            {playlistEmbed && (
-              <div className="mb-6">
-                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                  <iframe
-                    src={playlistEmbed}
-                    title="YouTube playlist"
-                    className="absolute inset-0 w-full h-full rounded-xl"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  />
-                </div>
-              </div>
-            )}
-
-            <div className="grid md:grid-cols-2 gap-6">
-              {videoEmbeds.map((src, i) => (
-                <div key={i} className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                  <iframe
-                    src={src}
-                    title={`YouTube video ${i + 1}`}
-                    className="absolute inset-0 w-full h-full rounded-xl"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  />
-                </div>
-              ))}
-            </div>
+            <VideoGallery urls={allVideoUrls} />
           </section>
         )}
       </main>

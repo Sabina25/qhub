@@ -6,18 +6,18 @@ export type Lang = 'ua' | 'en';
 export type L10n<T> = Record<Lang, T>;
 
 export type ProjectDoc = {
-  id?: string;               // Firestore id (после чтения)
+  id?: string;               
   slug?: L10n<string>;
   title: L10n<string>;
-  descriptionHtml: L10n<string>;     // per-lang HTML
-  descriptionLinks?: L10n<LinkRef[]>;// per-lang extracted links
-  image: string;                     // обложка
-  gallery: string[];                 // доп. фото
-  dateYMD?: string;                  // одна дата
-  dateStartYMD?: string;             // или период
+  descriptionHtml: L10n<string>;     
+  descriptionLinks?: L10n<LinkRef[]>;
+  image: string;                     
+  gallery: string[];                 
+  dateYMD?: string;                  
+  dateStartYMD?: string;             
   dateEndYMD?: string;
   location?: string;
-  youtubeUrls: string[];             // список URL (видео/плейлист)
+  youtubeUrls: string[];           
   featured: boolean;
   createdAt?: any;
   updatedAt?: any;
