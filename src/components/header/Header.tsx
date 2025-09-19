@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeaderUI } from './HeaderUI';
+import HeaderUI from './HeaderUI';
 import { useHeaderLogic, Appearance, Language } from './useHeaderLogic';
 
 type Props = { appearance?: Appearance };

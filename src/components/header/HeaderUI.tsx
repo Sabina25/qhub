@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Menu, X, Globe } from 'lucide-react';
-import type { Language } from './useHeaderLogic';
 
-type UIItem = { label: string; to: string; isRoute?: boolean };
+export type Language = 'en' | 'ua';
+
+export type UIItem = { label: string; to: string; isRoute?: boolean };
 
 type Props = {
   navRef: React.RefObject<HTMLElement>;
@@ -26,7 +27,7 @@ type Props = {
   skipToContentLabel?: string;
 };
 
-export const HeaderUI: React.FC<Props> = ({
+const HeaderUI: React.FC<Props> = ({
   navRef,
   textDark,
   chromeSolid,
@@ -43,6 +44,14 @@ export const HeaderUI: React.FC<Props> = ({
   onLangChange,
   skipToContentLabel = 'Skip to content',
 }) => {
+  // Lock background scroll when mobile menu is open
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, [isMenuOpen]);
+
   const desktopLinkIdle = textDark
     ? 'lg:text-gray-900 lg:hover:text-blue-600'
     : 'lg:text-white lg:hover:text-white/85';
@@ -50,16 +59,17 @@ export const HeaderUI: React.FC<Props> = ({
 
   const headerClasses = [
     'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-    'bg-white/95 shadow-sm', 
+    // Always provide a solid base on mobile; on desktop depend on chromeSolid
+    'bg-white/95 shadow-sm',
     (chromeSolid || forceSolidLogo)
       ? 'lg:bg-white/80 lg:backdrop-blur-md lg:shadow-md lg:border-b lg:border-black/5'
       : 'lg:bg-transparent lg:backdrop-blur-0 lg:shadow-none lg:border-b-0',
   ].join(' ');
 
-
+  // Desktop logo logic remains; mobile always uses the second logo
   const useSolid = forceSolidLogo || chromeSolid;
-  const logoSrc = useSolid ? '/images/Qlogo-l.png' : '/images/QLogo-3.png';
-  const logoAlt = 'Q-hub';
+  const logoSolid = '/images/Qlogo-l.png';
+  const logoSecondary = '/images/QLogo-3.png';
 
   return (
     <header className={headerClasses}>
@@ -73,13 +83,24 @@ export const HeaderUI: React.FC<Props> = ({
       <nav ref={navRef as any} aria-label="Primary" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 lg:h-16">
           {/* Logo */}
-          <img
-            onClick={onLogoClick}
-            src={logoSrc}
-            alt={logoAlt}
-            className="h-10 lg:h-14 cursor-pointer select-none transition-opacity duration-200"
-            draggable={false}
-          />
+          <div className="flex items-center">
+            {/* Mobile: always the secondary logo */}
+            <img
+              onClick={onLogoClick}
+              src={logoSolid}
+              alt="Q-hub"
+              className="h-10 cursor-pointer select-none transition-opacity duration-200 lg:hidden"
+              draggable={false}
+            />
+            {/* Desktop: solid/transparent logic */}
+            <img
+              onClick={onLogoClick}
+              src={useSolid ? logoSolid : logoSecondary}
+              alt="Q-hub"
+              className="h-14 cursor-pointer select-none transition-opacity duration-200 hidden lg:block"
+              draggable={false}
+            />
+          </div>
 
           {/* Desktop main nav */}
           <div className="hidden lg:flex items-center gap-6 ml-auto pr-[135px]">
@@ -171,9 +192,14 @@ export const HeaderUI: React.FC<Props> = ({
           </div>
         )}
 
-        {/* Mobile nav */}
+        {/* Mobile nav (fixed overlay under the header) */}
         {isMenuOpen && (
-          <div id="mobile-menu" className="lg:hidden bg-white border-t pt-3 pb-6 space-y-1">
+          <div
+            id="mobile-menu"
+            className="lg:hidden fixed inset-x-0 top-14 bottom-0 z-40 bg-white border-t pt-3 pb-6 space-y-1 overflow-y-auto"
+            aria-modal="true"
+            role="dialog"
+          >
             {[...mainNav, ...anchorNav].map((item) => {
               const isRoute = !!item.isRoute;
               const isActive =
@@ -212,3 +238,5 @@ export const HeaderUI: React.FC<Props> = ({
     </header>
   );
 };
+
+export default HeaderUI;
