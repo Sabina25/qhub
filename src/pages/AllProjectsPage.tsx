@@ -17,7 +17,7 @@ const AllProjectsPage: React.FC = () => {
       <Header appearance="solid" />
       <main className="max-w-7xl mx-auto px-4 py-20">
         <h1 className="text-4xl font-bold mb-10 text-center">
-          {t ? t('projects.allProjects') : 'All Projects'}
+          {t ? t('projects.title') : 'All Projects'}
         </h1>
 
         <ProjectsGrid
