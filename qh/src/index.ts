@@ -11,6 +11,8 @@ import {setGlobalOptions} from "firebase-functions";
 import {onRequest} from "firebase-functions/https";
 import * as logger from "firebase-functions/logger";
 
+export { ogEvents } from './ogEvents';
+
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
