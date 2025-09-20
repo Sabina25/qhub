@@ -18,12 +18,12 @@ const CreateProjectPage: React.FC = () => {
     f.setError(null);
 
     const anyTitle = (f.form.title.ua || f.form.title.en).trim();
-    if (!anyTitle) { f.setError('Введите заголовок (UA или EN)'); return; }
+    if (!anyTitle) { f.setError('Please enter a title (UA or EN).'); return; }
 
     const hasSingle = !!f.form.dateYMD;
     const hasRange = !!(f.form.dateStartYMD || f.form.dateEndYMD);
     if (hasSingle && hasRange) {
-      f.setError('Укажи либо одну дату, либо период — не оба сразу.');
+      f.setError('Specify either a single date or a period — not both.');
       return;
     }
 
@@ -66,7 +66,7 @@ const CreateProjectPage: React.FC = () => {
       f.resetForm();
     } catch (err: any) {
       console.error(err);
-      f.setError(err?.message || 'Failed to save');
+      f.setError(err?.message || 'Failed to save.');
     } finally {
       f.setUploading(false);
     }
@@ -119,7 +119,7 @@ const CreateProjectPage: React.FC = () => {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         onDelete={async (id) => {
-          if (!confirm('Удалить проект?')) return;
+          if (!confirm('Delete this project?')) return;
           await remove(id);
           await loadRows();
           if (f.editingId === id) f.resetForm();

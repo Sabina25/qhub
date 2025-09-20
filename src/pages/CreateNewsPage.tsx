@@ -23,7 +23,7 @@ const CreateNewsPage: React.FC = () => {
         uploading={l.uploading}
         progress={l.progress}
         setTitle={l.setTitle}
-        onQuillChange={l.onQuillChange}
+        onQuillChange={l.onQuillChange}   
         onSubmit={l.onSubmit}
         fileKey={l.fileKey}
         fileRef={l.fileRef}
@@ -38,7 +38,7 @@ const CreateNewsPage: React.FC = () => {
       <h3 className="text-2xl font-semibold mt-10 mb-4">Existing news</h3>
       <NewsTable
         rows={l.rows}
-        lang={l.lang as Lang}
+        lang={l.activeLang as Lang}   
         loading={l.loading}
         onEdit={l.startEdit}
         onDelete={l.onDelete}

@@ -17,9 +17,10 @@ const quillModules = {
   },
   clipboard: { matchVisual: false },
 };
+
 const quillFormats = [
-  'header','bold','italic','underline','strike','blockquote',
-  'list','bullet','indent','align','color','background','link',
+  'header', 'bold', 'italic', 'underline', 'strike', 'blockquote',
+  'list', 'bullet', 'indent', 'align', 'color', 'background', 'link',
 ];
 
 export type ProjectFormUIProps = {
@@ -37,7 +38,6 @@ export type ProjectFormUIProps = {
   setDesc: (l: Lang, html: string) => void;
   setField: <K extends keyof ProjectForm>(k: K, v: ProjectForm[K]) => void;
 
-  // даты (удобные)
   setDateSingle: (ymd: string) => void;
   setDateStart: (ymd: string) => void;
   setDateEnd: (ymd: string) => void;
@@ -66,13 +66,16 @@ export type ProjectFormUIProps = {
 const langs: Lang[] = ['ua', 'en'];
 
 export const ProjectFormUI: React.FC<ProjectFormUIProps> = (p) => {
+  const lang = p.activeLang;
   const hasSingle = !!p.form.dateYMD;
   const hasRange = !!(p.form.dateStartYMD || p.form.dateEndYMD);
 
   return (
     <form onSubmit={p.onSubmit} className="space-y-6">
       {p.error && (
-        <div className="mb-2 rounded border border-red-200 bg-red-50 px-4 py-2 text-red-700">{p.error}</div>
+        <div className="mb-2 rounded border border-red-200 bg-red-50 px-4 py-2 text-red-700">
+          {p.error}
+        </div>
       )}
 
       {/* tabs */}
@@ -82,7 +85,7 @@ export const ProjectFormUI: React.FC<ProjectFormUIProps> = (p) => {
             key={l}
             type="button"
             onClick={() => p.setActiveLang(l)}
-            className={`px-3 py-1 rounded ${p.activeLang === l ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}
+            className={`px-3 py-1 rounded ${lang === l ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}
           >
             {l.toUpperCase()}
           </button>
@@ -91,24 +94,26 @@ export const ProjectFormUI: React.FC<ProjectFormUIProps> = (p) => {
 
       {/* Title */}
       <div>
-        <label className="block mb-2 font-medium">Title ({p.activeLang.toUpperCase()})</label>
+        <label className="block mb-2 font-medium">Title ({lang.toUpperCase()})</label>
         <input
-          value={p.form.title[p.activeLang]}
-          onChange={(e) => p.setTitle(p.activeLang, e.target.value)}
+          key={`title-${lang}`} 
+          value={p.form.title[lang] || ''}
+          onChange={(e) => p.setTitle(lang, e.target.value)}
           className="w-full border p-2 rounded"
-          placeholder={p.activeLang === 'ua' ? 'Заголовок' : 'Title'}
+          placeholder={lang === 'ua' ? 'Title in Ukrainian' : 'Title'}
           required
         />
       </div>
 
       {/* Location */}
       <div>
-        <label className="block mb-2 font-medium">Location ({p.activeLang.toUpperCase()})</label>
+        <label className="block mb-2 font-medium">Location ({lang.toUpperCase()})</label>
         <input
-          value={p.form.location?.[p.activeLang] || ''}
-          onChange={(e) => p.setLocation(p.activeLang, e.target.value)}
+          key={`location-${lang}`} 
+          value={p.form.location?.[lang] || ''}
+          onChange={(e) => p.setLocation(lang, e.target.value)}
           className="w-full border p-2 rounded"
-          placeholder={p.activeLang === 'ua' ? 'Київ, Україна' : 'Kyiv, Ukraine'}
+          placeholder={lang === 'ua' ? 'Kyiv, Ukraine (UA)' : 'Kyiv, Ukraine'}
         />
       </div>
 
@@ -123,7 +128,7 @@ export const ProjectFormUI: React.FC<ProjectFormUIProps> = (p) => {
             className="w-full border p-2 rounded"
             disabled={hasRange}
           />
-          <p className="text-xs text-gray-500 mt-1">или используй период ниже</p>
+          <p className="text-xs text-gray-500 mt-1">or use the period below</p>
         </div>
         <div>
           <label className="block mb-2 font-medium">Period start</label>
@@ -149,16 +154,17 @@ export const ProjectFormUI: React.FC<ProjectFormUIProps> = (p) => {
 
       {/* Description */}
       <div>
-        <label className="block mb-2 font-medium">Description ({p.activeLang.toUpperCase()})</label>
+        <label className="block mb-2 font-medium">Description ({lang.toUpperCase()})</label>
         <ReactQuill
+          key={`desc-${lang}`} 
           theme="snow"
-          value={p.form.descriptionHtml[p.activeLang]}
-          onChange={(html) => p.setDesc(p.activeLang, html)}
+          value={p.form.descriptionHtml[lang] || ''}
+          onChange={(html) => p.setDesc(lang, html)}
           modules={quillModules as any}
           formats={quillFormats}
           className="bg-white rounded"
         />
-        <p className="text-xs text-gray-500 mt-1">Ссылки сохранятся и будут кликабельны.</p>
+        <p className="text-xs text-gray-500 mt-1">Links will be saved and remain clickable.</p>
       </div>
 
       {/* Images */}
@@ -237,7 +243,7 @@ export const ProjectFormUI: React.FC<ProjectFormUIProps> = (p) => {
               <input
                 value={u}
                 onChange={(e) => p.setYouTubeUrl(i, e.target.value)}
-                placeholder="https://youtu.be/... или https://www.youtube.com/watch?v=..."
+                placeholder="https://youtu.be/... or https://www.youtube.com/watch?v=..."
                 className="flex-1 border rounded px-3 py-2"
               />
               {p.form.youtubeUrls.length > 1 && (

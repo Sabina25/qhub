@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { useTranslation } from '../context/TranslationContext';
 import { useImageUpload } from './useImageUpload';
@@ -8,7 +8,7 @@ import { ensureAnchorAttrs } from '../utils/editor';
 export const langs: Lang[] = ['ua', 'en'];
 
 export const defaultForm: FormState = {
-  title: { ua: '', en: '' },
+  title:   { ua: '', en: '' },
   excerpt: { ua: '', en: '' },
   image: '',
   date: '',
@@ -16,23 +16,26 @@ export const defaultForm: FormState = {
   featured: false,
 };
 
+// helper to avoid sharing object references
+const cloneDefaultForm = (): FormState => JSON.parse(JSON.stringify(defaultForm));
+
 export function useCreateNewsLogic() {
   const { user } = useAuth();
   const { lang } = useTranslation();
 
-  // данные с Firestore (новости)
+  // Firestore
   const { rows, loading, loadRows, addOrUpdate, remove } = useNews();
 
-  // загрузка изображений в storage
+  // storage upload
   const { uploading, progress, uploadImage, resetUpload } = useImageUpload();
 
-  // локальное состояние формы
+  // local state
   const [activeLang, setActiveLang] = useState<Lang>('ua');
-  const [form, setForm] = useState<FormState>(defaultForm);
+  const [form, setForm] = useState<FormState>(cloneDefaultForm());
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // файл/превью
+  // file/preview
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -52,12 +55,13 @@ export function useCreateNewsLogic() {
     []
   );
 
+  // IMPORTANT: bind by language (no race with activeLang)
   const onQuillChange = useCallback(
-    (html: string) => {
+    (l: Lang, html: string) => {
       const clean = ensureAnchorAttrs(html);
-      setForm((p) => ({ ...p, excerpt: { ...p.excerpt, [activeLang]: clean } }));
+      setForm((p) => ({ ...p, excerpt: { ...p.excerpt, [l]: clean } }));
     },
-    [activeLang]
+    []
   );
 
   const onImageInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
@@ -67,7 +71,7 @@ export function useCreateNewsLogic() {
   const onImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0] || null;
     if (f && !f.type.startsWith('image/')) {
-      setError('Выберите файл изображения (jpg, png, webp).');
+      setError('Please choose an image file (jpg, png, webp).');
       return;
     }
     setImageFile(f);
@@ -81,10 +85,10 @@ export function useCreateNewsLogic() {
     setForm((p) => ({ ...p, image: '' }));
   };
 
-  // сброс
+  // reset
   const resetForm = useCallback(() => {
     setEditingId(null);
-    setForm(defaultForm);
+    setForm(cloneDefaultForm());
     setImageFile(null);
     setPreviewUrl('');
     setError(null);
@@ -94,20 +98,27 @@ export function useCreateNewsLogic() {
     if (fileRef.current) fileRef.current.value = '';
   }, [resetUpload]);
 
-  // edit -> форма
+  // edit -> form
   const startEdit = useCallback((r: Row) => {
     setEditingId(r.id);
+
+    const title: L10n<string> =
+      typeof r.title === 'string' ? { ua: r.title, en: r.title } : (r.title as L10n<string>) || { ua: '', en: '' };
+
+    const excerpt: L10n<string> =
+      typeof r.excerpt === 'string'
+        ? { ua: r.excerpt || '', en: r.excerpt || '' }
+        : ((r.excerpt as L10n<string>) || { ua: '', en: '' });
+
     setForm({
-      title: typeof r.title === 'string' ? { ua: r.title, en: r.title } : (r.title as L10n<string>),
-      excerpt:
-        typeof r.excerpt === 'string'
-          ? { ua: r.excerpt || '', en: r.excerpt || '' }
-          : ((r.excerpt as L10n<string>) || { ua: '', en: '' }),
+      title:   { ua: title.ua ?? '',   en: title.en ?? '' },
+      excerpt: { ua: excerpt.ua ?? '', en: excerpt.en ?? '' },
       image: r.image || '',
       date: r.dateYMD || '',
       categoryKey: r.categoryKey || '',
-      featured: r.featured,
+      featured: !!r.featured,
     });
+
     setImageFile(null);
     setPreviewUrl(r.image || '');
     setActiveLang('ua');
@@ -117,7 +128,7 @@ export function useCreateNewsLogic() {
   // delete
   const onDelete = useCallback(
     async (id: string) => {
-      if (!confirm('Удалить новость?')) return;
+      if (!confirm('Delete this news item?')) return;
       await remove(id);
       await loadRows();
       if (editingId === id) resetForm();
@@ -144,19 +155,19 @@ export function useCreateNewsLogic() {
         resetForm();
       } catch (err: any) {
         console.error(err);
-        setError(err?.message || 'Не удалось сохранить.');
+        setError(err?.message || 'Failed to save.');
       }
     },
     [form, imageFile, uploadImage, addOrUpdate, editingId, user?.email, loadRows, resetForm]
   );
 
   return {
-    // внешние для страницы
+    // page-facing
     rows,
     loading,
     lang,
 
-    // форма
+    // form
     activeLang,
     setActiveLang,
     form,
@@ -166,11 +177,11 @@ export function useCreateNewsLogic() {
     uploading,
     progress,
 
-    // поля формы
+    // fields
     setTitle,
-    onQuillChange,
+    onQuillChange, // (lang, html)
 
-    // файл
+    // file
     fileKey,
     fileRef,
     previewUrl,
@@ -178,12 +189,12 @@ export function useCreateNewsLogic() {
     onImageChange,
     clearImage,
 
-    // сабмит/удаление/редактирование
+    // actions
     onSubmit,
     startEdit,
     onDelete,
 
-    // утилиты
+    // utils
     resetForm,
   };
 }

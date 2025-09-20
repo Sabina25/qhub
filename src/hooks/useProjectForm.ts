@@ -27,9 +27,26 @@ export const defaultForm: ProjectForm = {
 
 const MAX_FILE_MB = 15;
 
+// ---- helpers for safe cloning ----
+function cloneL10nString(src?: L10n<string> | string): L10n<string> {
+  if (!src) return { ua: '', en: '' };
+  if (typeof src === 'string') return { ua: src, en: src };
+  return { ua: src.ua ?? '', en: src.en ?? '' };
+}
+function cloneL10nLinks(src?: L10n<LinkRef[]> | LinkRef[]): L10n<LinkRef[]> {
+  if (!src) return { ua: [], en: [] };
+  if (Array.isArray(src)) return { ua: [...src], en: [...src] };
+  return {
+    ua: Array.isArray(src.ua) ? [...src.ua] : [],
+    en: Array.isArray(src.en) ? [...src.en] : [],
+  };
+}
+function cloneArray<T>(a?: T[]): T[] { return Array.isArray(a) ? [...a] : []; }
+function cloneFormBase(): ProjectForm { return JSON.parse(JSON.stringify(defaultForm)); }
+
 export function useProjectForm() {
   const [activeLang, setActiveLang] = useState<Lang>('ua');
-  const [form, setForm] = useState<ProjectForm>(defaultForm);
+  const [form, setForm] = useState<ProjectForm>(cloneFormBase());
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -60,7 +77,7 @@ export function useProjectForm() {
   // ------- effects: previews -------
   useEffect(() => {
     if (!coverFile) {
-      setCoverPreview(''); 
+      setCoverPreview('');
       return;
     }
     const url = URL.createObjectURL(coverFile);
@@ -128,15 +145,20 @@ export function useProjectForm() {
     }));
   }, []);
 
-  // youtube
+  // ------- youtube (без гонок состояния) -------
   const setYouTubeUrl = (i: number, val: string) => {
-    const arr = [...form.youtubeUrls];
-    arr[i] = val;
-    setField('youtubeUrls', arr);
+    setForm(prev => {
+      const arr = [...prev.youtubeUrls];
+      arr[i] = val;
+      return { ...prev, youtubeUrls: arr };
+    });
   };
-  const addVideoField = () => setField('youtubeUrls', [...form.youtubeUrls, '']);
-  const removeVideoField = (i: number) =>
-    setField('youtubeUrls', form.youtubeUrls.filter((_, idx) => idx !== i));
+  const addVideoField = () => {
+    setForm(prev => ({ ...prev, youtubeUrls: [...prev.youtubeUrls, ''] }));
+  };
+  const removeVideoField = (i: number) => {
+    setForm(prev => ({ ...prev, youtubeUrls: prev.youtubeUrls.filter((_, idx) => idx !== i) }));
+  };
 
   // ------- files handlers -------
   const onCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -175,7 +197,7 @@ export function useProjectForm() {
 
   // ------- flow -------
   const resetForm = useCallback(() => {
-    setForm(defaultForm);
+    setForm(cloneFormBase());
     setEditingId(null);
     setError(null);
     setActiveLang('ua');
@@ -186,33 +208,26 @@ export function useProjectForm() {
   const startEdit = (row: any) => {
     setEditingId(row.id);
 
-    const title: L10n<string> =
-      typeof row.title === 'string' ? { ua: row.title, en: row.title } : (row.title || { ua: '', en: '' });
-    const descriptionHtml: L10n<string> =
-      typeof row.descriptionHtml === 'string'
-        ? { ua: row.descriptionHtml, en: row.descriptionHtml }
-        : (row.descriptionHtml || { ua: '', en: '' });
-    const descriptionLinks: L10n<LinkRef[]> =
-      Array.isArray(row.descriptionLinks)
-        ? { ua: row.descriptionLinks, en: row.descriptionLinks }
-        : (row.descriptionLinks || { ua: [], en: [] });
-    const location: L10n<string> =
-      typeof row.location === 'string' ? { ua: row.location, en: row.location } : (row.location || { ua: '', en: '' });
+    const title = cloneL10nString(row.title);
+    const descriptionHtml = cloneL10nString(row.descriptionHtml);
+    const descriptionLinks = cloneL10nLinks(row.descriptionLinks);
+    const location = cloneL10nString(row.location);
 
     setForm({
-      ...defaultForm,
+      ...cloneFormBase(),
       title,
       descriptionHtml,
       descriptionLinks,
       image: row.image || '',
-      gallery: row.gallery || [],
+      gallery: cloneArray(row.gallery),
       dateYMD: row.dateYMD || '',
       dateStartYMD: row.dateStartYMD || '',
       dateEndYMD: row.dateEndYMD || '',
       location,
-      youtubeUrls: Array.isArray(row.youtubeUrls) && row.youtubeUrls.length ? row.youtubeUrls : [''],
+      youtubeUrls: Array.isArray(row.youtubeUrls) && row.youtubeUrls.length ? [...row.youtubeUrls] : [''],
       featured: !!row.featured,
     });
+
     setCoverFile(null);
     setGalleryFiles([]);
     setCoverPreview(row.image || '');

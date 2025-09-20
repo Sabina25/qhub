@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 
 import { fetchProjects, ProjectDoc } from '../../data/projects';
-import { FancyCarousel } from '../FancyCarousel'; // <— проверь путь
+import { FancyCarousel } from '../FancyCarousel';
 
 type Lang = 'ua' | 'en';
 
@@ -26,6 +26,8 @@ function formatYMD(ymd?: string, locale = 'uk-UA') {
   if (!y || !m || !d) return '';
   return new Date(y, m - 1, d).toLocaleDateString(locale);
 }
+
+const FIXED_H = 'h-[460px]'; // ← единая высота карточки/слайда
 
 const Projects: React.FC = () => {
   const { t, lang } = useTranslation();
@@ -61,20 +63,33 @@ const Projects: React.FC = () => {
   const slides = useMemo(() => {
     const locale = (lang as Lang) === 'ua' ? 'uk-UA' : 'en-GB';
     return items.map((pr) => {
-      const title = pickL10n(pr.title, lang as Lang);
-      const descHtml = pickL10n((pr as any).descriptionHtml, lang as Lang);
-      const description = stripHtmlToText(descHtml, 240);
+      const title = pickL10n(pr.title as any, lang as Lang);
+  
+      const descHtmlRaw = pickL10n((pr as any).descriptionHtml, lang as Lang);
+      const description = stripHtmlToText(descHtmlRaw || '', 240);
 
+      const funding = pickL10n((pr as any).funding, lang as Lang);
+      const durationRaw = pickL10n((pr as any).duration, lang as Lang);
+      const participants = pickL10n((pr as any).participants, lang as Lang);
+      const location = pickL10n((pr as any).location, lang as Lang);
+  
+      const duration = durationRaw || formatYMD(pr.dateYMD, locale);
+  
+      const image = pickL10n((pr as any).image, lang as Lang) || (pr as any).image || '';
+  
       return {
         ...pr,
         title,
         description,
-        funding: (pr as any).funding || '',
-        duration: (pr as any).duration || formatYMD(pr.dateYMD, locale),
-        participants: (pr as any).participants || '',
+        funding: funding || '',
+        duration: duration || '',
+        participants: participants || '',
+        location: location || '',
+        image,
       };
     });
   }, [items, lang]);
+  
 
   return (
     <section id="projects" className="py-20 bg-white">
@@ -83,8 +98,8 @@ const Projects: React.FC = () => {
           <h2 className="text-4xl font-bold mb-4 font-raleway text-gray-900">
             {t('projects.title')}
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto font-notosans">
-            {t('projects.subtitle')}
+          <p className="mt-4 text-gray-500 max-w-3xl mx-auto text-lg leading-relaxed">
+            {t('projects.intro')}
           </p>
         </div>
 
@@ -95,41 +110,32 @@ const Projects: React.FC = () => {
         )}
 
         {loading ? (
-          <div className="h-[420px] bg-gray-100 rounded-lg animate-pulse" />
+          <div className={`${FIXED_H} bg-gray-100 rounded-lg animate-pulse`} />
         ) : items.length === 0 ? (
           <div className="text-center text-gray-500">No projects yet</div>
         ) : (
           <FancyCarousel
             className="mt-4"
             autoplayMs={7000}
-            dates={slides.map(pr => pr.dateYMD || '')}
-            formatDate={(d) => {
-              const locale = lang === 'ua' ? 'uk-UA' : 'en-GB';
-              if (d instanceof Date) return d.toLocaleDateString(locale);
-              const m = String(d).match(/^(\d{4})-(\d{2})-(\d{2})$/);
-              if (m) {
-                const [_, y, mo, da] = m;
-                return new Date(+y, +mo - 1, +da).toLocaleDateString(locale);
-              }
-              return String(d);
-            }}
-            datePlacement="top-right"
+            showOverlayDate={false}
+            fixedHeight={FIXED_H}
           >
             {slides.map((pr, i) => (
               <div key={pr.id || `slide-${i}`}>
-                <div className="flex flex-col lg:flex-row min-h-[420px]">
-                  <div className="relative lg:w-1/2 w-full">
+                <div className={`flex flex-col lg:flex-row ${FIXED_H}`}>
+                  {/* LEFT — image */}
+                  <div className="relative lg:w-1/2 w-full h-1/2 lg:h-full">
                     {pr.image ? (
                       <img
                         src={pr.image}
                         alt={pr.title}
-                        className="h-80 lg:h-full w-full object-cover"
+                        className="h-full w-full object-cover"
                         loading="lazy"
                       />
                     ) : (
-                      <div className="h-80 lg:h-full w-full bg-gray-200" />
+                      <div className="h-full w-full bg-gray-200" />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
                     {pr.featured && (
                       <span className="absolute top-3 left-3 bg-orange-500 text-white px-3 py-1 rounded-lg text-xs font-semibold shadow">
                         Featured
@@ -138,18 +144,25 @@ const Projects: React.FC = () => {
                   </div>
 
                   {/* RIGHT — content */}
-                  <div className="lg:w-1/2 w-full p-8 flex flex-col justify-between">
+                  <div className="lg:w-1/2 w-full p-8 flex flex-col justify-between h-1/2 lg:h-full">
                     <div>
-                      <h3 className="font-raleway uppercase text-3xl text-gray-900 mb-4 line-clamp-2">
+                      <h3 className="font-raleway uppercase text-3xl text-gray-900 mb-2 line-clamp-2">
                         {pr.title}
                       </h3>
 
-                      {(pr.funding || pr.duration || pr.participants) && (
-                        <div className="text-sm font-semibold mb-3 flex flex-wrap gap-x-2 gap-y-1 text-[#319795]"> {/* brand */}
-                          {pr.funding && <span>{pr.funding}</span>}
-                          {pr.funding && pr.duration && <span>•</span>}
+                      {/* Дата и локация под тайтлом */}
+                      {(pr.duration || pr.location) && (
+                        <div className="text-sm text-gray-600 mb-4 flex flex-wrap items-center gap-x-2 gap-y-1">
                           {pr.duration && <span>{pr.duration}</span>}
-                          {(pr.funding || pr.duration) && pr.participants && <span>•</span>}
+                          {pr.duration && pr.location && <span>•</span>}
+                          {pr.location && <span>{pr.location}</span>}
+                        </div>
+                      )}
+
+                      {(pr.funding || pr.participants) && (
+                        <div className="text-sm font-semibold mb-3 flex flex-wrap gap-x-2 gap-y-1 text-[#319795]">
+                          {pr.funding && <span>{pr.funding}</span>}
+                          {pr.funding && pr.participants && <span>•</span>}
                           {pr.participants && <span>{pr.participants}</span>}
                         </div>
                       )}
@@ -163,7 +176,7 @@ const Projects: React.FC = () => {
                       onClick={() => navigate(`/projects/${pr.id}`)}
                       className="mt-6 self-start rounded-lg bg-orange-500 px-5 py-2 text-white font-semibold shadow
                       hover:bg-orange-600 active:scale-[0.99] transition
-                      focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-400/40"  // brand
+                      focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-400/40"
                     >
                       {t('projects.button_more')}
                     </button>

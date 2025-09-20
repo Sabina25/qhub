@@ -10,7 +10,9 @@ type FancyCarouselProps = {
   dates?: Array<string | Date>;
   formatDate?: (d: string | Date, index: number) => string;
   datePlacement?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-  pauseOnHover?: boolean; 
+  pauseOnHover?: boolean;
+  showOverlayDate?: boolean;          // ← новое
+  fixedHeight?: string;               // ← новое (например 'h-[460px]')
 };
 
 function ScaleSlides({ dimInactive = false } = {}) {
@@ -26,11 +28,7 @@ function ScaleSlides({ dimInactive = false } = {}) {
         const isActive = dist === 0;
         const scale = isActive ? 1 : 1 - Math.min(0.12, dist * 0.08);
         el.style.transform = `scale(${scale})`;
-        if (dimInactive) {
-          el.style.opacity = isActive ? '1' : String(Math.max(0.7, 1 - dist * 0.25));
-        } else {
-          el.style.opacity = '1';
-        }
+        el.style.opacity = dimInactive ? (isActive ? '1' : String(Math.max(0.7, 1 - dist * 0.25))) : '1';
       });
     };
 
@@ -39,10 +37,9 @@ function ScaleSlides({ dimInactive = false } = {}) {
   };
 }
 
-
 function defaultFormatDate(d: string | Date) {
   if (d instanceof Date) return d.toLocaleDateString();
-  const m = d.match?.(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const m = (typeof d === 'string') ? d.match(/^(\d{4})-(\d{2})-(\d{2})$/) : null;
   if (m) {
     const [_, y, mo, da] = m;
     return new Date(+y, +mo - 1, +da).toLocaleDateString();
@@ -65,6 +62,8 @@ export const FancyCarousel: React.FC<FancyCarouselProps> = ({
   formatDate = defaultFormatDate,
   datePlacement = 'top-right',
   pauseOnHover = true,
+  showOverlayDate = false,         
+  fixedHeight,                     
 }) => {
   const [current, setCurrent] = useState(0);
   const slidesCount = useMemo(() => React.Children.count(children), [children]);
@@ -140,8 +139,11 @@ export const FancyCarousel: React.FC<FancyCarouselProps> = ({
       <div ref={sliderRef} className="keen-slider">
         {React.Children.map(children, (child, i) => (
           <div key={i} className="keen-slider__slide p-1">
-            <div className="relative rounded-2xl overflow-hidden shadow-xl bg-white ring-1 ring-black/5 transition-transform will-change-transform">
-              {dateChip && current === i && (
+            <div
+              className={`relative rounded-2xl overflow-hidden shadow-xl bg-white ring-1 ring-black/5 transition-transform will-change-transform ${fixedHeight ?? ''}`}
+            >
+              {/* оверлей-дата отключается флагом */}
+              {showOverlayDate && dateChip && current === i && (
                 <div className={`absolute ${placementToClass[datePlacement]} z-20`}>
                   <span className="rounded-full bg-white/90 backdrop-blur px-3 py-1 text-sm font-medium text-gray-800 shadow">
                     {dateChip}
@@ -178,16 +180,11 @@ export const FancyCarousel: React.FC<FancyCarouselProps> = ({
           <button
             key={i}
             onClick={() => { instanceRef.current?.moveToIdx(i); startRef.current = performance.now(); setProgress(0); }}
-            className={`h-2 w-2 rounded-full transition ${current === i ? 'w-6 bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'}`}
+            className={`h-2 w-2 rounded-full transition ${i === (current % slidesCount) ? 'w-6 bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'}`}
             aria-label={`Go to slide ${i + 1}`}
           />
         ))}
       </div>
-
-      {/* Прогресс */}
-      {/* <div className="mx-auto mt-3 h-1 w-40 overflow-hidden rounded bg-gray-200">
-        <div className="h-full bg-blue-600 transition-[width]" style={{ width: `${progress}%` }} />
-      </div> */}
     </div>
   );
 };

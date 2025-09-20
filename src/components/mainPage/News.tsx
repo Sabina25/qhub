@@ -149,7 +149,7 @@ const News: React.FC = () => {
                 </h3>
 
                 <div
-                  className="font-sans text-gray-600 mb-6 text-lg leading-relaxed line-clamp-6 prose"
+                  className="font-sans text-gray-600 mb-6 text-lg leading-relaxed line-clamp-5 prose"
                   dangerouslySetInnerHTML={{ __html: featured.excerptHtml }}
                 />
 

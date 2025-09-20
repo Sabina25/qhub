@@ -29,7 +29,9 @@ export type CreateNewsFormProps = {
 
   // inputs
   setTitle: (l: Lang, v: string) => void;
-  onQuillChange: (html: string) => void;
+
+  /** IMPORTANT: bind by language to avoid cross-language overwrites */
+  onQuillChange: (l: Lang, html: string) => void;
   onSubmit: (e: React.FormEvent) => void;
 
   // image
@@ -46,10 +48,14 @@ export type CreateNewsFormProps = {
 };
 
 export const CreateNewsForm: React.FC<CreateNewsFormProps> = (p) => {
+  const lang = p.activeLang;
+
   return (
     <form onSubmit={p.onSubmit} className="space-y-6">
       {p.error && (
-        <div className="mb-4 rounded border border-red-200 bg-red-50 px-4 py-2 text-red-700">{p.error}</div>
+        <div className="mb-4 rounded border border-red-200 bg-red-50 px-4 py-2 text-red-700">
+          {p.error}
+        </div>
       )}
 
       {/* Lang tabs */}
@@ -59,9 +65,7 @@ export const CreateNewsForm: React.FC<CreateNewsFormProps> = (p) => {
             key={l}
             type="button"
             onClick={() => p.setActiveLang(l)}
-            className={`px-3 py-1 rounded ${
-              p.activeLang === l ? 'bg-blue-600 text-white' : 'bg-gray-100'
-            }`}
+            className={`px-3 py-1 rounded ${lang === l ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}
           >
             {l.toUpperCase()}
           </button>
@@ -70,12 +74,13 @@ export const CreateNewsForm: React.FC<CreateNewsFormProps> = (p) => {
 
       {/* Title */}
       <div>
-        <label className="block mb-2 font-medium">Title ({p.activeLang.toUpperCase()})</label>
+        <label className="block mb-2 font-medium">Title ({lang.toUpperCase()})</label>
         <input
-          value={p.form.title[p.activeLang]}
-          onChange={(e) => p.setTitle(p.activeLang, e.target.value)}
+          key={`title-${lang}`}                  
+          value={p.form.title[lang] || ''}
+          onChange={(e) => p.setTitle(lang, e.target.value)}  
           className="w-full border p-2 rounded"
-          placeholder={p.activeLang === 'ua' ? 'Заголовок' : 'Title'}
+          placeholder={lang === 'ua' ? 'Title in Ukrainian' : 'Title'}
           minLength={3}
           required
         />
@@ -138,17 +143,18 @@ export const CreateNewsForm: React.FC<CreateNewsFormProps> = (p) => {
 
       {/* Content */}
       <div>
-        <label className="block mb-2 font-medium">Content ({p.activeLang.toUpperCase()})</label>
+        <label className="block mb-2 font-medium">Content ({lang.toUpperCase()})</label>
         <ReactQuill
+          key={`excerpt-${lang}`}                 
           theme="snow"
-          value={p.form.excerpt[p.activeLang]}
-          onChange={p.onQuillChange}
+          value={p.form.excerpt[lang] || ''}
+          onChange={(html) => p.onQuillChange(lang, html)}  
           className="bg-white rounded"
           modules={modules}
           formats={quillFormats}
         />
         <p className="text-xs text-gray-500 mt-1">
-          Подсказка: выделите текст → кнопка “link” → вставьте URL (https://…).
+          Tip: select text → “link” button → paste URL (https://…).
         </p>
       </div>
 
