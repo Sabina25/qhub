@@ -1,13 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 
 import Header from '../components/header/Header';
 import Footer from '../components/Footer';
+import RelatedProjects from '../components/RelatedProjects';
 import { useTranslation } from '../context/TranslationContext';
 import VideoGallery from '../components/VideoGallery';
 
-import { fetchProjectById, ProjectDoc } from '../data/projects';
+import { fetchProjectById, fetchProjects, ProjectDoc } from '../data/projects';
 
 // --- helpers ---
 type Lang = 'ua' | 'en';
@@ -47,43 +48,17 @@ function formatRange(p: ProjectDoc, locale: string) {
   return formatYMD(p.dateStartYMD || p.dateEndYMD, locale);
 }
 
-// --- нормализация YouTube ссылок ---
-function extractYouTubeId(raw: string): string | null {
-  if (!raw) return null;
-  const s = raw.trim();
-
-  const mShort = s.match(/youtu\.be\/([a-zA-Z0-9_-]{6,})/);
-  if (mShort?.[1]) return mShort[1];
-
-  const mShorts = s.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{6,})/);
-  if (mShorts?.[1]) return mShorts[1];
-
-  const mEmbed = s.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{6,})/);
-  if (mEmbed?.[1]) return mEmbed[1];
-
-  try {
-    const url = new URL(s);
-    const v = url.searchParams.get('v');
-    if (v) return v;
-  } catch {
-    try {
-      const url2 = new URL('https://' + s);
-      const v2 = url2.searchParams.get('v');
-      if (v2) return v2;
-    } catch {}
-  }
-
-  return null;
-}
-
 const ProjectDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { lang } = useTranslation(); // 'ua' | 'en'
+  const { lang, t } = useTranslation(); 
   const locale = lang === 'ua' ? 'uk-UA' : 'en-GB';
 
   const [proj, setProj] = useState<ProjectDoc | null>(null);
+  const [related, setRelated] = useState<ProjectDoc[]>([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!id) return;
@@ -92,6 +67,12 @@ const ProjectDetailPage: React.FC = () => {
         setLoading(true);
         const data = await fetchProjectById(id);
         setProj(data);
+
+        // related projects
+        const all = await fetchProjects();
+        const others = all.filter((p) => p.id !== id);
+        const shuffled = others.sort(() => 0.5 - Math.random());
+        setRelated(shuffled.slice(0, 3));
       } catch (e: any) {
         console.error(e);
         setErr(e?.message || 'Failed to load project');
@@ -107,9 +88,7 @@ const ProjectDetailPage: React.FC = () => {
   const sanitizedHtml = useMemo(() => enhanceHtml(descHtml || ''), [descHtml]);
 
   const dateStr = useMemo(() => (proj ? formatRange(proj, locale) : ''), [proj, locale]);
-
   const allVideoUrls = useMemo(() => proj?.youtubeUrls || [], [proj?.youtubeUrls]);
-
 
   if (loading) return <div className="max-w-4xl mx-auto px-4 py-20">Loading…</div>;
   if (err) return <div className="max-w-4xl mx-auto px-4 py-20 text-red-600">{err}</div>;
@@ -130,8 +109,13 @@ const ProjectDetailPage: React.FC = () => {
             />
           </div>
         )}
+        
+        {/* Back Button */}
+        <Link to="/events" className="text-blue-600 underline inline-block py-8">
+          ← {t('projects.back') || 'Back to Projects'}
+        </Link>
 
-        <h1 className="text-4xl font-bold mt-8 mb-2">{title || '—'}</h1>
+        <h1 className="text-4xl font-bold mt-4 mb-2">{title || '—'}</h1>
 
         {(dateStr || location) && (
           <p className="text-gray-500 mb-6">
@@ -169,6 +153,9 @@ const ProjectDetailPage: React.FC = () => {
             <VideoGallery urls={allVideoUrls} />
           </section>
         )}
+
+        {/* Related Projects */}
+        <RelatedProjects currentId={id!} limit={3} className="mt-16" />
       </main>
 
       <Footer />

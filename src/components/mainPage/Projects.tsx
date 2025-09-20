@@ -162,9 +162,8 @@ const Projects: React.FC = () => {
                           {pr.funding && pr.participants && <span>•</span>}
                           {pr.participants && <span>{pr.participants}</span>}
                         </div>
-                      )}
-
-                      <p className="text-[15px] sm:text-base text-gray-700 leading-relaxed font-notosans line-clamp-6 sm:line-clamp-5">
+                      )} 
+                      <p className="text-[15px] sm:text-base text-gray-600  mb-6 text-lg leading-relaxed font-sans line-clamp-6 sm:line-clamp-5">
                         {pr.description}
                       </p>
                     </div>
