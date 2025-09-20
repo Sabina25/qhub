@@ -111,7 +111,7 @@ const ProjectDetailPage: React.FC = () => {
         )}
         
         {/* Back Button */}
-        <Link to="/events" className="text-blue-600 underline inline-block py-8">
+        <Link to="/projects" className="text-blue-600 underline inline-block py-8">
           ← {t('projects.back') || 'Back to Projects'}
         </Link>
 
