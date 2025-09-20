@@ -27,8 +27,7 @@ function formatYMD(ymd?: string, locale = 'uk-UA') {
   return new Date(y, m - 1, d).toLocaleDateString(locale);
 }
 
-// фикс-«высота» только на >= md; на мобилке высота авто
-const FIXED_H = 'md:h-[420px] lg:h-[480px]';
+const FIXED_H = 'md:h-[320px] lg:h-[380px]';
 
 const Projects: React.FC = () => {
   const { t, lang } = useTranslation();
@@ -96,9 +95,6 @@ const Projects: React.FC = () => {
           <h2 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4 font-raleway text-gray-900">
             {t('projects.title')}
           </h2>
-          <p className="text-base sm:text-xl text-gray-600 max-w-2xl mx-auto font-notosans">
-            {t('projects.subtitle')}
-          </p>
           <p className="mt-3 sm:mt-4 text-gray-500 max-w-3xl mx-auto text-[15px] sm:text-lg leading-relaxed">
             {t('projects.intro')}
           </p>
@@ -119,11 +115,11 @@ const Projects: React.FC = () => {
             className="mt-4"
             autoplayMs={7000}
             showOverlayDate={false}
-            fixedHeight={FIXED_H} // применится только на md+
+            fixedHeight={FIXED_H} 
           >
             {slides.map((pr, i) => (
               <div key={pr.id || `slide-${i}`}>
-                {/* на мобилке — стэк без фикс-высоты, с md включается FIXED_H */}
+               
                 <div className={`flex flex-col lg:flex-row ${FIXED_H}`}>
                   {/* LEFT — image */}
                   <div className="relative w-full lg:w-1/2 h-52 xs:h-60 sm:h-64 md:h-full">
