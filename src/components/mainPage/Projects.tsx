@@ -27,7 +27,8 @@ function formatYMD(ymd?: string, locale = 'uk-UA') {
   return new Date(y, m - 1, d).toLocaleDateString(locale);
 }
 
-const FIXED_H = 'h-[460px]'; // ← единая высота карточки/слайда
+// фикс-«высота» только на >= md; на мобилке высота авто
+const FIXED_H = 'md:h-[420px] lg:h-[480px]';
 
 const Projects: React.FC = () => {
   const { t, lang } = useTranslation();
@@ -64,7 +65,6 @@ const Projects: React.FC = () => {
     const locale = (lang as Lang) === 'ua' ? 'uk-UA' : 'en-GB';
     return items.map((pr) => {
       const title = pickL10n(pr.title as any, lang as Lang);
-  
       const descHtmlRaw = pickL10n((pr as any).descriptionHtml, lang as Lang);
       const description = stripHtmlToText(descHtmlRaw || '', 240);
 
@@ -72,11 +72,10 @@ const Projects: React.FC = () => {
       const durationRaw = pickL10n((pr as any).duration, lang as Lang);
       const participants = pickL10n((pr as any).participants, lang as Lang);
       const location = pickL10n((pr as any).location, lang as Lang);
-  
+
       const duration = durationRaw || formatYMD(pr.dateYMD, locale);
-  
       const image = pickL10n((pr as any).image, lang as Lang) || (pr as any).image || '';
-  
+
       return {
         ...pr,
         title,
@@ -89,16 +88,18 @@ const Projects: React.FC = () => {
       };
     });
   }, [items, lang]);
-  
 
   return (
-    <section id="projects" className="py-20 bg-white">
+    <section id="projects" className="py-16 sm:py-20 bg-white">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4 font-raleway text-gray-900">
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4 font-raleway text-gray-900">
             {t('projects.title')}
           </h2>
-          <p className="mt-4 text-gray-500 max-w-3xl mx-auto text-lg leading-relaxed">
+          <p className="text-base sm:text-xl text-gray-600 max-w-2xl mx-auto font-notosans">
+            {t('projects.subtitle')}
+          </p>
+          <p className="mt-3 sm:mt-4 text-gray-500 max-w-3xl mx-auto text-[15px] sm:text-lg leading-relaxed">
             {t('projects.intro')}
           </p>
         </div>
@@ -110,7 +111,7 @@ const Projects: React.FC = () => {
         )}
 
         {loading ? (
-          <div className={`${FIXED_H} bg-gray-100 rounded-lg animate-pulse`} />
+          <div className={`h-[260px] ${FIXED_H} bg-gray-100 rounded-lg animate-pulse`} />
         ) : items.length === 0 ? (
           <div className="text-center text-gray-500">No projects yet</div>
         ) : (
@@ -118,13 +119,14 @@ const Projects: React.FC = () => {
             className="mt-4"
             autoplayMs={7000}
             showOverlayDate={false}
-            fixedHeight={FIXED_H}
+            fixedHeight={FIXED_H} // применится только на md+
           >
             {slides.map((pr, i) => (
               <div key={pr.id || `slide-${i}`}>
+                {/* на мобилке — стэк без фикс-высоты, с md включается FIXED_H */}
                 <div className={`flex flex-col lg:flex-row ${FIXED_H}`}>
                   {/* LEFT — image */}
-                  <div className="relative lg:w-1/2 w-full h-1/2 lg:h-full">
+                  <div className="relative w-full lg:w-1/2 h-52 xs:h-60 sm:h-64 md:h-full">
                     {pr.image ? (
                       <img
                         src={pr.image}
@@ -137,22 +139,21 @@ const Projects: React.FC = () => {
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
                     {pr.featured && (
-                      <span className="absolute top-3 left-3 bg-orange-500 text-white px-3 py-1 rounded-lg text-xs font-semibold shadow">
+                      <span className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-orange-500 text-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-semibold shadow">
                         Featured
                       </span>
                     )}
                   </div>
 
                   {/* RIGHT — content */}
-                  <div className="lg:w-1/2 w-full p-8 flex flex-col justify-between h-1/2 lg:h-full">
+                  <div className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-8 flex flex-col justify-between">
                     <div>
-                      <h3 className="font-raleway uppercase text-3xl text-gray-900 mb-2 line-clamp-2">
+                      <h3 className="font-raleway uppercase text-2xl sm:text-3xl text-gray-900 mb-2 line-clamp-3 sm:line-clamp-2">
                         {pr.title}
                       </h3>
 
-                      {/* Дата и локация под тайтлом */}
                       {(pr.duration || pr.location) && (
-                        <div className="text-sm text-gray-600 mb-4 flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <div className="text-[13px] sm:text-sm text-gray-600 mb-3 sm:mb-4 flex flex-wrap items-center gap-x-2 gap-y-1">
                           {pr.duration && <span>{pr.duration}</span>}
                           {pr.duration && pr.location && <span>•</span>}
                           {pr.location && <span>{pr.location}</span>}
@@ -160,21 +161,21 @@ const Projects: React.FC = () => {
                       )}
 
                       {(pr.funding || pr.participants) && (
-                        <div className="text-sm font-semibold mb-3 flex flex-wrap gap-x-2 gap-y-1 text-[#319795]">
+                        <div className="text-[13px] sm:text-sm font-semibold mb-2 sm:mb-3 flex flex-wrap gap-x-2 gap-y-1 text-[#319795]">
                           {pr.funding && <span>{pr.funding}</span>}
                           {pr.funding && pr.participants && <span>•</span>}
                           {pr.participants && <span>{pr.participants}</span>}
                         </div>
                       )}
 
-                      <p className="text-gray-700 text-base leading-relaxed font-notosans line-clamp-5">
+                      <p className="text-[15px] sm:text-base text-gray-700 leading-relaxed font-notosans line-clamp-6 sm:line-clamp-5">
                         {pr.description}
                       </p>
                     </div>
 
                     <button
                       onClick={() => navigate(`/projects/${pr.id}`)}
-                      className="mt-6 self-start rounded-lg bg-orange-500 px-5 py-2 text-white font-semibold shadow
+                      className="mt-4 sm:mt-6 self-start rounded-lg bg-orange-500 px-4 sm:px-5 py-2 text-white font-semibold shadow
                       hover:bg-orange-600 active:scale-[0.99] transition
                       focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-400/40"
                     >
