@@ -90,7 +90,7 @@ export const ProjectCard = memo(function ProjectCard({
         </div>
       )}
 
-      <p className="text-gray-700 mb-3 line-clamp-3">{descText}</p>
+      {/* <p className="text-gray-700 mb-3 line-clamp-3">{descText}</p> */}
     </Link>
   );
 });
