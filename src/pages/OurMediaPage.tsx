@@ -1,6 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from '../context/TranslationContext';
+
 import Header from '../components/header/Header';
 import Footer from '../components/Footer';
+
 import { useYouTubeFeed } from '../hooks/useYouTubeFeed';
 import { ShortsRail } from '../components/media/ShortsRail';
 import { VideoGrid } from '../components/media/VideoGrid';
@@ -13,6 +16,8 @@ const CHANNEL_ID =
   import.meta.env.VITE_YT_CHANNEL_ID ?? 'UCm-C1Ix_tf4PnuROw8QRqTg';
 
 const OurMediaPage = () => {
+  const { lang, t } = useTranslation(); 
+  const locale = lang === 'ua' ? 'uk-UA' : 'en-GB';
   const { shorts, longs, loading, err } = useYouTubeFeed(YT_API_KEY, CHANNEL_ID);
 
   // modal
@@ -28,13 +33,9 @@ const OurMediaPage = () => {
     () => (
       <div className="max-w-4xl mx-auto text-center px-4 space-y-4 text-gray-800 mt-10">
         <p className="text-lg font-semibold">
-          <span className="text-blue-700">Crimea Vox</span> — незалежне кримськотатарське медіа, що говорить про Крим
-          таким, яким він є.
+          <span className="text-blue-700">Crimea Vox</span> —  {t('media.info')}
         </p>
-        <p>
-          Це голос півострова, який не затихає. Ми працюємо, щоб повернути Крим у поле української уваги — і
-          утримувати його там постійно, попри окупацію.
-        </p>
+        <p>{t('media.info2')}</p>
       </div>
     ),
     []
@@ -73,7 +74,7 @@ const OurMediaPage = () => {
           {/* LONGS */}
           {loading ? (
             <section>
-              <h2 className="text-xl font-semibold mb-4">Последние видео</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('media.latest_videos')}</h2>
               <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <Skeleton key={i} />
@@ -81,7 +82,7 @@ const OurMediaPage = () => {
               </div>
             </section>
           ) : (
-            <VideoGrid items={longs} onOpen={openVideo} title="Последние видео" />
+            <VideoGrid items={longs} onOpen={openVideo} title={t('media.latest_videos')} />
           )}
 
           <VideoLightbox

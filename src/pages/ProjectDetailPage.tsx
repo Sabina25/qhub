@@ -68,8 +68,6 @@ const ProjectDetailPage: React.FC = () => {
         setLoading(true);
         const data = await fetchProjectById(id);
         setProj(data);
-
-        // Related (рандомные 3)
         const all = await fetchProjects();
         const others = all.filter((p) => p.id !== id);
         const shuffled = others.sort(() => 0.5 - Math.random());

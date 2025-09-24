@@ -64,6 +64,11 @@
     "back": "Back to News",
     "read_also": "Latest news"
   },
+  "media": {
+    "info": "an independent Crimean Tatar media outlet that speaks about Crimea as it really is.",
+    "info2": "This is the voice of the peninsula that never falls silent. We work to bring Crimea back into the field of Ukrainian attention — and to keep it there permanently, despite the occupation.",
+    "latest_videos": "Latest Videos"
+  },
   "common": {
     "loadMore": "Load more"
   },
