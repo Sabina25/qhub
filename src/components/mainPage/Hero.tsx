@@ -7,9 +7,9 @@ const Hero = () => {
   const navigate = useNavigate();
 
   const goLearnMore = () => {
-    const el = document.querySelector('#about');
+    const el = document.querySelector('#organisation');
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    else navigate('/about');
+    else navigate('/organisation');
   };
 
   return (
