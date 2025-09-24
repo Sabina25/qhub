@@ -60,13 +60,13 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
     const ua = String(req.get('user-agent') || '');
     const isBot = BOT_REGEX.test(ua);
 
-    // Парсим тип и id: /events/:id ИЛИ /projects/:id
+    // матчим /events/:id ИЛИ /projects/:id
     const rawUrl = (req as any).originalUrl || req.url || req.path || '';
     const m = rawUrl.match(/\/(events|projects)\/([^/?#]+)/);
     const pathType = (m?.[1] || '') as 'events' | 'projects' | '';
     const id = m?.[2] || '';
 
-    // Язык из ?lang= (по умолчанию 'ua')
+    // язык из ?lang=
     const urlObj = new URL(PUBLIC_ORIGIN + rawUrl);
     const qlang = urlObj.searchParams.get('lang');
     const lang: Lang = qlang === 'en' ? 'en' : 'ua';
@@ -78,19 +78,16 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
       return res.status(200).set('Cache-Control', 'public, max-age=60').send(await idx.text());
     }
 
-    // Ищем документ (сначала по ожидаемой коллекции)
+    // ищем документ: сперва в ожидаемой коллекции
     const tryCols = pathType === 'projects'
       ? ['projects', 'news', 'events']
       : ['news', 'events', 'projects'];
 
     let data: NewsDoc | null = null;
-    let foundIn: string | null = null;
-
     for (const col of tryCols) {
       const snap = await db.collection(col).doc(id).get();
-      if (snap.exists) { data = snap.data() as NewsDoc; foundIn = col; break; }
+      if (snap.exists) { data = snap.data() as NewsDoc; break; }
     }
-    console.log('[ogEvents] foundIn=', foundIn, 'hasData=', !!data);
 
     if (isBot && data) {
       const title = pickL10n(data.title, lang) || SITE_NAME;
@@ -98,7 +95,6 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
       const description = truncate(stripHtml(rawExcerpt || ''), 200) || SITE_NAME;
 
       const baseImage = absUrl(data.image) || DEFAULT_OG_IMAGE;
-      // добавим версию, чтобы платформы обновляли превью
       const version = (data as any)?.updatedAtTs || (data as any)?.dateYMD || Date.now();
       const imageUrl = baseImage.includes('?') ? `${baseImage}&v=${version}` : `${baseImage}?v=${version}`;
 
@@ -111,7 +107,6 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
   <title>${escapeHtml(title)}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Open Graph -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="${SITE_NAME}" />
   <meta property="og:locale" content="${lang === 'ua' ? 'uk_UA' : 'en_US'}" />
@@ -123,7 +118,6 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
   <meta property="og:image:height" content="630" />
   <meta property="og:url" content="${url}" />
 
-  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${escapeHtml(title)}" />
   <meta name="twitter:description" content="${escapeHtml(description)}" />
@@ -134,14 +128,9 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
 </head>
 <body><noscript><p><a href="${url}">Open</a></p></noscript></body>
 </html>`;
-
-      return res.status(200).set({
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'public, max-age=300',
-      }).send(html);
+      return res.status(200).set({'Content-Type':'text/html; charset=utf-8','Cache-Control':'public, max-age=300'}).send(html);
     }
 
-    // Обычный пользователь — SPA
     const idx = await fetch(FALLBACK_INDEX);
     return res.status(200).set('Cache-Control', 'private, no-cache').send(await idx.text());
   } catch (e) {
@@ -149,3 +138,4 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
     return res.status(500).send('Internal error');
   }
 });
+

@@ -3,7 +3,7 @@
     "site": "github-b91ab",
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-   "rewrites": [
+    "rewrites": [
       { "source": "/events/**",
         "function": { "functionId": "ogEvents", "codebase": "qh", "region": "us-central1" } },
       { "source": "/projects/**",
