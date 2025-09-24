@@ -5,7 +5,7 @@ import { useTranslation } from '../../context/TranslationContext';
 
 const Members = () => {
   const [showAll, setShowAll] = useState(false);
-  const visibleLogos = showAll ? memberLogos : memberLogos.slice(0, 5);
+  const visibleLogos = showAll ? memberLogos : memberLogos.slice(0, 6);
   const { t } = useTranslation();
 
   return (
@@ -27,11 +27,11 @@ const Members = () => {
             {t('members.team')}
           </h3>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           {visibleLogos.map((member, index) => (
               <div
                 key={index}
-                className="bg-white p-6 rounded-sm shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center justify-center min-h-[85px] group"
+                className="bg-white p-6 rounded-sm shadow-sm hover:shadow-md transition-shadow duration-200 flex  justify-center min-h-[85px] group"
               >
                 <div className="text-center">
                   {member.imageUrl ? (
