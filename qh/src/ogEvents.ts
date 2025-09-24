@@ -1,7 +1,8 @@
-// qh/src/ogEvents.ts
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
+const SITE_NAME = 'Q-hub';
+const OG_LOCALE = 'uk_UA';
 
 
 if (!admin.apps.length) {
@@ -54,87 +55,97 @@ function escapeHtml(s: string): string {
           .replace(/"/g, '&quot;');
 }
 
-// ... те же импорты и хелперы, как у тебя сейчас ...
-
 export const ogEvents = functions.https.onRequest(async (req, res) => {
-    try {
-      const ua = String(req.get('user-agent') || '');
-      const isBot = BOT_REGEX.test(ua);
-  
-      // Надёжнее: парсим из originalUrl|url|path
-      const rawUrl = (req as any).originalUrl || req.url || req.path || '';
-      const m = rawUrl.match(/\/events\/([^/?#]+)/);
-      const id = m?.[1] || '';
-      
-  
-      console.log('[ogEvents] ua=', ua, 'isBot=', isBot, 'rawUrl=', rawUrl, 'id=', id);
-  
-      if (!id) {
-        const idx = await fetch(FALLBACK_INDEX);
-        const html = await idx.text();
-        res.status(200).set('Cache-Control', 'public, max-age=60').send(html);
-        return;
-      }
-  
-      // Пытаемся найти и в news, и в events
-      const tryCols = ['news', 'events'];
-      let data: NewsDoc | null = null;
-      let foundIn: string | null = null;
-  
-      for (const col of tryCols) {
-        const snap = await db.collection(col).doc(id).get();
-        if (snap.exists) {
-          data = snap.data() as NewsDoc;
-          foundIn = col;
-          break;
-        }
-      }
-  
-      console.log('[ogEvents] foundIn=', foundIn, 'hasData=', !!data);
-  
-      if (isBot && data) {
-        const title = pickL10n(data.title, 'ua') || 'Q-hub';
-        const rawExcerpt = pickL10n(data.excerpt, 'ua');
-        const description = truncate(stripHtml(rawExcerpt || ''), 200) || 'Q-hub';
-        const image = absUrl(data.image) || DEFAULT_OG_IMAGE;
-        const url = `${PUBLIC_ORIGIN}/events/${id}`;
-  
-        const html = `<!doctype html>
-  <html lang="uk">
-  <head>
-    <meta charset="utf-8" />
-    <title>${escapeHtml(title)}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content="${escapeHtml(title)}" />
-    <meta property="og:description" content="${escapeHtml(description)}" />
-    <meta property="og:image" content="${image}" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:url" content="${url}" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="${escapeHtml(title)}" />
-    <meta name="twitter:description" content="${escapeHtml(description)}" />
-    <meta name="twitter:image" content="${image}" />
-    <link rel="canonical" href="${url}" />
-    <meta name="robots" content="index,follow" />
-  </head>
-  <body><noscript><p><a href="${url}">Open</a></p></noscript></body>
-  </html>`;
-        res.status(200).set({
-          'Content-Type': 'text/html; charset=utf-8',
-          'Cache-Control': 'public, max-age=300',
-        }).send(html);
-        return;
-      }
-  
-      // не бот или не нашли документ — отдать SPA
+  try {
+    const ua = String(req.get('user-agent') || '');
+    const isBot = BOT_REGEX.test(ua);
+
+    // Парсим тип и id: /events/:id ИЛИ /projects/:id
+    const rawUrl = (req as any).originalUrl || req.url || req.path || '';
+    const m = rawUrl.match(/\/(events|projects)\/([^/?#]+)/);
+    const pathType = (m?.[1] || '') as 'events' | 'projects' | '';
+    const id = m?.[2] || '';
+
+    // Язык из ?lang= (по умолчанию 'ua')
+    const urlObj = new URL(PUBLIC_ORIGIN + rawUrl);
+    const qlang = urlObj.searchParams.get('lang');
+    const lang: Lang = qlang === 'en' ? 'en' : 'ua';
+
+    console.log('[ogEvents]', { isBot, rawUrl, pathType, id, lang });
+
+    if (!id || !pathType) {
       const idx = await fetch(FALLBACK_INDEX);
-      const html = await idx.text();
-      res.status(200).set('Cache-Control', 'private, no-cache').send(html);
-    } catch (e) {
-      console.error(e);
-      res.status(500).send('Internal error');
+      return res.status(200).set('Cache-Control', 'public, max-age=60').send(await idx.text());
     }
-  });
-  
+
+    // Ищем документ (сначала по ожидаемой коллекции)
+    const tryCols = pathType === 'projects'
+      ? ['projects', 'news', 'events']
+      : ['news', 'events', 'projects'];
+
+    let data: NewsDoc | null = null;
+    let foundIn: string | null = null;
+
+    for (const col of tryCols) {
+      const snap = await db.collection(col).doc(id).get();
+      if (snap.exists) { data = snap.data() as NewsDoc; foundIn = col; break; }
+    }
+    console.log('[ogEvents] foundIn=', foundIn, 'hasData=', !!data);
+
+    if (isBot && data) {
+      const title = pickL10n(data.title, lang) || SITE_NAME;
+      const rawExcerpt = pickL10n(data.excerpt, lang);
+      const description = truncate(stripHtml(rawExcerpt || ''), 200) || SITE_NAME;
+
+      const baseImage = absUrl(data.image) || DEFAULT_OG_IMAGE;
+      // добавим версию, чтобы платформы обновляли превью
+      const version = (data as any)?.updatedAtTs || (data as any)?.dateYMD || Date.now();
+      const imageUrl = baseImage.includes('?') ? `${baseImage}&v=${version}` : `${baseImage}?v=${version}`;
+
+      const url = `${PUBLIC_ORIGIN}/${pathType}/${id}`;
+
+      const html = `<!doctype html>
+<html lang="${lang === 'ua' ? 'uk' : 'en'}">
+<head>
+  <meta charset="utf-8" />
+  <title>${escapeHtml(title)}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="${SITE_NAME}" />
+  <meta property="og:locale" content="${lang === 'ua' ? 'uk_UA' : 'en_US'}" />
+  <meta property="og:title" content="${escapeHtml(title)}" />
+  <meta property="og:description" content="${escapeHtml(description)}" />
+  <meta property="og:image" content="${imageUrl}" />
+  <meta property="og:image:secure_url" content="${imageUrl}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="${url}" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${escapeHtml(title)}" />
+  <meta name="twitter:description" content="${escapeHtml(description)}" />
+  <meta name="twitter:image" content="${imageUrl}" />
+
+  <link rel="canonical" href="${url}" />
+  <meta name="robots" content="index,follow" />
+</head>
+<body><noscript><p><a href="${url}">Open</a></p></noscript></body>
+</html>`;
+
+      return res.status(200).set({
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'public, max-age=300',
+      }).send(html);
+    }
+
+    // Обычный пользователь — SPA
+    const idx = await fetch(FALLBACK_INDEX);
+    return res.status(200).set('Cache-Control', 'private, no-cache').send(await idx.text());
+  } catch (e) {
+    console.error(e);
+    return res.status(500).send('Internal error');
+  }
+});

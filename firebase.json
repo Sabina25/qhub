@@ -3,15 +3,11 @@
     "site": "github-b91ab",
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [
-      {
-        "source": "/events/**",
-        "function": {
-          "functionId": "ogEvents",
-          "codebase": "qh",
-          "region": "us-central1"
-        }
-      },
+   "rewrites": [
+      { "source": "/events/**",
+        "function": { "functionId": "ogEvents", "codebase": "qh", "region": "us-central1" } },
+      { "source": "/projects/**",
+        "function": { "functionId": "ogEvents", "codebase": "qh", "region": "us-central1" } },
       { "source": "**", "destination": "/index.html" }
     ]
   },
