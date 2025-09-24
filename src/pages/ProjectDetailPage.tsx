@@ -9,6 +9,7 @@ import { useTranslation } from '../context/TranslationContext';
 import VideoGallery from '../components/VideoGallery';
 
 import { fetchProjectById, fetchProjects, ProjectDoc } from '../data/projects';
+import { buildShareUrl } from '../utils/share';
 
 // --- helpers ---
 type Lang = 'ua' | 'en';
@@ -35,7 +36,7 @@ function enhanceHtml(html: string) {
 
 function formatYMD(ymd?: string, locale = 'uk-UA') {
   if (!ymd) return '';
-  const [y, m, d] = ymd.split('-').map(Number);
+  const [y, m, d] = (ymd || '').split('-').map(Number);
   if (!y || !m || !d) return '';
   return new Date(y, m - 1, d).toLocaleDateString(locale);
 }
@@ -50,7 +51,7 @@ function formatRange(p: ProjectDoc, locale: string) {
 
 const ProjectDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { lang, t } = useTranslation(); 
+  const { lang, t } = useTranslation();
   const locale = lang === 'ua' ? 'uk-UA' : 'en-GB';
 
   const [proj, setProj] = useState<ProjectDoc | null>(null);
@@ -68,7 +69,7 @@ const ProjectDetailPage: React.FC = () => {
         const data = await fetchProjectById(id);
         setProj(data);
 
-        // related projects
+        // Related (рандомные 3)
         const all = await fetchProjects();
         const others = all.filter((p) => p.id !== id);
         const shuffled = others.sort(() => 0.5 - Math.random());
@@ -90,6 +91,35 @@ const ProjectDetailPage: React.FC = () => {
   const dateStr = useMemo(() => (proj ? formatRange(proj, locale) : ''), [proj, locale]);
   const allVideoUrls = useMemo(() => proj?.youtubeUrls || [], [proj?.youtubeUrls]);
 
+  // --- share (cache-buster + язык) ---
+  const shareVersion = useMemo(
+    () => (proj as any)?.updatedAtTs?.toString?.() || proj?.dateYMD || '',
+    [proj]
+  );
+  const shareUrl = useMemo(
+    () => buildShareUrl(`/projects/${id}`, { version: shareVersion, lang }),
+    [id, shareVersion, lang]
+  );
+
+  const copyShareUrl = () => {
+    navigator.clipboard
+      .writeText(shareUrl)
+      .then(() => alert(lang === 'ua' ? 'Посилання скопійовано' : 'Link copied'))
+      .catch(() => alert(lang === 'ua' ? 'Не вдалося скопіювати' : 'Copy failed'));
+  };
+
+  const webShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: title || 'Q-hub', text: title || '', url: shareUrl });
+      } catch {
+        /* ignore */
+      }
+    } else {
+      copyShareUrl();
+    }
+  };
+
   if (loading) return <div className="max-w-4xl mx-auto px-4 py-20">Loading…</div>;
   if (err) return <div className="max-w-4xl mx-auto px-4 py-20 text-red-600">{err}</div>;
   if (!proj) return <div className="max-w-4xl mx-auto px-4 py-20">Project not found</div>;
@@ -109,13 +139,38 @@ const ProjectDetailPage: React.FC = () => {
             />
           </div>
         )}
-        
+
         {/* Back Button */}
         <Link to="/projects" className="text-blue-600 underline inline-block py-8">
           ← {t('projects.back') || 'Back to Projects'}
         </Link>
 
         <h1 className="text-4xl font-bold mt-4 mb-2">{title || '—'}</h1>
+
+        {/* Share */}
+        <div className="mb-6 flex flex-wrap items-center gap-3">
+          <button
+            onClick={webShare}
+            className="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700"
+          >
+            {lang === 'ua' ? 'Поділитись' : 'Share'}
+          </button>
+          <button
+            onClick={copyShareUrl}
+            className="px-3 py-1.5 rounded-lg bg-gray-100 text-sm hover:bg-gray-200"
+          >
+            {lang === 'ua' ? 'Скопіювати посилання' : 'Copy link'}
+          </button>
+          <a
+            href={shareUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-auto text-xs text-gray-500 underline decoration-dotted truncate max-w-[45%]"
+            title={shareUrl}
+          >
+            {shareUrl}
+          </a>
+        </div>
 
         {(dateStr || location) && (
           <p className="text-gray-500 mb-6">
@@ -137,7 +192,7 @@ const ProjectDetailPage: React.FC = () => {
         {/* Gallery */}
         {proj.gallery && proj.gallery.length > 0 && (
           <section className="mt-10">
-            <h2 className="text-2xl font-semibold mb-4">Gallery</h2>
+            <h2 className="text-2xl font-semibold mb-4">{lang === 'ua' ? 'Галерея' : 'Gallery'}</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {proj.gallery.map((src, i) => (
                 <img key={i} src={src} className="w-full h-40 md:h-48 object-cover rounded-lg" loading="lazy" />
@@ -149,7 +204,7 @@ const ProjectDetailPage: React.FC = () => {
         {/* Videos */}
         {allVideoUrls.length > 0 && (
           <section className="mt-12">
-            <h2 className="text-2xl font-semibold mb-4">Videos</h2>
+            <h2 className="text-2xl font-semibold mb-4">{lang === 'ua' ? 'Відео' : 'Videos'}</h2>
             <VideoGallery urls={allVideoUrls} />
           </section>
         )}

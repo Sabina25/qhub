@@ -55,16 +55,34 @@ function escapeHtml(s: string): string {
           .replace(/"/g, '&quot;');
 }
 
+function ensureDirectImage(url: string): string {
+  const isStorage = /\/\/(firebasestorage\.googleapis\.com|firebasestorage\.app)\/v0\/b\/.+\/o\//i.test(url);
+  if (!isStorage) return url;
+  if (/[?&]alt=media\b/i.test(url)) return url;
+  return url + (url.includes('?') ? '&' : '?') + 'alt=media';
+}
+
+
+
 export const ogEvents = functions.https.onRequest(async (req, res) => {
   try {
     const ua = String(req.get('user-agent') || '');
     const isBot = BOT_REGEX.test(ua);
 
+    console.log('[ogEvents:hit]', {
+      method: req.method,
+      url: (req as any).originalUrl || req.url || req.path,
+      host: req.get('host'),
+      ua: ua.slice(0, 120)
+    });
+
     // матчим /events/:id ИЛИ /projects/:id
     const rawUrl = (req as any).originalUrl || req.url || req.path || '';
     const m = rawUrl.match(/\/(events|projects)\/([^/?#]+)/);
-    const pathType = (m?.[1] || '') as 'events' | 'projects' | '';
+    type PathType = 'events' | 'projects' | 'news';
+    const pathType = (m?.[1] || '') as PathType;
     const id = m?.[2] || '';
+    console.log('[ogEvents:path]', { rawUrl, pathType, id });
 
     // язык из ?lang=
     const urlObj = new URL(PUBLIC_ORIGIN + rawUrl);
@@ -78,27 +96,48 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
       return res.status(200).set('Cache-Control', 'public, max-age=60').send(await idx.text());
     }
 
-    // ищем документ: сперва в ожидаемой коллекции
-    const tryCols = pathType === 'projects'
-      ? ['projects', 'news', 'events']
-      : ['news', 'events', 'projects'];
 
-    let data: NewsDoc | null = null;
-    for (const col of tryCols) {
+      const tryCols = [pathType, ...['news','events','projects'].filter(c => c !== pathType)];
+
+
+      let data: NewsDoc | null = null;
+      let foundIn: string | null = null;
+
+      for (const col of tryCols) {
+  
       const snap = await db.collection(col).doc(id).get();
-      if (snap.exists) { data = snap.data() as NewsDoc; break; }
-    }
+      if (snap.exists) {
+        data = snap.data() as NewsDoc;
+        foundIn = col;
+        break;
+      }
+
+     
+      if (col === 'projects') {
+        const q = await db.collection(col).where('slug', '==', id).limit(1).get();
+        if (!q.empty) {
+          data = q.docs[0].data() as NewsDoc;
+          foundIn = col;
+          break;
+        }
+      }
+      }
+
+console.log('[ogEvents:found]', { foundIn, hasData: !!data, id });
+
+   
 
     if (isBot && data) {
       const title = pickL10n(data.title, lang) || SITE_NAME;
       const rawExcerpt = pickL10n(data.excerpt, lang);
       const description = truncate(stripHtml(rawExcerpt || ''), 200) || SITE_NAME;
-
+    
+      const baseImageRaw = absUrl(data.image) || DEFAULT_OG_IMAGE;
       const baseImage = absUrl(data.image) || DEFAULT_OG_IMAGE;
       const version = (data as any)?.updatedAtTs || (data as any)?.dateYMD || Date.now();
       const imageUrl = baseImage.includes('?') ? `${baseImage}&v=${version}` : `${baseImage}?v=${version}`;
-
-      const url = `${PUBLIC_ORIGIN}/${pathType}/${id}`;
+    
+      const url = `${PUBLIC_ORIGIN}/${pathType}/${id}`; 
 
       const html = `<!doctype html>
 <html lang="${lang === 'ua' ? 'uk' : 'en'}">
