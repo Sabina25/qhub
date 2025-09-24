@@ -143,6 +143,15 @@
     "sun": "Sunday",
     "closed": "Closed"
   },
+  "thanks":{
+    "title": "Thank you!",
+    "body": "Your message has been sent. We’ll get back to you soon.",
+    "send_another": "Send another message"
+  },
+  "error":{
+    "title": "Failed to send",
+    "body": "Please try again a bit later."
+  },
   "form": {
     "send_message": "Send Us a Message",
     "name": "Full Name *",
@@ -154,6 +163,7 @@
     "placeholder_name": "Your full name",
     "placeholder_email": "your.email@example.com",
     "placeholder_message": "Tell us more about your inquiry...",
+    "sending": "Sending…",
     "subject_options": {
       "select": "Select a subject",
       "membership": "Membership Information",

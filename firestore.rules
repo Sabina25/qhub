@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+
+    match /mail/{docId} {
+      allow read: if false;
+      allow create: if
+        request.resource.data.keys().hasOnly(['to','cc','bcc','replyTo','message']) &&
+        request.resource.data.to is list &&
+        request.resource.data.to.size() > 0 &&
+        request.resource.data.message is map &&
+        request.resource.data.message.subject is string &&
+        request.resource.data.message.text is string &&
+        request.resource.data.message.html is string;
+    }
+
+    match /contactMessages/{id} {
+      allow read: if false;
+      allow create: if true;
+    }
+  }
+}

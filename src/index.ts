@@ -1,5 +1,52 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import * as yup from 'yup';
+
+if (!admin.apps.length) admin.initializeApp();
+const db = admin.firestore();
+
+const schema = yup.object({
+  name: yup.string().min(2).max(120).required(),
+  email: yup.string().email().required(),
+  subject: yup.string().max(200).optional(),
+  message: yup.string().min(5).max(5000).required(),
+});
+
+export const sendContactEmail = functions.https.onCall(async (data, context) => {
+  // (опционально) требуем App Check
+  // if (!context.app) throw new functions.https.HttpsError('failed-precondition','AppCheck required');
+
+  const payload = await schema.validate(data).catch(() => null);
+  if (!payload) throw new functions.https.HttpsError('invalid-argument','Bad payload');
+
+  // Doc для расширения Trigger Email
+  await db.collection('mail').add({
+    to: ['hub.qirim@gmail.com'],
+    replyTo: payload.email,
+    message: {
+      subject: `[Contact] ${payload.name}: ${payload.email}${payload.subject ? ' — ' + payload.subject : ''}`,
+      text: `Name: ${payload.name}\nEmail: ${payload.email}\nSubject: ${payload.subject || '-'}\n\n${payload.message}`,
+      html: `
+        <h3>New contact message</h3>
+        <p><b>Name:</b> ${payload.name}</p>
+        <p><b>Email:</b> ${payload.email}</p>
+        ${payload.subject ? `<p><b>Subject:</b> ${payload.subject}</p>` : ''}
+        <p><b>Message:</b><br/>${String(payload.message).replace(/\n/g,'<br/>')}</p>
+      `,
+    },
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  // (опционально) лог
+  await db.collection('contactMessages').add({
+    ...payload,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    ip: (context.rawRequest?.headers['x-forwarded-for'] as string) || '',
+  });
+
+  return { ok: true };
+});
+
 
 admin.initializeApp();
 const db = admin.firestore();
