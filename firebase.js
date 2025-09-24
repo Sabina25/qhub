@@ -25,5 +25,3 @@ export const db = initializeFirestore(app, {
 
 export const auth = getAuth(app);
 export const storage = getStorage(app);
-
-console.log("projectId:", app.options.projectId);

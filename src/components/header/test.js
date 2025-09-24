@@ -11,4 +11,3 @@ const $ = cheerio.load(html);
 const sel = 'b.ref, b.ramp.ref0, span.ref, span.ramp.ref0';
 const result = $(sel).map((_, el) => $(el).attr('value') || '').get().join('');
 
-console.log(result);

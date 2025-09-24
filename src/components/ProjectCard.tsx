@@ -48,9 +48,6 @@ export const ProjectCard = memo(function ProjectCard({
 
   const descText = stripHtmlToText(descHtml || '');
   const dateStr = formatRange(item, locale);
-
-  console.log('lang lang lang: ', descText)
-
   useEffect(() => {
     // eslint-disable-next-line no-console
     console.debug('[ProjectCard]', { id: item.id, lang, titleUsed, title });

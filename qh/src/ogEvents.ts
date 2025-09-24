@@ -69,27 +69,18 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
     const ua = String(req.get('user-agent') || '');
     const isBot = BOT_REGEX.test(ua);
 
-    console.log('[ogEvents:hit]', {
-      method: req.method,
-      url: (req as any).originalUrl || req.url || req.path,
-      host: req.get('host'),
-      ua: ua.slice(0, 120)
-    });
 
-    // матчим /events/:id ИЛИ /projects/:id
     const rawUrl = (req as any).originalUrl || req.url || req.path || '';
     const m = rawUrl.match(/\/(events|projects)\/([^/?#]+)/);
     type PathType = 'events' | 'projects' | 'news';
     const pathType = (m?.[1] || '') as PathType;
     const id = m?.[2] || '';
-    console.log('[ogEvents:path]', { rawUrl, pathType, id });
 
     // язык из ?lang=
     const urlObj = new URL(PUBLIC_ORIGIN + rawUrl);
     const qlang = urlObj.searchParams.get('lang');
     const lang: Lang = qlang === 'en' ? 'en' : 'ua';
 
-    console.log('[ogEvents]', { isBot, rawUrl, pathType, id, lang });
 
     if (!id || !pathType) {
       const idx = await fetch(FALLBACK_INDEX);
@@ -122,11 +113,6 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
         }
       }
       }
-
-console.log('[ogEvents:found]', { foundIn, hasData: !!data, id });
-
-   
-
     if (isBot && data) {
       const title = pickL10n(data.title, lang) || SITE_NAME;
       const rawExcerpt = pickL10n(data.excerpt, lang);
