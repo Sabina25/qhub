@@ -2,6 +2,7 @@ import { ArrowRight, Users } from 'lucide-react';
 import { useTranslation } from '../../context/TranslationContext';
 import { useNavigate } from 'react-router-dom';
 
+
 const Hero = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const Hero = () => {
       id="home"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
       aria-label="Hero"
-    >
+    > 
       {/* Background image */}
       <div className="absolute inset-0 -z-10">
         <img

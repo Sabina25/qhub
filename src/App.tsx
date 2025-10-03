@@ -15,7 +15,7 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AllEventsPage from './pages/AllEventsPage';
 import AllProjectsPage from './pages/AllProjectsPage';
-import WaveDivider from './components/mainPage/WaveDivider';
+//import WaveDivider from './components/mainPage/WaveDivider';
 import EventDetailPage from './pages/EventDetailPage';
 import OurMediaPage from './pages/OurMediaPage';
 import CreateNews from './pages/CreateNewsPage';
@@ -24,7 +24,6 @@ import CreateProject from './pages/CreateProjectPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
 import Login from './pages/Login';
 
-import ScrollToTop from './ScrollToTop';
 import ScrollManager from './components/routing/ScrollManager';
 
 const Home = () => (

@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { Menu, X, Globe } from 'lucide-react';
 
+import AnnouncementBar from '../AnnouncementBar';
+
 export type Language = 'en' | 'ua';
 
 export type UIItem = { label: string; to: string; isRoute?: boolean };
@@ -73,6 +75,13 @@ const HeaderUI: React.FC<Props> = ({
 
   return (
     <header className={headerClasses}>
+    <AnnouncementBar
+      imageSrc="/images/aziz-axtemov.jpeg"
+      startISO="2021-09-04"
+      containerClass="max-w-7xl"   // такой же контейнер, как у HeaderUI
+      stickyTopClass="top-14 lg:top-16" // прилипает прямо под шапкой
+      persist={false}
+    />
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:m-2 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:shadow"
