@@ -75,13 +75,13 @@ const HeaderUI: React.FC<Props> = ({
 
   return (
     <header className={headerClasses}>
-    <AnnouncementBar
+    {isHome && <AnnouncementBar 
       imageSrc="/images/aziz-axtemov.jpeg"
       startISO="2021-09-04"
-      containerClass="max-w-7xl"   // такой же контейнер, как у HeaderUI
-      stickyTopClass="top-14 lg:top-16" // прилипает прямо под шапкой
+      containerClass="max-w-7xl"  
+      stickyTopClass="top-14 lg:top-16" 
       persist={false}
-    />
+    />}
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:m-2 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:shadow"
