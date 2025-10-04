@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Menu, X, Globe } from 'lucide-react';
 
-import AnnouncementBar from '../AnnouncementBar';
+import AnnouncementBarSlider from '../AnnouncementBar';
 
 export type Language = 'en' | 'ua';
 
@@ -75,13 +75,29 @@ const HeaderUI: React.FC<Props> = ({
 
   return (
     <header className={headerClasses}>
-    {isHome && <AnnouncementBar 
-      imageSrc="/images/aziz-axtemov.jpeg"
-      startISO="2021-09-04"
-      containerClass="max-w-7xl"  
-      stickyTopClass="top-14 lg:top-16" 
-      persist={false}
-    />}
+    {isHome && <AnnouncementBarSlider
+      slides={[
+        {
+          imageSrc: "/images/aziz-axtemov.jpeg",
+          startISO: "2021-09-04",
+          name: "Aziz Akhtemov",
+          text: "Crimean Tatar activist and political prisoner. Convicted in a fabricated 'sabotage' case.",
+        },
+        {
+          imageSrc: "/images/asan_axtemov.png",
+          startISO: "2021-09-04",
+          name: "Asan Akhtemov",
+          text: "Crimean Tatar activist and political prisoner. Convicted in a fabricated 'sabotage' case.",
+        },
+        {
+          imageSrc: "/images/Appaz_Kurtamet.png",
+          startISO: "2022-07-22",
+          name: "Appaz Kurtamet",
+          text: "Crimean Tatar activist and political prisoner, sentenced to 7 years in a fabricated financing case.",
+        },
+      ]}
+    />
+    }
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:m-2 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:shadow"
