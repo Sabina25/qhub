@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
+import { Share2, Copy as CopyIcon, Check as CheckIcon } from 'lucide-react';
 
 import Header from '../components/header/Header';
 import Footer from '../components/Footer';
@@ -59,6 +60,9 @@ const ProjectDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
 
+  const [copied, setCopied] = useState(false);      // для тоста над Copy
+  const [justShared, setJustShared] = useState(false); // опционально подсветим share-иконку
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -99,21 +103,45 @@ const ProjectDetailPage: React.FC = () => {
     [id, shareVersion, lang]
   );
 
+  // копирование без alert; показываем над иконкой на 2 сек "Copied"
+  const showCopiedToast = () => {
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 2000);
+  };
+
   const copyShareUrl = () => {
     navigator.clipboard
       .writeText(shareUrl)
-      .then(() => alert(lang === 'ua' ? 'Посилання скопійовано' : 'Link copied'))
-      .catch(() => alert(lang === 'ua' ? 'Не вдалося скопіювати' : 'Copy failed'));
+      .then(showCopiedToast)
+      .catch(() => {
+        // редкий случай: нет clipboard API — fallback через input
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = shareUrl;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showCopiedToast();
+        } catch {
+          // если вообще не вышло — просто ничего не делаем
+        }
+      });
   };
 
   const webShare = async () => {
     if (navigator.share) {
       try {
         await navigator.share({ title: title || 'Q-hub', text: title || '', url: shareUrl });
+        setJustShared(true);
+        window.setTimeout(() => setJustShared(false), 2000);
       } catch {
-        /* ignore */
+        /* cancelled — игнорируем */
       }
     } else {
+      // если нет Web Share API — просто копируем
       copyShareUrl();
     }
   };
@@ -145,29 +173,42 @@ const ProjectDetailPage: React.FC = () => {
 
         <h1 className="text-4xl font-bold mt-4 mb-2">{title || '—'}</h1>
 
-        {/* Share */}
-        <div className="mb-6 flex flex-wrap items-center gap-3">
+        {/* Share (только иконки, без видимой ссылки) */}
+        <div className="mb-6 flex items-center gap-2">
+          {/* Share icon */}
           <button
             onClick={webShare}
-            className="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700"
+            className={`relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700 transition
+                        focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40`}
+            aria-label={lang === 'ua' ? 'Поділитись' : 'Share'}
+            title={lang === 'ua' ? 'Поділитись' : 'Share'}
           >
-            {lang === 'ua' ? 'Поділитись' : 'Share'}
+            <Share2 className={`h-4 w-4 ${justShared ? 'scale-110' : ''}`} />
           </button>
-          <button
-            onClick={copyShareUrl}
-            className="px-3 py-1.5 rounded-lg bg-gray-100 text-sm hover:bg-gray-200"
-          >
-            {lang === 'ua' ? 'Скопіювати посилання' : 'Copy link'}
-          </button>
-          <a
-            href={shareUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-auto text-xs text-gray-500 underline decoration-dotted truncate max-w-[45%]"
-            title={shareUrl}
-          >
-            {shareUrl}
-          </a>
+
+          {/* Copy icon with tooltip */}
+          <div className="relative">
+            <button
+              onClick={copyShareUrl}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200 transition
+                         focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
+              aria-label={lang === 'ua' ? 'Скопіювати посилання' : 'Copy link'}
+              title={lang === 'ua' ? 'Скопіювати посилання' : 'Copy link'}
+            >
+              {copied ? <CheckIcon className="h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
+            </button>
+
+            {/* mini toast "Copied" */}
+            {copied && (
+              <div
+                role="status"
+                className="absolute -top-7 left-1/2 -translate-x-1/2 rounded-md bg-black/80 text-white text-xs px-2 py-1 pointer-events-none select-none"
+              >
+                Copied
+                <span className="absolute left-1/2 -bottom-1 -translate-x-1/2 border-4 border-transparent border-t-black/80" />
+              </div>
+            )}
+          </div>
         </div>
 
         {(dateStr || location) && (
