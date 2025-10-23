@@ -27,7 +27,7 @@
     },
     "mission": {
     "title": "Our Mission & Vision",
-    "subtitle": "Building bridges across Europe through the shared experience of educational mobility",
+    "subtitle": "Building bridges across Europe through the shared experience of educational mobility.",
     "vision_title": "Our Vision",
     "vision_text": "A resilient civil society in Crimea and Ukraine that meets modern challenges and is ready for future change.",
     "values_title": "Our Values",
@@ -192,6 +192,21 @@
     },
     "copyright": "© {year} Q-hub. All rights reserved.",
     "funding_notice": "Crimean project and educational platform Q-hub is a non-governmental organization founded by Crimean Tatar activists."
+  },
+  "politicalPrisoners": {
+    "days_in_detention" : "days in detention",
+    "azizAkhtemov": {
+      "name": "Aziz Akhtemov",
+      "text": "Crimean Tatar activist and political prisoner. Convicted in a fabricated 'sabotage' case."
+    },
+    "asanAkhtemov": {
+      "name": "Asan Akhtemov",
+      "text": "Crimean Tatar activist and political prisoner. Convicted in a fabricated 'sabotage' case."
+    },
+    "appazKurtamet": {
+      "name": "Appaz Kurtamet",
+      "text": "Crimean Tatar activist and political prisoner, sentenced to 7 years in a fabricated financing case."
+    }
   }
   }
   

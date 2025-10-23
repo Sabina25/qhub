@@ -25,20 +25,18 @@ const LogoMarquee = () => {
 
   const isHovered = useRef(false);
 
-  // DESKTOP: бесконечный translateX (не зависит от scroll)
   useEffect(() => {
     const viewport = deskViewportRef.current;
     const track = deskTrackRef.current;
     if (!viewport || !track) return;
 
-    // скорость в px/frame ( ~60fps )
-    const speed = 0.7; // вправо->лево
+   
+    const speed = 0.7; 
     let x = 0;
     let halfWidth = 0;
     let raf = 0;
 
     const measure = () => {
-      // ширина половины (потому что контент продублирован 2 раза)
       const children = track.children;
       let firstHalf = 0;
       const halfCount = Math.ceil(children.length / 2);
@@ -51,7 +49,7 @@ const LogoMarquee = () => {
     const step = () => {
       if (!isHovered.current) {
         x -= speed;
-        if (x <= -halfWidth) x += halfWidth; // цикл без шва
+        if (x <= -halfWidth) x += halfWidth; 
         track.style.transform = `translateX(${x}px)`;
       }
       raf = requestAnimationFrame(step);
@@ -68,20 +66,20 @@ const LogoMarquee = () => {
     };
   }, []);
 
-  // DESKTOP: ручные кнопки — подталкиваем оффсет
+ 
   const nudge = (delta: number) => {
     const track = deskTrackRef.current;
     if (!track) return;
-    // считываем текущий translateX
+   
     const m = /translateX\((-?\d+(\.\d+)?)px\)/.exec(track.style.transform || "");
     const cur = m ? parseFloat(m[1]) : 0;
     const next = cur + delta;
     track.style.transform = `translateX(${next}px)`;
   };
 
-  // MOBILE: 3 независимых ряда (scrollLeft анимация)
+  
   useEffect(() => {
-    const speeds = [0.6, -0.85, 0.75]; // разные стороны/скорости
+    const speeds = [0.6, -0.85, 0.75]; 
     const frameIds: number[] = [];
 
     const animateRow = (ref: React.RefObject<HTMLDivElement>, speed: number) => {
@@ -134,7 +132,7 @@ const LogoMarquee = () => {
           <div
             ref={deskTrackRef}
             className="flex gap-10 items-center will-change-transform"
-            // Дублируем 2 раза для бесшовного цикла
+            
           >
             {[...logos, ...logos].map((logo, i) => (
               <a

@@ -99,13 +99,26 @@ const HeaderUI: React.FC<Props> = ({
       {isHome && (
         <AnnouncementBarSlider
           slides={[
-            { imageSrc: '/images/aziz-axtemov.jpeg', startISO: '2021-09-04', name: 'Aziz Akhtemov',
-              text: "Crimean Tatar activist and political prisoner. Convicted in a fabricated 'sabotage' case." },
-            { imageSrc: '/images/asan_axtemov.png', startISO: '2021-09-04', name: 'Asan Akhtemov',
-              text: "Crimean Tatar activist and political prisoner. Convicted in a fabricated 'sabotage' case." },
-            { imageSrc: '/images/Appaz_Kurtamet.png', startISO: '2022-07-22', name: 'Appaz Kurtamet',
-              text: 'Crimean Tatar activist and political prisoner, sentenced to 7 years in a fabricated financing case.' },
-          ]}
+            {
+              imageSrc: "/images/aziz-axtemov.jpeg",
+              startISO: "2021-09-04",
+              name: "politicalPrisoners.azizAkhtemov.name",
+              text: "politicalPrisoners.azizAkhtemov.text"
+            },
+            {
+              imageSrc: "/images/asan_axtemov.png",
+              startISO: "2021-09-04",
+              name: "politicalPrisoners.asanAkhtemov.name",
+              text: "politicalPrisoners.asanAkhtemov.text"
+            },
+            {
+              imageSrc: "/images/Appaz_Kurtamet.png",
+              startISO: "2022-07-22",
+              name: "politicalPrisoners.appazKurtamet.name",
+              text: "politicalPrisoners.appazKurtamet.text"
+            }
+          ]
+          }
         />
       )}
 

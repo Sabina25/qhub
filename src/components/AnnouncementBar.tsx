@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { useTranslation } from '../context/TranslationContext';
+
 type Slide = {
   imageSrc: string;
   startISO: string;
@@ -24,6 +26,9 @@ export default function AnnouncementBarSlider({
 }: Props) {
   const [visible, setVisible] = useState(true);
   const [index, setIndex] = useState(0);
+
+  const { t } = useTranslation();
+  
 
   useEffect(() => {
     if (!persist) return;
@@ -93,7 +98,7 @@ export default function AnnouncementBarSlider({
                       {days.toLocaleString("en-US")}
                     </div>
                     <div className="text-red-100 text-xs sm:text-sm md:text-base -mt-1">
-                      days in detention
+                    {t('politicalPrisoners.days_in_detention')}
                     </div>
                   </div>
                 </div>
@@ -102,10 +107,10 @@ export default function AnnouncementBarSlider({
                 <div className="col-span-7 sm:col-span-8 md:col-span-9">
                   <div className="text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.45)]">
                     <h3 className="text-base sm:text-lg md:text-xl font-semibold">
-                      {slide.name}
+                    {t(slide.name)}
                     </h3>
                     <p className="text-sm sm:text-base md:text-lg">
-                      {slide.text}
+                    {t(slide.text)}
                     </p>
                   </div>
                 </div>
