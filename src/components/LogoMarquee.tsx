@@ -15,6 +15,9 @@ const logos = [
   { src: "/images/partnersLogo/qd.jpg", link: "https://www.instagram.com/qadindivani/" },
 ];
 
+const DESK_TRACK_H = 88; // px — высота полосы на десктопе
+const MOB_TRACK_H  = 72; // px — высота полосы на мобайле
+
 const LogoMarquee = () => {
   // desktop
   const deskViewportRef = useRef<HTMLDivElement>(null);
@@ -28,11 +31,10 @@ const LogoMarquee = () => {
 
   // -------- Desktop: бесконечный translateX --------
   useEffect(() => {
-    const viewport = deskViewportRef.current;
     const track = deskTrackRef.current;
-    if (!viewport || !track) return;
+    if (!track) return;
 
-    const baseSpeed = 0.7; // px per frame
+    const baseSpeed = 0.7; // px/frame
     let x = 0;
     let halfWidth = 0;
     let raf = 0;
@@ -63,7 +65,7 @@ const LogoMarquee = () => {
     };
   }, []);
 
-  // Подтолкнуть ленту кнопками (десктоп)
+  // подталкивание по кнопкам (десктоп)
   const nudge = (delta: number) => {
     const track = deskTrackRef.current;
     if (!track) return;
@@ -73,20 +75,18 @@ const LogoMarquee = () => {
 
   // -------- Mobile: “живая” волна --------
   useEffect(() => {
-    const viewport = mobViewportRef.current;
     const track = mobTrackRef.current;
-    if (!viewport || !track) return;
+    if (!track) return;
 
     let x = 0;
     let halfWidth = 0;
     let raf = 0;
 
-    // базовая скорость + лёгкое дыхание (меняется от времени)
     const base = 0.6;
-    const breathAmp = 0.25; // добавка к скорости
-    const waveAmpY = 6;     // px по Y
+    const breathAmp = 0.25; // модуляция скорости
+    const waveAmpY = 6;     // px по Y (влезает в высоту дорожки)
     const waveAmpS = 0.08;  // масштаб
-    const waveLen = 200;    // длина волны в px
+    const waveLen = 220;    // длина волны в px
 
     const measure = () => {
       const children = Array.from(track.children) as HTMLElement[];
@@ -96,24 +96,23 @@ const LogoMarquee = () => {
 
     const step = (t: number) => {
       if (!isHovered.current) {
-        // лёгкая модуляция скорости
         const v = base + breathAmp * Math.sin(t * 0.0015);
         x -= v;
         if (x <= -halfWidth) x += halfWidth;
         track.style.transform = `translateX(${x}px)`;
 
-        // волна по элементам: сдвиг и масштаб зависят от их текущего положения
         const children = Array.from(track.children) as HTMLElement[];
         let acc = x;
-        for (const el of children) {
-          const w = (el as HTMLElement).offsetWidth;
-          // позиция центра элемента в треке
+        for (const cell of children) {
+          const w = cell.offsetWidth;
           acc += w / 2;
           const phase = (acc % waveLen) / waveLen; // 0..1
           const y = Math.sin(phase * Math.PI * 2) * waveAmpY;
           const s = 1 + Math.cos(phase * Math.PI * 2) * waveAmpS;
-          (el as HTMLElement).style.transform = `translateY(${y}px) scale(${s})`;
-          acc += w / 2 + 32; // +gap (8 * 4)
+          // трансформируем именно содержимое (img), а не контейнер-ячейку
+          const img = cell.querySelector("img") as HTMLElement | null;
+          if (img) img.style.transform = `translateY(${y}px) scale(${s})`;
+          acc += w / 2 + 32; // gap-8 (8*4)
         }
       }
       raf = requestAnimationFrame(step);
@@ -127,20 +126,18 @@ const LogoMarquee = () => {
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
-      // очистим inline-стили на детях
-      Array.from(track.children).forEach((c) => ((c as HTMLElement).style.transform = ""));
+      Array.from(track.querySelectorAll("img")).forEach((img) => (img as HTMLElement).style.transform = "");
     };
   }, []);
 
   return (
     <div
-      className="relative bg-white py-8 overflow-hidden"
+      className="relative bg-white py-8 overflow-visible"
       onMouseEnter={() => (isHovered.current = true)}
       onMouseLeave={() => (isHovered.current = false)}
     >
-      {/* ---------- DESKTOP (>= md): классическая плавная лента ---------- */}
+      {/* ---------- DESKTOP (>= md) ---------- */}
       <div className="hidden md:block max-w-7xl mx-auto px-4 relative">
-        {/* кнопки — не обязательны, но приятны */}
         <button
           onClick={() => nudge(200)}
           className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white rounded-full p-2 shadow-md z-10"
@@ -157,26 +154,36 @@ const LogoMarquee = () => {
         </button>
 
         <div ref={deskViewportRef} className="overflow-hidden">
-          {/* градиентная маска по краям */}
+          {/* мягкая маска по краям и увеличенная высота дорожки */}
           <div
             className="relative"
             style={{
+              height: DESK_TRACK_H + 16, // +внутренние отступы снизу/сверху
               WebkitMaskImage:
-                "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+                "linear-gradient(to right, transparent, black 7%, black 93%, transparent)",
               maskImage:
-                "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+                "linear-gradient(to right, transparent, black 7%, black 93%, transparent)",
             }}
           >
-            <div ref={deskTrackRef} className="flex gap-10 items-center will-change-transform">
+            <div
+              ref={deskTrackRef}
+              className="flex gap-10 items-center will-change-transform py-2"
+              style={{ height: DESK_TRACK_H }}
+            >
               {[...logos, ...logos].map((logo, i) => (
                 <a
                   key={`d-${i}`}
                   href={logo.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block flex-shrink-0 transition-transform duration-300 hover:scale-105"
+                  className="flex items-center justify-center flex-shrink-0"
+                  style={{ height: DESK_TRACK_H }}
                 >
-                  <img src={logo.src} alt={`logo-${i}`} className="h-16 w-auto object-contain" />
+                  <img
+                    src={logo.src}
+                    alt={`logo-${i}`}
+                    className="max-h-full w-auto object-contain"
+                  />
                 </a>
               ))}
             </div>
@@ -190,6 +197,7 @@ const LogoMarquee = () => {
           ref={mobViewportRef}
           className="overflow-hidden rounded-xl"
           style={{
+            height: MOB_TRACK_H + 18,
             WebkitMaskImage:
               "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
             maskImage:
@@ -198,7 +206,8 @@ const LogoMarquee = () => {
         >
           <div
             ref={mobTrackRef}
-            className="flex items-center gap-8 will-change-transform"
+            className="flex items-center gap-8 will-change-transform py-3"
+            style={{ height: MOB_TRACK_H }}
           >
             {[...logos, ...logos].map((logo, i) => (
               <a
@@ -206,12 +215,13 @@ const LogoMarquee = () => {
                 href={logo.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block flex-shrink-0"
+                className="flex items-center justify-center flex-shrink-0"
+                style={{ height: MOB_TRACK_H }}
               >
                 <img
                   src={logo.src}
                   alt={`logo-${i}`}
-                  className="h-12 w-auto object-contain"
+                  className="max-h-full w-auto object-contain transition-transform duration-300"
                 />
               </a>
             ))}
