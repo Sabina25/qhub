@@ -53,7 +53,7 @@ const Members = () => {
                   <p className="text-sm font-medium text-gray-700 line-clamp-2">
                     {t(member.name)}
                   </p>
-                  <p className="text-xs text-gray-500 capitalize">{t(member.role)}</p>
+                  <p className="text-xs text-gray-500">{t(member.role)}</p>
                 </div>
               </div>
             ))}

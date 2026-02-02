@@ -33,8 +33,8 @@ const Home = () => (
       <Hero />
       {/* <WaveDivider /> */}
       <Mission />
-      <Projects />
       <News />
+      <Projects />
       <Members />
       <Contact />
       <ScrollManager headerSelector="#site-header" /> 
@@ -51,9 +51,9 @@ function App() {
       <ScrollManager headerSelector="#site-header" /* scrollContainerSelector="#app-scroll" */ />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/events" element={<AllEventsPage />} />
           <Route path="/projects" element={<AllProjectsPage />} />
           <Route path="/projects/:id" element={<ProjectDetailPage />} />
-          <Route path="/events" element={<AllEventsPage />} />
           <Route path="/events/:id" element={<EventDetailPage />} />
           <Route path="/media" element={<OurMediaPage />} />
           <Route path="/login" element={<Login />} />
