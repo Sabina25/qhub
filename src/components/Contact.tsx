@@ -108,10 +108,9 @@ const Contact = () => {
                   <MapPin className="h-6 w-6 text-blue-600" />
                   <div>
                     <h4 className="text-lg font-semibold text-gray-900">{t('contact.info.address')}</h4>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 max-w-[220px]">
                       Q-hub<br />
-                      вул. Олени Пчілки, буд. 6-а, кв. 69,<br />
-                      Київ, Україна 02081
+                      {t('footer.contact.address')}
                     </p>
                   </div>
                 </div>

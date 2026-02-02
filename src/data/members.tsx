@@ -18,9 +18,6 @@ const members = [
   { name: "members.list.names.aziz_axtemov", role: "members.list.roles.rf_affiliation" },
   { name: "members.list.names.ruslan_khalapov", role: "members.list.roles.media_advisor" },
   { name: "members.list.names.safiye_ametova", role: "members.list.roles.finance_advisor" },
-  { name: "members.list.names.elnara_nuriyeva", role: "members.list.roles.qhub_rep_germany" },
-  { name: "members.list.names.zore_mustafaeva", role: "members.list.roles.qhub_rep_turkey" },
-  { name: "members.list.names.lia_gazi_kyzy", role: "members.list.roles.qhub_rep_spain" },
 ];
 
 export default members;

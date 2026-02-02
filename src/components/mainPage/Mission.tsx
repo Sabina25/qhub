@@ -73,7 +73,7 @@ const Mission = () => {
           {/* Right: image + badge */}
           <div className="relative">
             <img
-              src="https://images.pexels.com/photos/1438072/pexels-photo-1438072.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop"
+              src="/images/team.jpg"
               alt="Diverse group of young Europeans"
               className="rounded-lg shadow-2xl w-full h-96 object-cover"
             />
