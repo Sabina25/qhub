@@ -20,6 +20,11 @@ export default {
         heading: ['Raleway', 'sans-serif'],
         raleway: ['Raleway', 'sans-serif'],
       },
+      screens: {
+        sm: '640px',
+        md: '768px', 
+        lg: '1024px', 
+      },
       
       typography: (theme) => ({
         DEFAULT: {

@@ -5,10 +5,20 @@ import { NewsCard } from './NewsCard';
 export const SKELETON_COUNT = 6;
 
 const SkeletonCard = () => (
-  <div className="animate-pulse bg-gray-100 p-4 rounded-xl h-64" aria-hidden="true">
-    <div className="w-full h-32 bg-gray-300 rounded mb-4" />
-    <div className="h-4 bg-gray-300 rounded w-3/4 mb-2" />
-    <div className="h-4 bg-gray-200 rounded w-1/2" />
+  <div
+    aria-hidden="true"
+    style={{
+      borderRadius: 16, overflow: 'hidden',
+      background: 'rgba(77,184,184,0.05)',
+      border: '0.5px solid rgba(77,184,184,0.1)',
+      animation: 'pulse 1.8s ease-in-out infinite',
+    }}
+  >
+    <div style={{ height: 200, background: 'rgba(77,184,184,0.08)' }} />
+    <div style={{ padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ height: 14, borderRadius: 6, background: 'rgba(77,184,184,0.1)', width: '75%' }} />
+      <div style={{ height: 14, borderRadius: 6, background: 'rgba(77,184,184,0.07)', width: '50%' }} />
+    </div>
   </div>
 );
 
@@ -29,7 +39,7 @@ export const NewsGrid = memo(function NewsGrid({
   loaderRef,
   labels,
   locale = 'en-GB',
-  className = '',                          
+  className = '',
 }: {
   items?: NewsCardVM[];
   loadingInitial: boolean;
@@ -40,53 +50,63 @@ export const NewsGrid = memo(function NewsGrid({
   loaderRef: RefObject<HTMLDivElement>;
   labels: Labels;
   locale?: string;
-  className?: string;                      
+  className?: string;
 }) {
   return (
     <section className={className}>
+      {/* Error */}
       {error && (
-        <div className="mb-8 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
+        <div style={{ marginBottom: 24, padding: '12px 16px', borderRadius: 12, background: 'rgba(255,80,80,0.08)', border: '0.5px solid rgba(255,100,100,0.25)', color: '#f87171', fontSize: 14 }}>
           {error}
         </div>
       )}
 
-      {(!loadingInitial && items.length === 0) ? (
-        <div className="text-center text-gray-500 py-10">
+      {/* Empty */}
+      {!loadingInitial && items.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '60px 0', color: 'rgba(200,230,230,0.45)', fontSize: 15 }}>
           {labels.empty ?? 'No news yet'}
-        </div>
-      ) : (
-        <div className="grid md:grid-cols-3 gap-8">
-          {loadingInitial &&
-            Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <SkeletonCard key={`skel-${i}`} />
-            ))}
-
-          {!loadingInitial &&
-            items.map((ev) => (
-              <NewsCard
-              key={`${ev.id}-${locale}`}
-                item={ev}
-                featuredLabel={labels.featured}
-                categoryLabel={(ev.categoryKey && (labels.category(ev.categoryKey) || ev.categoryKey)) || undefined}
-                locale={locale}
-              />
-            ))}
-
-          {!loadingInitial && loadingMore &&
-            Array.from({ length: Math.min(SKELETON_COUNT, Math.max(0, items.length)) }).map((_, i) => (
-              <SkeletonCard key={`skel-more-${i}`} />
-            ))}
         </div>
       )}
 
-      <div ref={loaderRef} className="h-10 mt-10" aria-hidden="true" />
+      {/* Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20 }}>
+        {loadingInitial && Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+          <SkeletonCard key={`skel-${i}`} />
+        ))}
 
+        {!loadingInitial && items.map((ev) => (
+          <NewsCard
+            key={`${ev.id}-${locale}`}
+            item={ev}
+            featuredLabel={labels.featured}
+            categoryLabel={(ev.categoryKey && (labels.category(ev.categoryKey) || ev.categoryKey)) || undefined}
+            locale={locale}
+          />
+        ))}
+
+        {!loadingInitial && loadingMore && Array.from({ length: 3 }).map((_, i) => (
+          <SkeletonCard key={`skel-more-${i}`} />
+        ))}
+      </div>
+
+      {/* Intersection observer target */}
+      <div ref={loaderRef} style={{ height: 40, marginTop: 40 }} aria-hidden="true" />
+
+      {/* Load more button */}
       {!loadingInitial && canLoadMore && !loadingMore && items.length > 0 && (
-        <div className="flex justify-center mt-4">
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
           <button
             onClick={onLoadMore}
-            className="px-4 py-2 rounded border hover:bg-gray-50"
             aria-label={labels.loadMore}
+            style={{
+              padding: '11px 32px', borderRadius: 30, cursor: 'pointer',
+              background: 'transparent',
+              border: '0.5px solid rgba(77,184,184,0.35)',
+              color: '#4db8b8', fontSize: 14, fontWeight: 500,
+              transition: 'background 0.2s',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(77,184,184,0.08)')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
           >
             {labels.loadMore}
           </button>

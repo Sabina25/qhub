@@ -11,8 +11,6 @@ type NavRoute = { label: string; to: string; isRoute: true };
 type NavAnchor = { label: string; to: string; isRoute?: false };
 export type NavItem = NavRoute | NavAnchor;
 
-const HEADER_BASE_H = 56;
-
 export function useHeaderLogic(appearance: Appearance = 'auto') {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -25,21 +23,35 @@ export function useHeaderLogic(appearance: Appearance = 'auto') {
   const { user } = useAuth();
   const isAdmin = user?.email === ADMIN_EMAIL;
 
+  // Scroll state — поддерживает и snap-container и обычный window
   useEffect(() => {
-    let ticking = false;
+    const getScroller = (): EventTarget =>
+      document.querySelector('.snap-container') ?? window;
+
     const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        setScrolled(window.scrollY > 8);
-        ticking = false;
-      });
+      const el = document.querySelector('.snap-container');
+      setScrolled(el ? el.scrollTop > 80 : window.scrollY > 80);
     };
+
+    let scroller = getScroller();
+    scroller.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+
+    // Re-attach если snap-container появится позже
+    const obs = new MutationObserver(() => {
+      scroller.removeEventListener('scroll', onScroll);
+      scroller = getScroller();
+      scroller.addEventListener('scroll', onScroll, { passive: true });
+    });
+    obs.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      scroller.removeEventListener('scroll', onScroll);
+      obs.disconnect();
+    };
   }, []);
 
+  // Active anchor via hash
   useEffect(() => {
     const onHash = () => setActiveAnchor(window.location.hash);
     onHash();
@@ -47,45 +59,46 @@ export function useHeaderLogic(appearance: Appearance = 'auto') {
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [location.pathname]);
+  useEffect(() => { setIsMenuOpen(false); }, [location.pathname]);
 
   const chromeSolid = appearance === 'transparent' ? false : scrolled;
   const textDark = appearance === 'solid' || (appearance === 'auto' && scrolled);
 
   const mainNav: NavItem[] = [
-    { label: t('header.nav_main.home'), to: '/', isRoute: true },
-    { label: t('header.nav_main.projects'), to: '/projects', isRoute: true },
-    { label: t('header.nav_main.news'), to: '/events', isRoute: true },
-    { label: t('header.nav_main.media'), to: '/media', isRoute: true },
+    { label: t('header.nav_main.home'),     to: '/',        isRoute: true },
+    { label: t('header.nav_main.news'),     to: '/events',  isRoute: true },
+    { label: t('header.nav_main.projects'), to: '/projects',isRoute: true },
+    { label: t('header.nav_main.media'),    to: '/media',   isRoute: true },
     ...(isAdmin ? [{ label: 'Admin', to: '/admin', isRoute: true } as const] : []),
   ];
 
   const anchorNav: NavItem[] = [
     { label: t('header.nav_anchors.organisation'), to: 'organisation' },
-    { label: t('header.nav_anchors.projects'), to: 'projects' },
-    { label: t('header.nav_anchors.news'), to: 'news' },
-    { label: t('header.nav_anchors.members'), to: 'members' },
-    { label: t('header.nav_anchors.contact'), to: 'contact' },
+    { label: t('header.nav_anchors.news'),         to: 'news' },
+    { label: t('header.nav_anchors.projects'),     to: 'projects' },
+    { label: t('header.nav_anchors.members'),      to: 'members' },
+    { label: t('header.nav_anchors.contact'),      to: 'contact' },
   ];
 
   const scrollToId = (id: string) => {
+    // Используем snap-helper если доступен
+    if (typeof (window as any).__snapGoTo === 'function') {
+      (window as any).__snapGoTo(id);
+      if (history.replaceState) {
+        history.replaceState(null, '', `${location.pathname}#${id}`);
+        setActiveAnchor(`#${id}`);
+      }
+      return;
+    }
+    // Fallback для не-snap страниц
     const el = document.getElementById(id);
     if (!el) return;
-
-    const headerEl = navRef.current;
-    const headerH = (headerEl?.getBoundingClientRect().height ?? HEADER_BASE_H) + 8;
-    const top = window.scrollY + (el.getBoundingClientRect().top - headerH);
-
+    const headerH = (navRef.current?.getBoundingClientRect().height ?? 60) + 8;
+    const top = window.scrollY + el.getBoundingClientRect().top - headerH;
     window.scrollTo({ top, behavior: 'smooth' });
-
     if (history.replaceState) {
-      const url = `${location.pathname}#${id}`;
-      history.replaceState(null, '', url);
+      history.replaceState(null, '', `${location.pathname}#${id}`);
       setActiveAnchor(`#${id}`);
-    } else {
-      window.location.hash = `#${id}`;
     }
   };
 
@@ -99,7 +112,7 @@ export function useHeaderLogic(appearance: Appearance = 'auto') {
       let tries = 0;
       const int = setInterval(() => {
         tries++;
-        if (document.getElementById(item.to) || tries >= 15) {
+        if (document.getElementById(item.to) || tries >= 20) {
           clearInterval(int);
           scrollToId(item.to);
         }
@@ -110,29 +123,12 @@ export function useHeaderLogic(appearance: Appearance = 'auto') {
   };
 
   const logoClick = () => navigate('/');
-
   const toggleMenu = () => setIsMenuOpen((s) => !s);
-
   const isHome = location.pathname === '/';
 
   return {
-    // state
-    isMenuOpen,
-    activeAnchor,
-    scrolled,
-    textDark,
-    chromeSolid,
-    lang,
-    // refs
-    navRef,
-    // data
-    mainNav,
-    anchorNav,
-    isHome,
-    // actions
-    setLang,
-    toggleMenu,
-    onNavClick,
-    logoClick,
+    isMenuOpen, activeAnchor, scrolled, textDark, chromeSolid,
+    lang, navRef, mainNav, anchorNav, isHome,
+    setLang, toggleMenu, onNavClick, logoClick,
   };
 }

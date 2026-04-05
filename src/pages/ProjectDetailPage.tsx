@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
-import { Share2, Copy as CopyIcon, Check as CheckIcon } from 'lucide-react';
+import { Share2, Copy as CopyIcon, Check as CheckIcon, ArrowLeft, Calendar, MapPin } from 'lucide-react';
 
 import Header from '../components/header/Header';
 import Footer from '../components/Footer';
@@ -12,7 +12,8 @@ import VideoGallery from '../components/VideoGallery';
 import { fetchProjectById, fetchProjects, ProjectDoc } from '../data/projects';
 import { buildShareUrl } from '../utils/share';
 
-// --- helpers ---
+const Q = { teal: '#4db8b8', teal2: '#2d7d9a', text: '#e8f4f4', muted: 'rgba(200,230,230,0.65)', faint: 'rgba(200,230,230,0.38)' };
+
 type Lang = 'ua' | 'en';
 
 function pickL10n(val: any, lang: Lang): string {
@@ -24,13 +25,20 @@ function pickL10n(val: any, lang: Lang): string {
 function enhanceHtml(html: string) {
   const clean = DOMPurify.sanitize(html || '', { ADD_ATTR: ['target', 'rel'] });
   const doc = new DOMParser().parseFromString(clean, 'text/html');
+  // Убираем inline цвета чтобы не переопределяли тёмную тему
+  doc.querySelectorAll<HTMLElement>('*').forEach(el => {
+    el.style.removeProperty('color');
+    el.style.removeProperty('background-color');
+    el.style.removeProperty('background');
+  });
   doc.querySelectorAll('a[href]').forEach((a) => {
     const href = a.getAttribute('href') || '';
-    if (href && !/^(https?:|mailto:|tel:|\/|#)/i.test(href)) {
+    if (href && !/^(https?:|mailto:|tel:|\/|#)/i.test(href))
       a.setAttribute('href', 'https://' + href);
-    }
     a.setAttribute('target', '_blank');
     a.setAttribute('rel', 'noopener noreferrer');
+    (a as HTMLElement).style.color = Q.teal;
+    (a as HTMLElement).style.textDecoration = 'underline';
   });
   return doc.body.innerHTML;
 }
@@ -41,12 +49,10 @@ function formatYMD(ymd?: string, locale = 'uk-UA') {
   if (!y || !m || !d) return '';
   return new Date(y, m - 1, d).toLocaleDateString(locale);
 }
-
 function formatRange(p: ProjectDoc, locale: string) {
   if (p.dateYMD) return formatYMD(p.dateYMD, locale);
-  if (p.dateStartYMD && p.dateEndYMD) {
+  if (p.dateStartYMD && p.dateEndYMD)
     return `${formatYMD(p.dateStartYMD, locale)} – ${formatYMD(p.dateEndYMD, locale)}`;
-  }
   return formatYMD(p.dateStartYMD || p.dateEndYMD, locale);
 }
 
@@ -55,29 +61,19 @@ const ProjectDetailPage: React.FC = () => {
   const { lang, t } = useTranslation();
   const locale = lang === 'ua' ? 'uk-UA' : 'en-GB';
 
-  const [proj, setProj] = useState<ProjectDoc | null>(null);
-  const [related, setRelated] = useState<ProjectDoc[]>([]);
+  const [proj, setProj]       = useState<ProjectDoc | null>(null);
   const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState<string | null>(null);
-
-  const [copied, setCopied] = useState(false);      // для тоста над Copy
-  const [justShared, setJustShared] = useState(false); // опционально подсветим share-иконку
-
-  const navigate = useNavigate();
+  const [err, setErr]         = useState<string | null>(null);
+  const [copied, setCopied]   = useState(false);
+  const [justShared, setJustShared] = useState(false);
 
   useEffect(() => {
     if (!id) return;
     (async () => {
       try {
         setLoading(true);
-        const data = await fetchProjectById(id);
-        setProj(data);
-        const all = await fetchProjects();
-        const others = all.filter((p) => p.id !== id);
-        const shuffled = others.sort(() => 0.5 - Math.random());
-        setRelated(shuffled.slice(0, 3));
+        setProj(await fetchProjectById(id));
       } catch (e: any) {
-        console.error(e);
         setErr(e?.message || 'Failed to load project');
       } finally {
         setLoading(false);
@@ -85,156 +81,166 @@ const ProjectDetailPage: React.FC = () => {
     })();
   }, [id]);
 
-  const title = useMemo(() => pickL10n(proj?.title, lang as Lang), [proj?.title, lang]);
-  const location = useMemo(() => pickL10n((proj as any)?.location, lang as Lang), [proj?.location, lang]);
-  const descHtml = useMemo(() => pickL10n((proj as any)?.descriptionHtml, lang as Lang), [proj?.descriptionHtml, lang]);
+  const title       = useMemo(() => pickL10n(proj?.title, lang as Lang), [proj?.title, lang]);
+  const location    = useMemo(() => pickL10n((proj as any)?.location, lang as Lang), [proj?.location, lang]);
+  const funding     = useMemo(() => pickL10n((proj as any)?.funding, lang as Lang), [proj, lang]);
+  const participants= useMemo(() => pickL10n((proj as any)?.participants, lang as Lang), [proj, lang]);
+  const descHtml    = useMemo(() => pickL10n((proj as any)?.descriptionHtml, lang as Lang), [proj?.descriptionHtml, lang]);
   const sanitizedHtml = useMemo(() => enhanceHtml(descHtml || ''), [descHtml]);
-
-  const dateStr = useMemo(() => (proj ? formatRange(proj, locale) : ''), [proj, locale]);
+  const dateStr     = useMemo(() => (proj ? formatRange(proj, locale) : ''), [proj, locale]);
   const allVideoUrls = useMemo(() => proj?.youtubeUrls || [], [proj?.youtubeUrls]);
 
-  // --- share (cache-buster + язык) ---
-  const shareVersion = useMemo(
-    () => (proj as any)?.updatedAtTs?.toString?.() || proj?.dateYMD || '',
-    [proj]
-  );
-  const shareUrl = useMemo(
-    () => buildShareUrl(`/projects/${id}`, { version: shareVersion, lang }),
-    [id, shareVersion, lang]
-  );
+  const shareVersion = useMemo(() => (proj as any)?.updatedAtTs?.toString?.() || proj?.dateYMD || '', [proj]);
+  const shareUrl     = useMemo(() => buildShareUrl(`/projects/${id}`, { version: shareVersion, lang }), [id, shareVersion, lang]);
 
-  // копирование без alert; показываем над иконкой на 2 сек "Copied"
-  const showCopiedToast = () => {
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
+  const showCopied = () => { setCopied(true); setTimeout(() => setCopied(false), 2000); };
+  const copyLink = () => {
+    navigator.clipboard.writeText(shareUrl).then(showCopied).catch(() => {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = shareUrl; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+        document.body.removeChild(ta); showCopied();
+      } catch {/* ignore */}
+    });
   };
-
-  const copyShareUrl = () => {
-    navigator.clipboard
-      .writeText(shareUrl)
-      .then(showCopiedToast)
-      .catch(() => {
-        // редкий случай: нет clipboard API — fallback через input
-        try {
-          const ta = document.createElement('textarea');
-          ta.value = shareUrl;
-          ta.style.position = 'fixed';
-          ta.style.left = '-9999px';
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand('copy');
-          document.body.removeChild(ta);
-          showCopiedToast();
-        } catch {
-          // если вообще не вышло — просто ничего не делаем
-        }
-      });
-  };
-
   const webShare = async () => {
     if (navigator.share) {
-      try {
-        await navigator.share({ title: title || 'Q-hub', text: title || '', url: shareUrl });
-        setJustShared(true);
-        window.setTimeout(() => setJustShared(false), 2000);
-      } catch {
-        /* cancelled — игнорируем */
-      }
-    } else {
-      // если нет Web Share API — просто копируем
-      copyShareUrl();
-    }
+      try { await navigator.share({ title: title || 'Q-hub', text: title || '', url: shareUrl }); setJustShared(true); setTimeout(() => setJustShared(false), 2000); }
+      catch {/* cancelled */}
+    } else copyLink();
   };
 
-  if (loading) return <div className="max-w-4xl mx-auto px-4 py-20">Loading…</div>;
-  if (err) return <div className="max-w-4xl mx-auto px-4 py-20 text-red-600">{err}</div>;
-  if (!proj) return <div className="max-w-4xl mx-auto px-4 py-20">Project not found</div>;
+  /* ── States ── */
+  const stateStyle: React.CSSProperties = { minHeight: '100vh', background: '#080c14', display: 'flex', alignItems: 'center', justifyContent: 'center' };
+
+  if (loading) return (
+    <div style={stateStyle}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+        <div style={{ width: 36, height: 36, borderRadius: '50%', border: `2px solid ${Q.teal}`, borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
+        <p style={{ color: Q.faint, fontSize: 14 }}>Loading…</p>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    </div>
+  );
+  if (err) return (
+    <div style={stateStyle}>
+      <div style={{ padding: '16px 24px', borderRadius: 12, background: 'rgba(255,80,80,0.08)', border: '0.5px solid rgba(255,100,100,0.25)', color: '#f87171' }}>{err}</div>
+    </div>
+  );
+  if (!proj) return (
+    <div style={stateStyle}>
+      <p style={{ color: Q.muted }}>Project not found</p>
+    </div>
+  );
 
   return (
-    <>
+    <div style={{ minHeight: '100vh', background: '#080c14', display: 'flex', flexDirection: 'column' }}>
       <Header appearance="solid" />
-      <main className="max-w-5xl mx-auto px-4 py-10">
+
+      <main style={{ flex: 1, maxWidth: 860, width: '100%', margin: '0 auto', padding: '80px 24px 80px' }}>
+
         {/* Cover */}
         {proj.image && (
-          <div className="relative h-72 sm:h-96 lg:h-[520px] overflow-hidden rounded-xl">
-            <img
-              src={proj.image}
-              alt={title || 'project cover'}
-              className="absolute inset-0 w-full h-full object-cover object-center"
-              loading="lazy"
-            />
+          <div style={{ borderRadius: 18, overflow: 'hidden', marginBottom: 40, border: '0.5px solid rgba(77,184,184,0.18)', position: 'relative' }}>
+            <img src={proj.image} alt={title || 'project cover'}
+              style={{ width: '100%', height: 'clamp(240px,40vw,480px)', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+              loading="lazy" />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(6,9,16,0.6), transparent 50%)', pointerEvents: 'none' }} />
           </div>
         )}
 
-        {/* Back Button */}
-        <Link to="/projects" className="text-blue-600 underline inline-block py-8">
-          ← {t('projects.back') || 'Back to Projects'}
+        {/* Back */}
+        <Link to="/projects"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: Q.teal, textDecoration: 'none', marginBottom: 28, transition: 'color 0.2s' }}
+          onMouseEnter={e => (e.currentTarget.style.color = '#7dd8d8')}
+          onMouseLeave={e => (e.currentTarget.style.color = Q.teal)}>
+          <ArrowLeft style={{ width: 15, height: 15 }} />
+          {t('projects.back') || 'Back to Projects'}
         </Link>
 
-        <h1 className="text-4xl font-bold mt-4 mb-2">{title || '—'}</h1>
+        {/* Featured + funding badges */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+          {proj.featured && (
+            <span style={{ fontSize: 11, padding: '3px 10px', borderRadius: 20, fontWeight: 700, background: '#f97316', color: '#fff' }}>Featured</span>
+          )}
+          {funding && (
+            <span style={{ fontSize: 11, padding: '3px 10px', borderRadius: 20, fontWeight: 600, background: 'rgba(45,125,154,0.85)', color: '#e8f4f4' }}>{funding}</span>
+          )}
+          {participants && (
+            <span style={{ fontSize: 11, padding: '3px 10px', borderRadius: 20, background: 'rgba(77,184,184,0.1)', border: '0.5px solid rgba(77,184,184,0.25)', color: Q.teal }}>{participants}</span>
+          )}
+        </div>
 
-        {/* Share (только иконки, без видимой ссылки) */}
-        <div className="mb-6 flex items-center gap-2">
-          {/* Share icon */}
-          <button
-            onClick={webShare}
-            className={`relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700 transition
-                        focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40`}
-            aria-label={lang === 'ua' ? 'Поділитись' : 'Share'}
-            title={lang === 'ua' ? 'Поділитись' : 'Share'}
-          >
-            <Share2 className={`h-4 w-4 ${justShared ? 'scale-110' : ''}`} />
-          </button>
+        {/* Title */}
+        <h1 className="font-raleway" style={{ fontSize: 'clamp(1.6rem,4vw,2.5rem)', fontWeight: 700, color: Q.text, lineHeight: 1.2, marginBottom: 20 }}>
+          {title || '—'}
+        </h1>
 
-          {/* Copy icon with tooltip */}
-          <div className="relative">
-            <button
-              onClick={copyShareUrl}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200 transition
-                         focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
-              aria-label={lang === 'ua' ? 'Скопіювати посилання' : 'Copy link'}
-              title={lang === 'ua' ? 'Скопіювати посилання' : 'Copy link'}
-            >
-              {copied ? <CheckIcon className="h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
-            </button>
+        {/* Teal line */}
+        <div style={{ width: 48, height: 2, background: `linear-gradient(90deg,${Q.teal},${Q.teal2})`, borderRadius: 2, marginBottom: 20 }} />
 
-            {/* mini toast "Copied" */}
-            {copied && (
-              <div
-                role="status"
-                className="absolute -top-7 left-1/2 -translate-x-1/2 rounded-md bg-black/80 text-white text-xs px-2 py-1 pointer-events-none select-none"
-              >
-                Copied
-                <span className="absolute left-1/2 -bottom-1 -translate-x-1/2 border-4 border-transparent border-t-black/80" />
+        {/* Meta */}
+        {(dateStr || location) && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginBottom: 28 }}>
+            {dateStr && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: Q.faint }}>
+                <Calendar style={{ width: 14, height: 14 }} />
+                {dateStr}
+              </div>
+            )}
+            {location && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: Q.faint }}>
+                <MapPin style={{ width: 14, height: 14 }} />
+                {location}
               </div>
             )}
           </div>
-        </div>
-
-        {(dateStr || location) && (
-          <p className="text-gray-500 mb-6">
-            {dateStr && <span>{dateStr}</span>}
-            {dateStr && location && <span className="mx-2">•</span>}
-            {location && <span>{location}</span>}
-          </p>
         )}
 
+        {/* Share */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 40 }}>
+          <button onClick={webShare}
+            style={{ width: 38, height: 38, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: justShared ? 'rgba(77,184,184,0.2)' : 'rgba(77,184,184,0.1)', border: `0.5px solid rgba(77,184,184,${justShared ? '0.5' : '0.3'})`, color: Q.teal, cursor: 'pointer', transition: 'all 0.2s' }}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(77,184,184,0.2)')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'rgba(77,184,184,0.1)')}>
+            <Share2 style={{ width: 16, height: 16 }} />
+          </button>
+          <div style={{ position: 'relative' }}>
+            <button onClick={copyLink}
+              style={{ width: 38, height: 38, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: copied ? 'rgba(77,184,184,0.15)' : 'rgba(255,255,255,0.05)', border: `0.5px solid rgba(77,184,184,${copied ? '0.4' : '0.2'})`, color: copied ? Q.teal : Q.faint, cursor: 'pointer', transition: 'all 0.2s' }}>
+              {copied ? <CheckIcon style={{ width: 16, height: 16 }} /> : <CopyIcon style={{ width: 16, height: 16 }} />}
+            </button>
+            {copied && (
+              <div style={{ position: 'absolute', bottom: 'calc(100% + 8px)', left: '50%', transform: 'translateX(-50%)', background: 'rgba(13,17,23,0.95)', border: '0.5px solid rgba(77,184,184,0.2)', color: Q.teal, fontSize: 11, padding: '4px 10px', borderRadius: 6, whiteSpace: 'nowrap' }}>
+                Copied!
+              </div>
+            )}
+          </div>
+          <span style={{ fontSize: 12, color: Q.faint }}>{lang === 'ua' ? 'Поділитись проєктом' : 'Share this project'}</span>
+        </div>
+
+        {/* Article body */}
         <div
-          className="
-            prose prose-lg max-w-none text-gray-800 leading-relaxed
-            prose-a:text-blue-600 prose-a:underline hover:prose-a:text-blue-700
-            prose-a:underline-offset-2 prose-a:decoration-2
-          "
+          className="article-body"
+          style={{ lineHeight: 1.85, fontSize: 16 }}
           dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
         />
 
         {/* Gallery */}
         {proj.gallery && proj.gallery.length > 0 && (
-          <section className="mt-10">
-            <h2 className="text-2xl font-semibold mb-4">{lang === 'ua' ? 'Галерея' : 'Gallery'}</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <section style={{ marginTop: 56 }}>
+            <div style={{ marginBottom: 20 }}>
+              <h2 className="font-raleway" style={{ fontSize: 22, fontWeight: 600, color: Q.text, marginBottom: 8 }}>
+                {lang === 'ua' ? 'Галерея' : 'Gallery'}
+              </h2>
+              <div style={{ width: 32, height: 2, background: `linear-gradient(90deg,${Q.teal},${Q.teal2})`, borderRadius: 2 }} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12 }}>
               {proj.gallery.map((src, i) => (
-                <img key={i} src={src} className="w-full h-40 md:h-48 object-cover rounded-lg" loading="lazy" />
+                <div key={i} style={{ borderRadius: 12, overflow: 'hidden', border: '0.5px solid rgba(77,184,184,0.15)', aspectRatio: '4/3' }}>
+                  <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} loading="lazy" />
+                </div>
               ))}
             </div>
           </section>
@@ -242,18 +248,33 @@ const ProjectDetailPage: React.FC = () => {
 
         {/* Videos */}
         {allVideoUrls.length > 0 && (
-          <section className="mt-12">
-            <h2 className="text-2xl font-semibold mb-4">{lang === 'ua' ? 'Відео' : 'Videos'}</h2>
+          <section style={{ marginTop: 56 }}>
+            <div style={{ marginBottom: 20 }}>
+              <h2 className="font-raleway" style={{ fontSize: 22, fontWeight: 600, color: Q.text, marginBottom: 8 }}>
+                {lang === 'ua' ? 'Відео' : 'Videos'}
+              </h2>
+              <div style={{ width: 32, height: 2, background: `linear-gradient(90deg,${Q.teal},${Q.teal2})`, borderRadius: 2 }} />
+            </div>
             <VideoGallery urls={allVideoUrls} />
           </section>
         )}
 
-        {/* Related Projects */}
+        {/* Bottom back */}
+        <div style={{ marginTop: 56, paddingTop: 32, borderTop: '0.5px solid rgba(77,184,184,0.1)' }}>
+          <Link to="/projects"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: Q.teal, textDecoration: 'none' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#7dd8d8')}
+            onMouseLeave={e => (e.currentTarget.style.color = Q.teal)}>
+            <ArrowLeft style={{ width: 15, height: 15 }} />
+            {t('projects.back') || 'Back to Projects'}
+          </Link>
+        </div>
+
         <RelatedProjects currentId={id!} limit={3} className="mt-16" />
       </main>
 
       <Footer />
-    </>
+    </div>
   );
 };
 
