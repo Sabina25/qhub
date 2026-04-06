@@ -58,7 +58,7 @@ export default function RelatedNews({ currentId, limit = 3, className = '' }: Pr
   if (loading) {
     return (
       <section className={`mt-12 ${className}`}>
-        <h2 className="text-xl font-bold mb-4">
+        <h2 className="text-xl font-bold mb-4 text-white">
           {t('news.read_also') ?? 'Читайте также'}
         </h2>
         <div className="grid gap-6 sm:grid-cols-3">

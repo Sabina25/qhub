@@ -46,6 +46,7 @@ const EventDetailPage = () => {
       try { setItem(await fetchNewsById(id, lang)); }
       finally { setLoading(false); }
     })();
+    window.scrollTo({ top: 0, behavior: 'smooth' }); window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [id, lang]);
 
   const locale = lang === 'ua' ? 'uk-UA' : 'en-GB';
