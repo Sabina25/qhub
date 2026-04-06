@@ -138,7 +138,7 @@ const Hero = () => {
       </div>
 
       {/* ── Scroll indicator ── */}
-      <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', zIndex: 2 }}>
+      <div  className="hidden sm:flex" style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', zIndex: 2 }}>
         <div className="animate-bounce">
           <div style={{ width: 24, height: 40, borderRadius: 12, border: '2px solid rgba(77,184,184,0.5)', display: 'flex', justifyContent: 'center' }}>
             <div className="animate-pulse" style={{ width: 4, height: 12, borderRadius: 4, background: 'rgba(77,184,184,0.8)', marginTop: 8 }} />

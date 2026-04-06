@@ -18,8 +18,7 @@ export const ShortsRail = ({
 
   return (
     <section className="relative">
-      <h2 className="text-xl font-semibold mb-4">Shorts</h2>
-
+  
       <button
         onClick={() => scroll('left')}
         className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/85 hover:bg-white shadow rounded-full p-2"

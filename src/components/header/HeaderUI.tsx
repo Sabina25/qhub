@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Globe, X, Menu, Home, FolderOpen, Newspaper, Radio } from 'lucide-react';
-import AnnouncementBarSlider from '../AnnouncementBar';
 
 export type Language = 'en' | 'ua';
 export type UIItem = { label: string; to: string; isRoute?: boolean };
@@ -210,15 +209,6 @@ const HeaderUI: React.FC<Props> = ({
           borderBottom: `0.5px solid ${borderColor}`,
         }}
       >
-        {isHome && (
-          <AnnouncementBarSlider
-            slides={[
-              { imageSrc: '/images/aziz-axtemov.jpeg',  startISO: '2021-09-04', name: 'politicalPrisoners.azizAkhtemov.name',  text: 'politicalPrisoners.azizAkhtemov.text' },
-              { imageSrc: '/images/asan_axtemov.png',   startISO: '2021-09-04', name: 'politicalPrisoners.asanAkhtemov.name',  text: 'politicalPrisoners.asanAkhtemov.text' },
-              { imageSrc: '/images/Appaz_Kurtamet.png', startISO: '2022-07-22', name: 'politicalPrisoners.appazKurtamet.name', text: 'politicalPrisoners.appazKurtamet.text' },
-            ]}
-          />
-        )}
 
         <a href="#main"
           style={{ position: 'absolute', left: -9999, top: 'auto', width: 1, height: 1, overflow: 'hidden' }}

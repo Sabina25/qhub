@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from '../context/TranslationContext';
+import { Instagram, Youtube, Twitter } from 'lucide-react';
 
 import Header from '../components/header/Header';
 import Footer from '../components/Footer';
@@ -61,8 +62,41 @@ const OurMediaPage = () => {
       </div>
 
       <p style={{ fontSize: 14, lineHeight: 1.75, color: Q.muted }}>
-        {t('media.info2')}
-      </p>
+  {t('media.info2')}
+</p>
+
+{/* Соцсети */}
+<div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginTop: 20 }}>
+  {[
+    { Icon: Instagram, href: 'instagram.com/crimea_vox' },
+    { Icon: Youtube,   href: 'https://www.youtube.com/@crimea_vox' },
+    { Icon: Twitter,   href: 'https://x.com/crimeavox' },
+  ].map(({ Icon, href }) => (
+    <a key={href} href={href} target="_blank" rel="noopener noreferrer"
+      style={{
+        width: 40, height: 40, borderRadius: 10,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: 'rgba(77,184,184,0.08)',
+        border: '0.5px solid rgba(77,184,184,0.2)',
+        color: 'rgba(200,230,230,0.55)',
+        transition: 'background 0.2s, color 0.2s, border-color 0.2s',
+        textDecoration: 'none',
+      }}
+      onMouseEnter={e => {
+        (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(77,184,184,0.15)';
+        (e.currentTarget as HTMLAnchorElement).style.color = '#4db8b8';
+        (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(77,184,184,0.4)';
+      }}
+      onMouseLeave={e => {
+        (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(77,184,184,0.08)';
+        (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(200,230,230,0.55)';
+        (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(77,184,184,0.2)';
+      }}
+    >
+      <Icon style={{ width: 18, height: 18 }} />
+    </a>
+  ))}
+</div>
     </div>
   ), [lang]);
 

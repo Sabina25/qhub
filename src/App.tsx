@@ -23,7 +23,8 @@ import AdminMenu from './components/admin/AdminMenu';
 import CreateProject from './pages/CreateProjectPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
 import Login from './pages/Login';
-import NeuralNetwork from './components/NeuralNetwork'
+import NeuralNetwork from './components/NeuralNetwork';
+import AnnouncementBanner from './components/AnnouncementBanner';
 
 import './components/mainPage/HomeSnap.css';
 
@@ -70,10 +71,11 @@ const Home = () => {
 
   return (
     <div className="home-wrapper">
+      <AnnouncementBanner />
       {/* Фиксированный фон */}
       <div className="home-bg" aria-hidden="true">
-  <NeuralNetwork />
-</div>
+        <NeuralNetwork />
+      </div>
 
       {/* Header поверх всего */}
       <Header />
