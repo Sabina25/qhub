@@ -28,7 +28,6 @@ import AnnouncementBanner from './components/AnnouncementBanner';
 
 import './components/mainPage/HomeSnap.css';
 
-// ── Секции ──────────────────────────────────────────────────────
 const SECTIONS = ['home', 'organisation', 'news', 'projects', 'members', 'contact'];
 
 const Home = () => {
@@ -41,7 +40,6 @@ const Home = () => {
     return () => document.documentElement.classList.remove('snap-active');
   }, []);
 
-  // Следим за активной секцией через scroll
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -60,7 +58,6 @@ const Home = () => {
     });
   };
 
-  // Позволяем Header скроллить к секции
   useEffect(() => {
     (window as any).__snapGoTo = (id: string) => {
       const idx = SECTIONS.indexOf(id);
@@ -76,8 +73,6 @@ const Home = () => {
       <div className="home-bg" aria-hidden="true">
         <NeuralNetwork />
       </div>
-
-      {/* Header поверх всего */}
       <Header />
 
       {/* Dots-навигация */}
@@ -92,35 +87,23 @@ const Home = () => {
         ))}
       </nav>
 
-      {/* Scroll-snap контейнер */}
+      {/* Scroll-snap */}
       <div className="snap-container" ref={containerRef}>
-
-        {/* 1. Hero */}
         <section id="home" className="snap-section snap-section--hero">
           <Hero />
         </section>
-
-        {/* 2. Mission */}
         <section id="organisation" className="snap-section snap-section--content">
           <Mission />
         </section>
-
-        {/* 3. News */}
         <section id="news" className="snap-section snap-section--content">
           <News />
         </section>
-
-        {/* 4. Projects */}
         <section id="projects" className="snap-section snap-section--content">
           <Projects />
         </section>
-
-        {/* 5. Members */}
         <section id="members" className="snap-section snap-section--content">
           <Members />
         </section>
-
-        {/* 6. Contact + Footer */}
         <section id="contact" className="snap-section snap-section--content">
           <Contact />
           <Footer />
@@ -131,7 +114,7 @@ const Home = () => {
   );
 };
 
-// ── App ──────────────────────────────────────────────────────────
+
 function App() {
   return (
     <AuthProvider>

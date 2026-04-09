@@ -68,7 +68,7 @@ const OurMediaPage = () => {
 {/* Соцсети */}
 <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginTop: 20 }}>
   {[
-    { Icon: Instagram, href: 'instagram.com/crimea_vox' },
+    { Icon: Instagram, href: 'https://www.instagram.com/crimea_vox/' },
     { Icon: Youtube,   href: 'https://www.youtube.com/@crimea_vox' },
     { Icon: Twitter,   href: 'https://x.com/crimeavox' },
   ].map(({ Icon, href }) => (
