@@ -96,7 +96,7 @@ const EventDetailPage = () => {
       {/* Hero image */}
       {item.image && <ParallaxBanner image={item.image} height="75vh" />}
 
-      <main style={{ flex: 1, maxWidth: 820, width: '100%', margin: '0 auto', padding: '40px 24px 80px' }}>
+      <main style={{ flex: 1, maxWidth: 820, width: '100%', margin: '0 auto', padding: '40px 24px' }}>
 
         {/* Back link */}
         <Link

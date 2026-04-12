@@ -11,6 +11,8 @@ type Props = {
   className?: string;
 };
 
+const Q = { teal: '#4db8b8', teal2: '#2d7d9a', text: '#e8f4f4', muted: 'rgba(200,230,230,0.6)', white: '#ffffff' };
+
 function pickL10n(val: any, lang: 'ua' | 'en'): string {
   if (typeof val === 'string') return val;
   if (val && typeof val === 'object') return val[lang] ?? val.ua ?? val.en ?? '';
@@ -75,7 +77,7 @@ export default function RelatedNews({ currentId, limit = 3, className = '' }: Pr
   return (
     <section className={`mt-16 mb-20 ${className}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-bold mb-8">
+        <h2 className="text-2xl font-bold mb-8" style={{color: Q.text}} >
           {t('news.read_also') ?? 'Читайте також'}
         </h2>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from '../context/TranslationContext';
 
 const logos = [
   { src: '/images/partnersLogo/logo_01.png',          link: 'https://www.youtube.com/@crimea_vox' },
@@ -24,6 +25,7 @@ const LogoMarquee = () => {
   const xRef        = useRef(0);
   const halfWRef    = useRef(0);
   const rafRef      = useRef<number>(0);
+  const { t }       = useTranslation();
 
   useEffect(() => {
     const track = trackRef.current;
@@ -102,7 +104,7 @@ const LogoMarquee = () => {
             border: '0.5px solid rgba(77,184,184,0.3)',
             color: Q.teal, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 500,
           }}>
-            Наші партнери
+            {t('members.title')}
           </span>
           <div style={{ flex: 1, height: '0.5px', background: `linear-gradient(90deg, rgba(77,184,184,0.4), rgba(77,184,184,0.05))` }} />
         </div>

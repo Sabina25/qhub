@@ -171,7 +171,14 @@ const News: React.FC = () => {
 
       {/* Heading */}
       <div className="text-center mb-10">
-        <h2 className="font-raleway font-semibold text-4xl md:text-5xl mb-3" style={{ color: Q.text }}>
+      <h2
+          className="font-raleway font-semibold"
+          style={{
+            color: Q.text,
+            fontSize: 'clamp(1.875rem, 4vw, 3rem)',
+            marginBottom: 12,
+          }}
+        >
           {t('news.title')}
         </h2>
         <div style={{ width: 40, height: 2, background: `linear-gradient(90deg,${Q.teal},${Q.teal2})`, borderRadius: 2, margin: '0 auto 14px' }} />
