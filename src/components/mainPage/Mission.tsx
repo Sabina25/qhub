@@ -41,6 +41,14 @@ const Mission = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <style>{`
+        .mission-mobile  { display: flex !important; }
+        .mission-desktop { display: none  !important; }
+        @media (min-width: 768px) {
+          .mission-mobile  { display: none  !important; }
+          .mission-desktop { display: block !important; }
+        }
+      `}</style>
 
       {/* Heading */}
       <div className="text-center mb-8 sm:mb-10">

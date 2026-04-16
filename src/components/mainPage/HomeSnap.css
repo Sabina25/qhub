@@ -81,7 +81,7 @@ html.snap-active body {
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
 }
 
 /* Hero — без паддинга (сам управляет) */
@@ -96,12 +96,15 @@ html.snap-active body {
 
 /* Обычные секции — со скроллом внутри если контент длинный */
 .snap-section--content {
-  height: auto;
+  height: 100vh;
   min-height: 100vh;
   padding: 80px 0 60px;
   align-items: stretch;
-  justify-content: center;
-  overflow: visible;
+  justify-content: flex-start;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 /* ── dots-навигация ── */
@@ -210,3 +213,6 @@ html.snap-active body {
   .snap-dots { right: 10px; }
   .snap-section--content { padding: 70px 0 30px; }
 }
+
+/* ── Webkit scrollbar hidden inside content sections ── */
+.snap-section--content::-webkit-scrollbar { display: none; }
