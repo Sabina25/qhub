@@ -1,6 +1,5 @@
 /* ================================================================
-   HomeSnap.css  —  Qhub scroll-snap layout
-   Палитра: #0d1117 · #4db8b8 · #2d7d9a
+   HomeSnap.css — Qhub scroll-snap layout
    ================================================================ */
 
 /* ── html/body ── */
@@ -15,48 +14,23 @@ html.snap-active body {
   position: relative;
   width: 100%;
   height: 100vh;
-  background: #0d1117;
+  background: #080c14;
   overflow: hidden;
 }
 
-/* ── фиксированный фон ── */
+/* ── fixed background ── */
 .home-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  background: #080c14;
 }
-
-.home-bg__glow {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(100px);
-}
-.home-bg__glow--tl {
-  width: 700px; height: 700px;
-  top: -200px; left: -200px;
-  background: radial-gradient(circle, rgba(77,184,184,0.2) 0%, transparent 65%);
-}
-.home-bg__glow--br {
-  width: 700px; height: 700px;
-  bottom: -200px; right: -200px;
-  background: radial-gradient(circle, rgba(45,125,154,0.18) 0%, transparent 65%);
-}
-.home-bg__glow--mid {
-  width: 500px; height: 500px;
-  top: 40%; left: 50%;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(45,125,154,0.1) 0%, transparent 70%);
-}
-.home-bg__grid {
-  position: absolute;
-  inset: 0;
-  opacity: 0.032;
-  background-image:
-    linear-gradient(rgba(77,184,184,1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(77,184,184,1) 1px, transparent 1px);
-  background-size: 44px 44px;
-}
+.home-bg__glow,
+.home-bg__glow--tl,
+.home-bg__glow--br,
+.home-bg__glow--mid,
+.home-bg__grid { display: none; }
 
 /* ── scroll container ── */
 .snap-container {
@@ -64,37 +38,37 @@ html.snap-active body {
   inset: 0;
   z-index: 1;
   overflow-y: scroll;
-  scroll-snap-type: y mandatory;
+  /* proximity — не защёлкивает жёстко, даёт свободно скроллить внутри секций */
+  scroll-snap-type: y proximity;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 .snap-container::-webkit-scrollbar { display: none; }
 
-/* ── каждая секция ── */
+/* ── sections ── */
 .snap-section {
   scroll-snap-align: start;
+  /* normal — не останавливает принудительно */
   scroll-snap-stop: normal;
-  min-height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: hidden;
 }
 
-/* Hero — без паддинга (сам управляет) */
+/* Hero — жёсткий snap, фиксированная высота */
 .snap-section--hero {
   height: 100vh;
   min-height: 100vh;
   max-height: 100vh;
-  padding: 0;
   overflow: hidden;
+  scroll-snap-align: start;
   scroll-snap-stop: always;
 }
 
-/* Обычные секции — со скроллом внутри если контент длинный */
+/* Контентные секции — высота 100vh, скролл внутри */
 .snap-section--content {
   height: 100vh;
   min-height: 100vh;
@@ -105,9 +79,12 @@ html.snap-active body {
   overflow-x: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  /* Snap только когда секция видна достаточно */
+  scroll-snap-align: start;
 }
+.snap-section--content::-webkit-scrollbar { display: none; }
 
-/* ── dots-навигация ── */
+/* ── dots navigation ── */
 .snap-dots {
   position: fixed;
   right: 24px;
@@ -129,42 +106,16 @@ html.snap-active body {
   border: none;
   padding: 0;
 }
-.snap-dot.active {
-  background: #4db8b8;
-  height: 18px;
-}
-.snap-dot:hover {
-  background: rgba(77,184,184,0.55);
-}
+.snap-dot.active { background: #4db8b8; height: 18px; }
+.snap-dot:hover  { background: rgba(77,184,184,0.55); }
 
-/* ── секционный лейбл + линия ── */
-.snap-tag {
-  font-size: 11px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: #4db8b8;
-  opacity: 0.8;
-  margin-bottom: 8px;
-}
-.snap-line {
-  width: 40px;
-  height: 2px;
-  background: linear-gradient(90deg, #4db8b8, #2d7d9a);
-  border-radius: 2px;
-  margin: 0 auto 24px;
-}
-
-/* ── типографика ── */
+/* ── typography ── */
+.snap-section h1,
 .snap-section h2,
-.snap-section h3,
-.snap-section h1 {
-  color: #e8f4f4;
-}
-.snap-section p {
-  color: rgba(200,230,230,0.6);
-}
+.snap-section h3 { color: #e8f4f4; }
+.snap-section p   { color: rgba(200,230,230,0.6); }
 
-/* ── стеклянные карточки внутри секций ── */
+/* ── glass cards ── */
 .glass-inner {
   background: rgba(255,255,255,0.034);
   border: 0.5px solid rgba(77,184,184,0.16);
@@ -173,15 +124,11 @@ html.snap-active body {
   -webkit-backdrop-filter: blur(20px);
   transition: border-color 0.3s;
 }
-.glass-inner:hover {
-  border-color: rgba(77,184,184,0.28);
-}
+.glass-inner:hover { border-color: rgba(77,184,184,0.28); }
 
-/* ── переопределения Tailwind внутри snap-секций ── */
+/* ── Tailwind overrides ── */
 .snap-section .bg-white,
-.snap-section .bg-gray-50 {
-  background: transparent !important;
-}
+.snap-section .bg-gray-50    { background: transparent !important; }
 .snap-section .text-gray-900 { color: #e8f4f4 !important; }
 .snap-section .text-gray-600,
 .snap-section .text-gray-500 { color: rgba(200,230,230,0.6) !important; }
@@ -193,9 +140,6 @@ html.snap-active body {
   box-shadow: none !important;
   border-radius: 12px !important;
 }
-.snap-section .text-\[#1A3639\],
-.snap-section .text-\[#319795\] { color: #4db8b8 !important; }
-.snap-section .text-\[#4FD1C5\]  { color: #7dd8d8 !important; }
 .snap-section .text-blue-600 { color: #4db8b8 !important; }
 .snap-section article.bg-white,
 .snap-section .bg-white.overflow-hidden {
@@ -203,16 +147,73 @@ html.snap-active body {
   border: 0.5px solid rgba(77,184,184,0.14) !important;
   border-radius: 14px !important;
 }
-.snap-section .bg-gray-50.rounded-2xl {
-  background: rgba(255,255,255,0.03) !important;
-  border: 0.5px solid rgba(77,184,184,0.12) !important;
-}
 
-/* ── адаптив ── */
+/* ── responsive ── */
 @media (max-width: 768px) {
   .snap-dots { right: 10px; }
   .snap-section--content { padding: 70px 0 30px; }
 }
 
-/* ── Webkit scrollbar hidden inside content sections ── */
-.snap-section--content::-webkit-scrollbar { display: none; }
+/* ── Header ── */
+.qh-desktop-nav,
+.qh-desktop-lang,
+.header-desktop-nav   { display: flex; }
+.qh-mobile-burger,
+.header-mobile-burger { display: none; }
+
+@media (max-width: 1023px) {
+  .qh-desktop-nav,
+  .qh-desktop-lang,
+  .header-desktop-nav   { display: none !important; }
+  .qh-mobile-burger,
+  .header-mobile-burger { display: flex !important; }
+}
+
+/* ── Mission responsive ── */
+.mission-mobile  { display: flex; }
+.mission-desktop { display: none; }
+
+@media (min-width: 768px) {
+  .mission-mobile  { display: none  !important; }
+  .mission-desktop { display: block !important; }
+}
+
+/* ── News responsive ── */
+.news-mobile  { display: flex; }
+.news-desktop { display: none; }
+
+@media (min-width: 768px) {
+  .news-mobile  { display: none !important; }
+  .news-desktop { display: flex !important; }
+}
+
+/* ── Scroll indicator ── */
+.scroll-indicator { display: flex; }
+@media (max-width: 640px) {
+  .scroll-indicator { display: none !important; }
+}
+
+/* ── Article body ── */
+.article-body,
+.article-body *:not(a) { color: rgba(200,230,230,0.75) !important; }
+.article-body strong,
+.article-body b        { color: #e8f4f4 !important; }
+.article-body a        { color: #4db8b8 !important; }
+.article-body h1,
+.article-body h2,
+.article-body h3,
+.article-body h4       { color: #e8f4f4 !important; }
+.article-body blockquote {
+  border-left: 2px solid rgba(77,184,184,0.4);
+  padding-left: 16px;
+}
+
+/* ── News excerpt ── */
+.news-excerpt,
+.news-excerpt * { color: rgba(194,194,194,0.79) !important; }
+
+/* ── Global ── */
+html, body, #root {
+  background: #080c14;
+  color: #e8f4f4;
+}

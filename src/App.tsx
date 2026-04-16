@@ -34,7 +34,6 @@ const Home = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
 
-  // Включаем overflow:hidden на html/body пока на главной
   useEffect(() => {
     document.documentElement.classList.add('snap-active');
     return () => document.documentElement.classList.remove('snap-active');
@@ -52,10 +51,7 @@ const Home = () => {
   }, []);
 
   const goTo = (idx: number) => {
-    containerRef.current?.scrollTo({
-      top: idx * window.innerHeight,
-      behavior: 'smooth',
-    });
+    containerRef.current?.scrollTo({ top: idx * window.innerHeight, behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -69,13 +65,11 @@ const Home = () => {
   return (
     <div className="home-wrapper">
       <AnnouncementBanner />
-      {/* Фиксированный фон */}
       <div className="home-bg" aria-hidden="true">
         <NeuralNetwork />
       </div>
       <Header />
 
-      {/* Dots-навигация */}
       <nav className="snap-dots" aria-label="Sections">
         {SECTIONS.map((id, i) => (
           <button
@@ -87,33 +81,20 @@ const Home = () => {
         ))}
       </nav>
 
-      {/* Scroll-snap */}
       <div className="snap-container" ref={containerRef}>
-        <section id="home" className="snap-section snap-section--hero">
-          <Hero />
-        </section>
-        <section id="organisation" className="snap-section snap-section--content">
-          <Mission />
-        </section>
-        <section id="news" className="snap-section snap-section--content">
-          <News />
-        </section>
-        <section id="projects" className="snap-section snap-section--content">
-          <Projects />
-        </section>
-        <section id="members" className="snap-section snap-section--content">
-          <Members />
-        </section>
-        <section id="contact" className="snap-section snap-section--content">
+        <section id="home"         className="snap-section snap-section--hero">    <Hero />     </section>
+        <section id="organisation" className="snap-section snap-section--content"> <Mission />  </section>
+        <section id="news"         className="snap-section snap-section--content"> <News />     </section>
+        <section id="projects"     className="snap-section snap-section--content"> <Projects /> </section>
+        <section id="members"      className="snap-section snap-section--content"> <Members />  </section>
+        <section id="contact"      className="snap-section snap-section--content">
           <Contact />
           <Footer />
         </section>
-
       </div>
     </div>
   );
 };
-
 
 function App() {
   return (
@@ -121,24 +102,18 @@ function App() {
       <TranslationProvider>
         <Router>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/events" element={<AllEventsPage />} />
-            <Route path="/projects" element={<AllProjectsPage />} />
+            <Route path="/"             element={<Home />} />
+            <Route path="/events"       element={<AllEventsPage />} />
+            <Route path="/projects"     element={<AllProjectsPage />} />
             <Route path="/projects/:id" element={<ProjectDetailPage />} />
-            <Route path="/events/:id" element={<EventDetailPage />} />
-            <Route path="/media" element={<OurMediaPage />} />
-            <Route path="/login" element={<Login />} />
-
-            <Route
-              path="/admin/*"
-              element={
-                <RequireAuth>
-                  <AdminLayout />
-                </RequireAuth>
-              }
-            >
-              <Route index element={<AdminMenu />} />
-              <Route path="add-news" element={<CreateNews />} />
+            <Route path="/events/:id"   element={<EventDetailPage />} />
+            <Route path="/media"        element={<OurMediaPage />} />
+            <Route path="/login"        element={<Login />} />
+            <Route path="/admin/*" element={
+              <RequireAuth><AdminLayout /></RequireAuth>
+            }>
+              <Route index              element={<AdminMenu />} />
+              <Route path="add-news"    element={<CreateNews />} />
               <Route path="add-project" element={<CreateProject />} />
             </Route>
           </Routes>
