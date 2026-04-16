@@ -93,6 +93,39 @@ const ProjectDetailPage: React.FC = () => {
   const shareVersion = useMemo(() => (proj as any)?.updatedAtTs?.toString?.() || proj?.dateYMD || '', [proj]);
   const shareUrl     = useMemo(() => buildShareUrl(`/projects/${id}`, { version: shareVersion, lang }), [id, shareVersion, lang]);
 
+  // ── Open Graph мета-теги ──
+  useEffect(() => {
+    if (!proj) return;
+    const pageTitle = title ? `${title} — Q-hub` : 'Q-hub';
+    const pageImage = proj.image || '';
+    const pageUrl   = window.location.href;
+    const pageDesc  = (proj as any)?.descriptionHtml
+      ? pickL10n((proj as any).descriptionHtml, lang as Lang)
+          .replace(/<[^>]*>/g, '')
+          .trim()
+          .slice(0, 160)
+      : '';
+
+    const setMeta = (prop: string, content: string, attr = 'property') => {
+      let el = document.querySelector(`meta[${attr}="${prop}"]`) as HTMLMetaElement | null;
+      if (!el) { el = document.createElement('meta'); el.setAttribute(attr, prop); document.head.appendChild(el); }
+      el.setAttribute('content', content);
+    };
+
+    document.title = pageTitle;
+    setMeta('og:title',       pageTitle);
+    setMeta('og:description', pageDesc);
+    setMeta('og:image',       pageImage);
+    setMeta('og:url',         pageUrl);
+    setMeta('og:type',        'article');
+    setMeta('twitter:card',        'summary_large_image', 'name');
+    setMeta('twitter:title',       pageTitle,             'name');
+    setMeta('twitter:description', pageDesc,              'name');
+    setMeta('twitter:image',       pageImage,             'name');
+
+    return () => { document.title = 'Q-hub'; };
+  }, [proj, title, lang]);
+
   const showCopied = () => { setCopied(true); setTimeout(() => setCopied(false), 2000); };
   const copyLink = () => {
     navigator.clipboard.writeText(shareUrl).then(showCopied).catch(() => {
