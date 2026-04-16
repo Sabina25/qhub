@@ -2,24 +2,24 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as yup from 'yup';
 
+// ── Инициализация — только один раз ──
 if (!admin.apps.length) admin.initializeApp();
 const db = admin.firestore();
 
+// ════════════════════════════════
+// sendContactEmail
+// ════════════════════════════════
 const schema = yup.object({
-  name: yup.string().min(2).max(120).required(),
-  email: yup.string().email().required(),
+  name:    yup.string().min(2).max(120).required(),
+  email:   yup.string().email().required(),
   subject: yup.string().max(200).optional(),
   message: yup.string().min(5).max(5000).required(),
 });
 
-export const sendContactEmail = functions.https.onCall(async (data, context) => {
-  // (опционально) требуем App Check
-  // if (!context.app) throw new functions.https.HttpsError('failed-precondition','AppCheck required');
-
+export const sendContactEmail = functions.https.onCall(async (data) => {
   const payload = await schema.validate(data).catch(() => null);
-  if (!payload) throw new functions.https.HttpsError('invalid-argument','Bad payload');
+  if (!payload) throw new functions.https.HttpsError('invalid-argument', 'Bad payload');
 
-  // Doc для расширения Trigger Email
   await db.collection('mail').add({
     to: ['hub.qirim@gmail.com'],
     replyTo: payload.email,
@@ -31,96 +31,120 @@ export const sendContactEmail = functions.https.onCall(async (data, context) => 
         <p><b>Name:</b> ${payload.name}</p>
         <p><b>Email:</b> ${payload.email}</p>
         ${payload.subject ? `<p><b>Subject:</b> ${payload.subject}</p>` : ''}
-        <p><b>Message:</b><br/>${String(payload.message).replace(/\n/g,'<br/>')}</p>
+        <p><b>Message:</b><br/>${String(payload.message).replace(/\n/g, '<br/>')}</p>
       `,
     },
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
   });
 
-  // (опционально) лог
   await db.collection('contactMessages').add({
     ...payload,
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    ip: (context.rawRequest?.headers['x-forwarded-for'] as string) || '',
   });
 
   return { ok: true };
 });
 
+// ════════════════════════════════
+// ogEvents — OG мета для краулеров
+// ════════════════════════════════
+type L10n = string | { ua?: string; en?: string };
 
-admin.initializeApp();
-const db = admin.firestore();
+const BOTS = /facebookexternalhit|twitterbot|slackbot|linkedinbot|telegrambot|whatsapp|discord|googlebot|bingbot|applebot|pinterest/i;
 
-type L10n<T=string> = T | { ua?: T; en?: T };
-
-const BOTS = /facebookexternalhit|twitterbot|slackbot|linkedinbot|telegram|whatsapp|discord|googlebot/i;
-
-function pick(v: L10n<string>|undefined, lang:'ua'|'en') {
+function pick(v: L10n | undefined, lang: 'ua' | 'en'): string {
   if (!v) return '';
   return typeof v === 'string' ? v : (v[lang] ?? v.ua ?? v.en ?? '');
 }
-const strip = (h='') => h.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
-const esc = (s:string) => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'} as any)[c]);
+const strip = (h = '') => h.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+const esc   = (s: string) => s.replace(/[&<>"']/g, c =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' } as any)[c]
+);
 
-function abs(req: functions.https.Request, url?: string) {
-  if (!url) return '';
-  if (/^https?:\/\//i.test(url)) return url;
-  const host = req.get('x-forwarded-host') || req.get('host');
-  return `https://${host}${url.startsWith('/') ? url : '/'+url}`;
-}
-
-function html({url,title,desc,image,published}:{url:string;title:string;desc:string;image:string;published?:string}) {
-  const T = esc(title || 'Q-hub');
-  const D = esc(desc || '');
-  const IMG = image ? `<meta property="og:image" content="${esc(image)}">
-<meta property="og:image:alt" content="${T}">` : '';
+function makeHtml({ url, title, desc, image, published }: {
+  url: string; title: string; desc: string; image: string; published?: string;
+}) {
+  const T   = esc(title || 'Q-hub');
+  const D   = esc(desc || '');
+  const IMG = image
+    ? `<meta property="og:image" content="${esc(image)}">
+       <meta property="og:image:width" content="1200">
+       <meta property="og:image:height" content="630">
+       <meta name="twitter:image" content="${esc(image)}">`
+    : '';
   return `<!doctype html><html lang="uk"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>${T}</title><link rel="canonical" href="${esc(url)}"/>
-<meta property="og:type" content="article"><meta property="og:site_name" content="Q-hub">
-<meta property="og:url" content="${esc(url)}"><meta property="og:title" content="${T}">
-<meta property="og:description" content="${D}">${IMG}
-${published ? `<meta property="article:published_time" content="${esc(published)}">` : ''}
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="${T}"><meta name="twitter:description" content="${D}">
-${image ? `<meta name="twitter:image" content="${esc(image)}">` : ''}
-<link rel="icon" href="/favicon.ico">
-<link rel="stylesheet" href="/assets/app.css">
-</head><body><div id="root"></div><script type="module" src="/assets/app.js"></script></body></html>`;
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>${T}</title>
+<link rel="canonical" href="${esc(url)}"/>
+<meta property="og:type"        content="article"/>
+<meta property="og:site_name"   content="Q-hub"/>
+<meta property="og:url"         content="${esc(url)}"/>
+<meta property="og:title"       content="${T}"/>
+<meta property="og:description" content="${D}"/>
+${IMG}
+${published ? `<meta property="article:published_time" content="${esc(published)}"/>` : ''}
+<meta name="twitter:card"        content="summary_large_image"/>
+<meta name="twitter:title"       content="${T}"/>
+<meta name="twitter:description" content="${D}"/>
+<link rel="icon" href="/favicon.ico"/>
+</head>
+<body>
+  <h1>${T}</h1>
+  <p>${D}</p>
+  ${image ? `<img src="${esc(image)}" alt="${T}" style="max-width:600px"/>` : ''}
+</body></html>`;
 }
 
-async function readDoc(kind:'events'|'projects', id:string) {
-  const col = kind === 'events' ? 'news' : 'projects';
-  const snap = await db.collection(col).doc(id).get();
-  return snap.exists ? { id, ...(snap.data() as any) } : null;
-}
-
-export const ogRenderer = functions.https.onRequest(async (req, res) => {
+export const ogEvents = functions.https.onRequest(async (req, res) => {
   try {
     const ua = req.get('user-agent') || '';
-    const parts = req.path.split('/'); // ['', 'og-test', 'events', ':id']
-    const kind = parts[2] as 'events'|'projects';
-    const id = parts[3];
 
-    if (!id || !['events','projects'].includes(kind)) return res.status(404).send('Not found');
+    // Обычный браузер — отдаём index.html (Firebase Hosting подхватит)
+    if (!BOTS.test(ua)) {
+      res.set('Cache-Control', 'no-cache');
+      // Возвращаем базовый HTML — браузер загрузит React приложение
+      res.redirect(302, req.path);
+      return;
+    }
 
-    const lang: 'ua'|'en' = (req.get('accept-language')||'').toLowerCase().startsWith('en') ? 'en' : 'ua';
-    const url = `https://${req.get('x-forwarded-host') || req.get('host')}${req.originalUrl}`;
+    // Краулер — разбираем путь: /events/:id или /projects/:id
+    const parts = req.path.replace(/^\//, '').split('/');
+    const kind  = parts[0] as 'events' | 'projects';
+    const id    = parts[1];
 
-    const doc = await readDoc(kind, id);
-    if (!doc) return res.status(404).send('Not found');
+    if (!id || !['events', 'projects'].includes(kind)) {
+      res.status(404).send('Not found');
+      return;
+    }
 
-    const title = pick(doc.title, lang) || 'Q-hub';
-    const raw   = doc.excerpt ?? doc.descriptionHtml ?? '';
-    const desc  = strip(pick(raw, lang)).slice(0, 240);
-    const image = abs(req, doc.image);
+    const lang: 'ua' | 'en' = (req.get('accept-language') || '').toLowerCase().startsWith('en') ? 'en' : 'ua';
+
+    // Читаем документ из Firestore
+    const col  = kind === 'events' ? 'news' : 'projects';
+    const snap = await db.collection(col).doc(id).get();
+
+    if (!snap.exists) {
+      res.status(404).send('Not found');
+      return;
+    }
+
+    const doc = snap.data() as any;
+
+    const title     = pick(doc.title, lang) || 'Q-hub';
+    const rawDesc   = doc.excerpt ?? doc.descriptionHtml ?? '';
+    const desc      = strip(pick(rawDesc, lang)).slice(0, 240);
+    const image     = doc.image || '';
     const published = typeof doc.dateYMD === 'string' ? doc.dateYMD : undefined;
+    const url       = `https://${req.get('x-forwarded-host') || req.get('host')}/${kind}/${id}`;
 
-    const page = html({ url, title, desc, image, published });
-    res.set('Cache-Control', BOTS.test(ua) ? 'public, max-age=300' : 'private, max-age=0');
-    res.status(200).send(page);
+    const page = makeHtml({ url, title, desc, image, published });
+
+    res.set('Cache-Control', 'public, max-age=300, s-maxage=300');
+    res.status(200).type('html').send(page);
+
   } catch (e) {
-    console.error(e);
+    console.error('ogEvents error:', e);
     res.status(500).send('Server error');
   }
 });
