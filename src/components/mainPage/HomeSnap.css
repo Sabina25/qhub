@@ -1,6 +1,6 @@
 /* ================================================================
    HomeSnap.css  —  Qhub scroll-snap layout
-   Фон: NeuralNetwork canvas (NeuralNetwork.tsx)
+   Палитра: #0d1117 · #4db8b8 · #2d7d9a
    ================================================================ */
 
 /* ── html/body ── */
@@ -15,7 +15,7 @@ html.snap-active body {
   position: relative;
   width: 100%;
   height: 100vh;
-  background: #080c14;
+  background: #0d1117;
   overflow: hidden;
 }
 
@@ -25,16 +25,37 @@ html.snap-active body {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: #080c14;
 }
 
-/* glow и grid — не нужны, рисует NeuralNetwork.tsx */
-.home-bg__glow,
-.home-bg__glow--tl,
-.home-bg__glow--br,
-.home-bg__glow--mid,
+.home-bg__glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+}
+.home-bg__glow--tl {
+  width: 700px; height: 700px;
+  top: -200px; left: -200px;
+  background: radial-gradient(circle, rgba(77,184,184,0.2) 0%, transparent 65%);
+}
+.home-bg__glow--br {
+  width: 700px; height: 700px;
+  bottom: -200px; right: -200px;
+  background: radial-gradient(circle, rgba(45,125,154,0.18) 0%, transparent 65%);
+}
+.home-bg__glow--mid {
+  width: 500px; height: 500px;
+  top: 40%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(45,125,154,0.1) 0%, transparent 70%);
+}
 .home-bg__grid {
-  display: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.032;
+  background-image:
+    linear-gradient(rgba(77,184,184,1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(77,184,184,1) 1px, transparent 1px);
+  background-size: 44px 44px;
 }
 
 /* ── scroll container ── */
@@ -52,29 +73,35 @@ html.snap-active body {
 /* ── каждая секция ── */
 .snap-section {
   scroll-snap-align: start;
-  scroll-snap-stop: always;
-  height: 100vh;
+  scroll-snap-stop: normal;
+  min-height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
+/* Hero — без паддинга (сам управляет) */
 .snap-section--hero {
+  height: 100vh;
+  min-height: 100vh;
+  max-height: 100vh;
   padding: 0;
   overflow: hidden;
+  scroll-snap-stop: always;
 }
 
+/* Обычные секции — со скроллом внутри если контент длинный */
 .snap-section--content {
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(77,184,184,0.2) transparent;
-  padding: 80px 0 40px;
+  height: auto;
+  min-height: 100vh;
+  padding: 80px 0 60px;
   align-items: stretch;
-  justify-content: flex-start;
+  justify-content: center;
+  overflow: visible;
 }
 
 /* ── dots-навигация ── */
@@ -152,10 +179,10 @@ html.snap-active body {
 .snap-section .bg-gray-50 {
   background: transparent !important;
 }
-.snap-section .text-gray-900  { color: #e8f4f4 !important; }
+.snap-section .text-gray-900 { color: #e8f4f4 !important; }
 .snap-section .text-gray-600,
-.snap-section .text-gray-500  { color: rgba(200,230,230,0.6) !important; }
-.snap-section .text-gray-700  { color: rgba(200,230,230,0.75) !important; }
+.snap-section .text-gray-500 { color: rgba(200,230,230,0.6) !important; }
+.snap-section .text-gray-700 { color: rgba(200,230,230,0.75) !important; }
 .snap-section .shadow-md,
 .snap-section .shadow-sm {
   background: rgba(255,255,255,0.05) !important;
@@ -165,8 +192,8 @@ html.snap-active body {
 }
 .snap-section .text-\[#1A3639\],
 .snap-section .text-\[#319795\] { color: #4db8b8 !important; }
-.snap-section .text-\[#4FD1C5\] { color: #7dd8d8 !important; }
-.snap-section .text-blue-600    { color: #4db8b8 !important; }
+.snap-section .text-\[#4FD1C5\]  { color: #7dd8d8 !important; }
+.snap-section .text-blue-600 { color: #4db8b8 !important; }
 .snap-section article.bg-white,
 .snap-section .bg-white.overflow-hidden {
   background: rgba(255,255,255,0.05) !important;
@@ -182,53 +209,4 @@ html.snap-active body {
 @media (max-width: 768px) {
   .snap-dots { right: 10px; }
   .snap-section--content { padding: 70px 0 30px; }
-}
-
-.news-excerpt,
-.news-excerpt * {
-  color: #c2c2c2ca !important;
-}
-
-.header-desktop-nav {
-  display: flex;
-}
-.header-mobile-burger {
-  display: none;
-}
-
-@media (max-width: 1023px) {
-  .header-desktop-nav {
-    display: none !important;
-  }
-  .header-mobile-burger {
-    display: flex !important;
-  }
-}
-
-/* ── Mission responsive ── */
-.mission-mobile  { display: flex; }
-.mission-desktop { display: none; }
-
-@media (min-width: 768px) {
-  .mission-mobile  { display: none !important; }
-  .mission-desktop { display: block !important; }
-}
-
-/* ── Article body — force light text ── */
-.article-body,
-.article-body *:not(a) {
-  color: rgba(200, 230, 230, 0.75) !important;
-}
-.article-body strong,
-.article-body b {
-  color: #e8f4f4 !important;
-}
-.article-body a {
-  color: #4db8b8 !important;
-}
-.article-body h1,
-.article-body h2,
-.article-body h3,
-.article-body h4 {
-  color: #e8f4f4 !important;
 }
