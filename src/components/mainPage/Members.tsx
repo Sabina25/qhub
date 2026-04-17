@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import memberLogos from '../../data/members';
 import LogoMarquee from '../LogoMarquee';
 import { useTranslation } from '../../context/TranslationContext';
@@ -42,6 +42,16 @@ const MOBILE_INITIAL  = 3;
 const Members = () => {
   const [showAll, setShowAll] = useState(false);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const section = document.getElementById('members');
+    if (!section) return;
+    if (showAll) {
+      section.style.scrollSnapAlign = 'none';
+    } else {
+      section.style.scrollSnapAlign = 'start';
+    }
+  }, [showAll]);
 
   const visibleDesktop = showAll ? memberLogos : memberLogos.slice(0, DESKTOP_INITIAL);
   const visibleMobile  = showAll ? memberLogos : memberLogos.slice(0, MOBILE_INITIAL);

@@ -1,15 +1,16 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as yup from 'yup';
+import * as fs from 'fs';
+import * as path from 'path';
 
-// ── Инициализация — только один раз ──
 if (!admin.apps.length) admin.initializeApp();
 const db = admin.firestore();
 
-// ════════════════════════════════
+// ════════════════════════════════════════
 // sendContactEmail
-// ════════════════════════════════
-const schema = yup.object({
+// ════════════════════════════════════════
+const contactSchema = yup.object({
   name:    yup.string().min(2).max(120).required(),
   email:   yup.string().email().required(),
   subject: yup.string().max(200).optional(),
@@ -17,7 +18,7 @@ const schema = yup.object({
 });
 
 export const sendContactEmail = functions.https.onCall(async (data) => {
-  const payload = await schema.validate(data).catch(() => null);
+  const payload = await contactSchema.validate(data).catch(() => null);
   if (!payload) throw new functions.https.HttpsError('invalid-argument', 'Bad payload');
 
   await db.collection('mail').add({
@@ -45,87 +46,102 @@ export const sendContactEmail = functions.https.onCall(async (data) => {
   return { ok: true };
 });
 
-// ════════════════════════════════
-// ogEvents — OG мета для краулеров
-// ════════════════════════════════
-type L10n = string | { ua?: string; en?: string };
+// ════════════════════════════════════════
+// ogEvents — OG meta for crawlers
+// ════════════════════════════════════════
+const SITE_URL = 'https://qirimhub.com';
 
-const BOTS = /facebookexternalhit|twitterbot|slackbot|linkedinbot|telegrambot|whatsapp|discord|googlebot|bingbot|applebot|pinterest/i;
+const BOTS = /facebookexternalhit|facebot|twitterbot|slackbot|linkedinbot|telegrambot|whatsapp|whatsappbot|discord|googlebot|bingbot|applebot|pinterest|vkshare|ia_archiver/i;
+
+type L10n = string | { ua?: string; en?: string };
 
 function pick(v: L10n | undefined, lang: 'ua' | 'en'): string {
   if (!v) return '';
   return typeof v === 'string' ? v : (v[lang] ?? v.ua ?? v.en ?? '');
 }
+
 const strip = (h = '') => h.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-const esc   = (s: string) => s.replace(/[&<>"']/g, c =>
+
+const esc = (s: string) => String(s).replace(/[&<>"']/g, c =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' } as any)[c]
 );
 
-function makeHtml({ url, title, desc, image, published }: {
+// Читаем index.html из dist (деплоится вместе с функцией)
+function getIndexHtml(): string {
+  try {
+    const p = path.join(__dirname, '..', 'dist-index.html');
+    return fs.readFileSync(p, 'utf8');
+  } catch {
+    return '';
+  }
+}
+
+// Вставляем OG теги в <head> существующего index.html
+function injectOgTags(html: string, tags: string): string {
+  if (!html) return tags;
+  return html.replace('</head>', `${tags}\n</head>`);
+}
+
+function makeOgTags({ url, title, desc, image, published }: {
   url: string; title: string; desc: string; image: string; published?: string;
-}) {
-  const T   = esc(title || 'Q-hub');
-  const D   = esc(desc || '');
+}): string {
+  const T   = esc(title);
+  const D   = esc(desc);
   const IMG = image
-    ? `<meta property="og:image" content="${esc(image)}">
-       <meta property="og:image:width" content="1200">
-       <meta property="og:image:height" content="630">
-       <meta name="twitter:image" content="${esc(image)}">`
+    ? `<meta property="og:image"        content="${esc(image)}"/>
+  <meta property="og:image:width"  content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta name="twitter:image"       content="${esc(image)}"/>`
     : '';
-  return `<!doctype html><html lang="uk"><head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>${T}</title>
-<link rel="canonical" href="${esc(url)}"/>
-<meta property="og:type"        content="article"/>
-<meta property="og:site_name"   content="Q-hub"/>
-<meta property="og:url"         content="${esc(url)}"/>
-<meta property="og:title"       content="${T}"/>
-<meta property="og:description" content="${D}"/>
-${IMG}
-${published ? `<meta property="article:published_time" content="${esc(published)}"/>` : ''}
-<meta name="twitter:card"        content="summary_large_image"/>
-<meta name="twitter:title"       content="${T}"/>
-<meta name="twitter:description" content="${D}"/>
-<link rel="icon" href="/favicon.ico"/>
-</head>
-<body>
-  <h1>${T}</h1>
-  <p>${D}</p>
-  ${image ? `<img src="${esc(image)}" alt="${T}" style="max-width:600px"/>` : ''}
-</body></html>`;
+
+  return `
+  <!-- OG injected by ogEvents -->
+  <title>${T}</title>
+  <meta property="og:type"        content="article"/>
+  <meta property="og:site_name"   content="Q-hub"/>
+  <meta property="og:url"         content="${esc(url)}"/>
+  <meta property="og:title"       content="${T}"/>
+  <meta property="og:description" content="${D}"/>
+  <meta property="og:locale"      content="uk_UA"/>
+  <meta name="description"        content="${D}"/>
+  ${IMG}
+  ${published ? `<meta property="article:published_time" content="${esc(published)}"/>` : ''}
+  <meta name="twitter:card"        content="summary_large_image"/>
+  <meta name="twitter:title"       content="${T}"/>
+  <meta name="twitter:description" content="${D}"/>`;
 }
 
 export const ogEvents = functions.https.onRequest(async (req, res) => {
   try {
     const ua = req.get('user-agent') || '';
 
-    // Обычный браузер — отдаём index.html (Firebase Hosting подхватит)
-    if (!BOTS.test(ua)) {
-      res.set('Cache-Control', 'no-cache');
-      // Возвращаем базовый HTML — браузер загрузит React приложение
-      res.redirect(302, req.path);
-      return;
-    }
-
-    // Краулер — разбираем путь: /events/:id или /projects/:id
     const parts = req.path.replace(/^\//, '').split('/');
     const kind  = parts[0] as 'events' | 'projects';
     const id    = parts[1];
 
     if (!id || !['events', 'projects'].includes(kind)) {
-      res.status(404).send('Not found');
+      res.redirect(302, SITE_URL);
       return;
     }
 
-    const lang: 'ua' | 'en' = (req.get('accept-language') || '').toLowerCase().startsWith('en') ? 'en' : 'ua';
+    const canonicalUrl = `${SITE_URL}/${kind}/${id}`;
 
-    // Читаем документ из Firestore
+    // ── Обычный браузер — отдаём index.html с OG тегами ──
+    // Это работает для браузеров И для краулеров
+    const lang: 'ua' | 'en' = (req.get('accept-language') || '')
+      .toLowerCase().startsWith('en') ? 'en' : 'ua';
+
     const col  = kind === 'events' ? 'news' : 'projects';
     const snap = await db.collection(col).doc(id).get();
 
     if (!snap.exists) {
-      res.status(404).send('Not found');
+      // Документ не найден — отдаём обычный index.html
+      const html = getIndexHtml();
+      if (html) {
+        res.status(200).type('html').send(html);
+      } else {
+        res.redirect(302, canonicalUrl);
+      }
       return;
     }
 
@@ -136,12 +152,28 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
     const desc      = strip(pick(rawDesc, lang)).slice(0, 240);
     const image     = doc.image || '';
     const published = typeof doc.dateYMD === 'string' ? doc.dateYMD : undefined;
-    const url       = `https://${req.get('x-forwarded-host') || req.get('host')}/${kind}/${id}`;
 
-    const page = makeHtml({ url, title, desc, image, published });
+    const ogTags = makeOgTags({ url: canonicalUrl, title, desc, image, published });
 
-    res.set('Cache-Control', 'public, max-age=300, s-maxage=300');
-    res.status(200).type('html').send(page);
+    // Пробуем взять index.html и вставить OG теги
+    const baseHtml = getIndexHtml();
+
+    if (baseHtml) {
+      const finalHtml = injectOgTags(baseHtml, ogTags);
+      res.set('Cache-Control', BOTS.test(ua)
+        ? 'public, max-age=300, s-maxage=600'
+        : 'no-cache, no-store'
+      );
+      res.status(200).type('html').send(finalHtml);
+    } else {
+      // Fallback — минимальный HTML с OG и редиректом
+      res.status(200).type('html').send(`<!doctype html>
+<html lang="uk"><head>
+<meta charset="utf-8"/>
+${ogTags}
+<meta http-equiv="refresh" content="0; url=${esc(canonicalUrl)}"/>
+</head><body><script>window.location.replace("${esc(canonicalUrl)}")</script></body></html>`);
+    }
 
   } catch (e) {
     console.error('ogEvents error:', e);
