@@ -11,8 +11,7 @@
       {
         "source": "/projects/**",
         "function": { "functionId": "ogEvents", "codebase": "qh", "region": "us-central1" }
-      },
-      { "source": "**", "destination": "/index.html" }
+      }
     ]
   },
   "functions": [

@@ -83,8 +83,8 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
 
 
     if (!id || !pathType) {
-      const idx = await fetch(FALLBACK_INDEX);
-      return res.status(200).set('Cache-Control', 'public, max-age=60').send(await idx.text());
+      res.redirect(302, `${PUBLIC_ORIGIN}${req.path}?direct=1`);
+      return;
     }
 
 
@@ -156,8 +156,8 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
       return res.status(200).set({'Content-Type':'text/html; charset=utf-8','Cache-Control':'public, max-age=300'}).send(html);
     }
 
-    const idx = await fetch(FALLBACK_INDEX);
-    return res.status(200).set('Cache-Control', 'private, no-cache').send(await idx.text());
+    res.redirect(302, PUBLIC_ORIGIN);
+    return;
   } catch (e) {
     console.error(e);
     return res.status(500).send('Internal error');
