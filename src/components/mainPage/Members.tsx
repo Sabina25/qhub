@@ -32,16 +32,16 @@ const MemberCard = ({ member, avatarSize, t }: { member: any; avatarSize: number
     </div>
     <p className="member-name">{t(member.name)}</p>
     <p className="member-role">{t(member.role)}</p>
-    <div style={{ marginTop: 10, width: 20, height: 1.5, background: `linear-gradient(90deg, #4db8b8, transparent)`, borderRadius: 1 }} />
+    <div style={{ marginTop: 8, width: 16, height: 1.5, background: `linear-gradient(90deg, #4db8b8, transparent)`, borderRadius: 1 }} />
   </div>
 );
+
+const DESKTOP_INITIAL = 4;
+const MOBILE_INITIAL  = 3;
 
 const Members = () => {
   const [showAll, setShowAll] = useState(false);
   const { t } = useTranslation();
-
-  const DESKTOP_INITIAL = 4;
-  const MOBILE_INITIAL  = 6;
 
   const visibleDesktop = showAll ? memberLogos : memberLogos.slice(0, DESKTOP_INITIAL);
   const visibleMobile  = showAll ? memberLogos : memberLogos.slice(0, MOBILE_INITIAL);
@@ -49,19 +49,19 @@ const Members = () => {
   return (
     <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', width: '100%' }}>
       <style>{`
-        /* ── Grid ── */
+        /* ── Grids ── */
         .members-desktop { display: none !important; }
-        .members-mobile  { display: grid !important; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+        .members-mobile  { display: grid !important; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
 
         @media (min-width: 640px) {
-          .members-desktop { display: grid !important; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; }
+          .members-desktop { display: grid !important; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; }
           .members-mobile  { display: none !important; }
         }
 
-        /* ── Card ── */
+        /* ── Card — компактная ── */
         .member-card {
-          border-radius: 14px;
-          padding: 14px 10px 12px;
+          border-radius: 12px;
+          padding: 12px 8px 10px;
           display: flex; flex-direction: column; align-items: center; text-align: center;
           background: rgba(255,255,255,0.04);
           border: 0.5px solid rgba(77,184,184,0.14);
@@ -72,26 +72,26 @@ const Members = () => {
           background: rgba(77,184,184,0.07);
         }
         @media (min-width: 640px) {
-          .member-card { border-radius: 20px; padding: 28px 18px 22px; }
+          .member-card { border-radius: 14px; padding: 16px 12px 14px; }
         }
 
         /* ── Avatar ── */
-        .member-avatar { margin-bottom: 10px; transition: transform 0.2s; }
+        .member-avatar { margin-bottom: 8px; transition: transform 0.2s; }
         .member-card:hover .member-avatar { transform: scale(1.05); }
-        @media (min-width: 640px) { .member-avatar { margin-bottom: 16px; } }
+        @media (min-width: 640px) { .member-avatar { margin-bottom: 10px; } }
 
         /* ── Text ── */
-        .member-name { font-size: 12px; font-weight: 500; color: #e8f4f4; line-height: 1.35; margin-bottom: 3px; }
-        .member-role { font-size: 11px; color: rgba(200,230,230,0.38); line-height: 1.4; }
+        .member-name { font-size: 11px; font-weight: 500; color: #e8f4f4; line-height: 1.3; margin-bottom: 2px; }
+        .member-role { font-size: 10px; color: rgba(200,230,230,0.38); line-height: 1.3; }
         @media (min-width: 640px) {
-          .member-name { font-size: 15px; margin-bottom: 5px; }
-          .member-role { font-size: 13px; }
+          .member-name { font-size: 13px; margin-bottom: 3px; }
+          .member-role { font-size: 11px; }
         }
 
         /* ── Button ── */
         .members-more-btn {
-          display: inline-block; margin-top: 24px;
-          padding: 10px 28px; border-radius: 30px;
+          display: inline-block; margin-top: 20px;
+          padding: 9px 24px; border-radius: 30px;
           border: 0.5px solid rgba(77,184,184,0.35);
           background: transparent; color: #4db8b8;
           font-size: 13px; font-weight: 500; cursor: pointer;
@@ -101,33 +101,33 @@ const Members = () => {
       `}</style>
 
       {/* Heading */}
-      <div style={{ textAlign: 'center', marginBottom: 40 }}>
+      <div style={{ textAlign: 'center', marginBottom: 28 }}>
         <h2 className="font-raleway font-semibold"
-          style={{ color: Q.text, fontSize: 'clamp(1.875rem, 4vw, 3rem)', marginBottom: 16 }}>
+          style={{ color: Q.text, fontSize: 'clamp(1.875rem, 4vw, 3rem)', marginBottom: 12 }}>
           {t('members.title')}
         </h2>
-        <div style={{ width: 40, height: 2, background: `linear-gradient(90deg,${Q.teal},${Q.teal2})`, borderRadius: 2, margin: '0 auto 16px' }} />
-        <p style={{ fontSize: 18, maxWidth: 720, margin: '0 auto', color: Q.muted }}>
+        <div style={{ width: 40, height: 2, background: `linear-gradient(90deg,${Q.teal},${Q.teal2})`, borderRadius: 2, margin: '0 auto 12px' }} />
+        <p style={{ fontSize: 16, maxWidth: 620, margin: '0 auto', color: Q.muted }}>
           {t('members.subtitle')}
         </p>
       </div>
 
       <LogoMarquee />
 
-      <div style={{ marginTop: 40 }}>
+      <div style={{ marginTop: 28 }}>
         <h3 className="font-raleway font-semibold"
-          style={{ color: Q.text, fontSize: 22, textAlign: 'center', marginBottom: 24 }}>
+          style={{ color: Q.text, fontSize: 18, textAlign: 'center', marginBottom: 16 }}>
           {t('members.team')}
         </h3>
 
-        {/* Desktop: 4 initial */}
+        {/* Desktop: 8 (2×4) */}
         <div className="members-desktop">
-          {visibleDesktop.map((m, i) => <MemberCard key={i} member={m} avatarSize={88} t={t} />)}
+          {visibleDesktop.map((m, i) => <MemberCard key={i} member={m} avatarSize={60} t={t} />)}
         </div>
 
-        {/* Mobile: 6 initial */}
+        {/* Mobile: 6 (2×3) */}
         <div className="members-mobile">
-          {visibleMobile.map((m, i) => <MemberCard key={i} member={m} avatarSize={52} t={t} />)}
+          {visibleMobile.map((m, i) => <MemberCard key={i} member={m} avatarSize={44} t={t} />)}
         </div>
 
         {memberLogos.length > DESKTOP_INITIAL && (
