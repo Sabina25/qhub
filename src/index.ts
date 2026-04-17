@@ -1,9 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as yup from 'yup';
-import * as fs from 'fs';
-import * as path from 'path';
-
 if (!admin.apps.length) admin.initializeApp();
 const db = admin.firestore();
 
@@ -69,7 +66,7 @@ const esc = (s: string) => String(s).replace(/[&<>"']/g, c =>
 // Читаем index.html из dist (деплоится вместе с функцией)
 function getIndexHtml(): string {
   try {
-    const p = path.join(__dirname, '..', 'dist-index.html');
+    const p = path.join(__dirname, '..', '..', 'dist', 'index.html');
     return fs.readFileSync(p, 'utf8');
   } catch {
     return '';
@@ -126,8 +123,12 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
 
     const canonicalUrl = `${SITE_URL}/${kind}/${id}`;
 
-    // ── Обычный браузер — отдаём index.html с OG тегами ──
-    // Это работает для браузеров И для краулеров
+    // ── Обычный браузер — редирект на основной сайт ──
+    if (!BOTS.test(ua)) {
+      res.redirect(302, canonicalUrl);
+      return;
+    }
+
     const lang: 'ua' | 'en' = (req.get('accept-language') || '')
       .toLowerCase().startsWith('en') ? 'en' : 'ua';
 
@@ -155,25 +156,19 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
 
     const ogTags = makeOgTags({ url: canonicalUrl, title, desc, image, published });
 
-    // Пробуем взять index.html и вставить OG теги
-    const baseHtml = getIndexHtml();
-
-    if (baseHtml) {
-      const finalHtml = injectOgTags(baseHtml, ogTags);
-      res.set('Cache-Control', BOTS.test(ua)
-        ? 'public, max-age=300, s-maxage=600'
-        : 'no-cache, no-store'
-      );
-      res.status(200).type('html').send(finalHtml);
-    } else {
-      // Fallback — минимальный HTML с OG и редиректом
-      res.status(200).type('html').send(`<!doctype html>
+    // Краулер — отдаём минимальный HTML с OG тегами
+    const T = esc(title);
+    res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
+    res.status(200).type('html').send(`<!doctype html>
 <html lang="uk"><head>
 <meta charset="utf-8"/>
+<title>${T}</title>
 ${ogTags}
-<meta http-equiv="refresh" content="0; url=${esc(canonicalUrl)}"/>
-</head><body><script>window.location.replace("${esc(canonicalUrl)}")</script></body></html>`);
-    }
+</head>
+<body>
+  <h1>${T}</h1>
+  <a href="${esc(canonicalUrl)}">${esc(canonicalUrl)}</a>
+</body></html>`);
 
   } catch (e) {
     console.error('ogEvents error:', e);
