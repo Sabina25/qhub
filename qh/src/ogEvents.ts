@@ -1,33 +1,24 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
-const SITE_NAME = 'Q-hub';
-const OG_LOCALE = 'uk_UA';
-
-
-if (!admin.apps.length) {
-  admin.initializeApp();
-}
+if (!admin.apps.length) admin.initializeApp();
 const db = admin.firestore();
 
-const BOT_REGEX =
-  /(bot|crawl|spider|slurp|facebookexternalhit|twitterbot|linkedinbot|telegrambot|whatsapp|discord|vkshare|google-structured-data-testing-tool)/i;
-
+const SITE_NAME    = 'Q-hub';
 const PUBLIC_ORIGIN = 'https://qirimhub.com';
-const FALLBACK_INDEX = 'https://qirimhub.com/index.html';
-
+const FALLBACK_ORIGIN = 'https://github-b91ab.web.app';
 const DEFAULT_OG_IMAGE = `${PUBLIC_ORIGIN}/og-default.jpg`;
 
-// --- types ---
+const BOT_REGEX = /(bot|crawl|spider|slurp|facebookexternalhit|twitterbot|linkedinbot|telegrambot|whatsapp|discord|vkshare)/i;
+
 type Lang = 'ua' | 'en';
 type L10nText = string | { ua?: string; en?: string };
-
 type NewsDoc = {
   title?: L10nText;
   excerpt?: L10nText;
+  descriptionHtml?: L10nText;
   image?: string;
   dateYMD?: string;
-  categoryKey?: string;
 };
 
 function pickL10n(val: L10nText | undefined, lang: Lang = 'ua'): string {
@@ -35,132 +26,123 @@ function pickL10n(val: L10nText | undefined, lang: Lang = 'ua'): string {
   if (typeof val === 'string') return val;
   return val[lang] ?? val.ua ?? val.en ?? '';
 }
-
-function stripHtml(html = ''): string {
-  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-}
-function truncate(s: string, n = 200): string {
-  return s.length <= n ? s : s.slice(0, n - 1) + '…';
-}
-function absUrl(u?: string): string | undefined {
+function stripHtml(html = '') { return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(); }
+function truncate(s: string, n = 200) { return s.length <= n ? s : s.slice(0, n - 1) + '…'; }
+function absUrl(u?: string) {
   if (!u) return undefined;
   if (/^https?:\/\//i.test(u)) return u;
-  if (u.startsWith('/')) return `${PUBLIC_ORIGIN}${u}`;
-  return `${PUBLIC_ORIGIN}/${u}`;
+  return `${PUBLIC_ORIGIN}${u.startsWith('/') ? '' : '/'}${u}`;
 }
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;');
+function escHtml(s: string) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
-function ensureDirectImage(url: string): string {
-  const isStorage = /\/\/(firebasestorage\.googleapis\.com|firebasestorage\.app)\/v0\/b\/.+\/o\//i.test(url);
+function ensureMedia(url: string) {
+  const isStorage = /firebasestorage\.(googleapis\.com|app)\/v0\/b\/.+\/o\//i.test(url);
   if (!isStorage) return url;
-  if (/[?&]alt=media\b/i.test(url)) return url;
+  if (/[?&]alt=media/i.test(url)) return url;
   return url + (url.includes('?') ? '&' : '?') + 'alt=media';
 }
 
-
-
 export const ogEvents = functions.https.onRequest(async (req, res) => {
+  console.error('[ogEvents] path=' + req.path + ' ua=' + req.get('user-agent'));
   try {
-    const ua = String(req.get('user-agent') || '');
-    const isBot = BOT_REGEX.test(ua);
+    const ua     = String(req.get('user-agent') || '');
+    const isBot  = BOT_REGEX.test(ua);
+    const path   = req.path || '/';
 
+    // Парсимо /events/:id або /projects/:id
+    const m        = path.match(/^\/(events|projects)\/([^/?#]+)/);
+    const pathType = m?.[1] as 'events' | 'projects' | undefined;
+    const id       = m?.[2];
 
-    const rawUrl = (req as any).originalUrl || req.url || req.path || '';
-    const m = rawUrl.match(/\/(events|projects)\/([^/?#]+)/);
-    type PathType = 'events' | 'projects' | 'news';
-    const pathType = (m?.[1] || '') as PathType;
-    const id = m?.[2] || '';
+    console.error(`[ogEvents] isBot=${isBot} pathType=${pathType} id=${id}`);
 
-    // язык из ?lang=
-    const urlObj = new URL(PUBLIC_ORIGIN + rawUrl);
-    const qlang = urlObj.searchParams.get('lang');
-    const lang: Lang = qlang === 'en' ? 'en' : 'ua';
-
-
-    if (!id || !pathType) {
-      res.redirect(302, `${PUBLIC_ORIGIN}${req.path}?direct=1`);
+    if (!pathType || !id) {
+      res.redirect(302, FALLBACK_ORIGIN);
       return;
     }
 
+    const canonicalUrl = `${PUBLIC_ORIGIN}/${pathType}/${id}`;
 
-      const tryCols = [pathType, ...['news','events','projects'].filter(c => c !== pathType)];
+    // Визначаємо мову з query або accept-language
+    const qlang = req.query?.lang as string | undefined;
+    const lang: Lang = (qlang === 'en' || (req.get('accept-language') || '').toLowerCase().startsWith('en'))
+      ? 'en' : 'ua';
 
+    // Шукаємо документ
+    const col  = pathType === 'events' ? 'news' : 'projects';
+    const snap = await db.collection(col).doc(id).get();
 
-      let data: NewsDoc | null = null;
-      let foundIn: string | null = null;
+    console.error(`[ogEvents] col=${col} exists=${snap.exists}`);
 
-      for (const col of tryCols) {
-  
-      const snap = await db.collection(col).doc(id).get();
-      if (snap.exists) {
-        data = snap.data() as NewsDoc;
-        foundIn = col;
-        break;
-      }
-
-     
+    if (!snap.exists) {
+      // Спробуємо в news якщо projects не знайшло
       if (col === 'projects') {
-        const q = await db.collection(col).where('slug', '==', id).limit(1).get();
-        if (!q.empty) {
-          data = q.docs[0].data() as NewsDoc;
-          foundIn = col;
-          break;
+        const snap2 = await db.collection('news').doc(id).get();
+        if (snap2.exists) {
+          const doc2 = snap2.data() as NewsDoc;
+          return sendOgHtml(res, doc2, id, 'events', lang, canonicalUrl);
         }
       }
-      }
-    if (isBot && data) {
-      const title = pickL10n(data.title, lang) || SITE_NAME;
-      const rawExcerpt = pickL10n(data.excerpt, lang);
-      const description = truncate(stripHtml(rawExcerpt || ''), 200) || SITE_NAME;
-    
-      const baseImageRaw = absUrl(data.image) || DEFAULT_OG_IMAGE;
-      const baseImage = absUrl(data.image) || DEFAULT_OG_IMAGE;
-      const version = (data as any)?.updatedAtTs || (data as any)?.dateYMD || Date.now();
-      const imageUrl = baseImage.includes('?') ? `${baseImage}&v=${version}` : `${baseImage}?v=${version}`;
-    
-      const url = `${PUBLIC_ORIGIN}/${pathType}/${id}`; 
-
-      const html = `<!doctype html>
-<html lang="${lang === 'ua' ? 'uk' : 'en'}">
-<head>
-  <meta charset="utf-8" />
-  <title>${escapeHtml(title)}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <meta property="og:type" content="article" />
-  <meta property="og:site_name" content="${SITE_NAME}" />
-  <meta property="og:locale" content="${lang === 'ua' ? 'uk_UA' : 'en_US'}" />
-  <meta property="og:title" content="${escapeHtml(title)}" />
-  <meta property="og:description" content="${escapeHtml(description)}" />
-  <meta property="og:image" content="${imageUrl}" />
-  <meta property="og:image:secure_url" content="${imageUrl}" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:url" content="${url}" />
-
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="${escapeHtml(title)}" />
-  <meta name="twitter:description" content="${escapeHtml(description)}" />
-  <meta name="twitter:image" content="${imageUrl}" />
-
-  <link rel="canonical" href="${url}" />
-  <meta name="robots" content="index,follow" />
-</head>
-<body><noscript><p><a href="${url}">Open</a></p></noscript></body>
-</html>`;
-      return res.status(200).set({'Content-Type':'text/html; charset=utf-8','Cache-Control':'public, max-age=300'}).send(html);
+      res.redirect(302, canonicalUrl);
+      return;
     }
 
-    res.redirect(302, PUBLIC_ORIGIN);
-    return;
+    const doc = snap.data() as NewsDoc;
+    return sendOgHtml(res, doc, id, pathType, lang, canonicalUrl);
+
   } catch (e) {
-    console.error(e);
-    return res.status(500).send('Internal error');
+    console.error('[ogEvents] ERROR:', e);
+    res.status(500).send('Internal error');
   }
 });
 
+function sendOgHtml(
+  res: functions.Response,
+  doc: NewsDoc,
+  id: string,
+  pathType: string,
+  lang: Lang,
+  canonicalUrl: string
+) {
+  const title       = pickL10n(doc.title, lang) || SITE_NAME;
+  const rawDesc     = doc.excerpt ?? doc.descriptionHtml ?? '';
+  const description = truncate(stripHtml(pickL10n(rawDesc, lang)), 200) || SITE_NAME;
+  const rawImage    = absUrl(doc.image) || DEFAULT_OG_IMAGE;
+  const imageUrl    = ensureMedia(rawImage);
+  const version     = (doc as any)?.updatedAtTs || doc.dateYMD || Date.now();
+  const imgWithVer  = imageUrl + (imageUrl.includes('?') ? '&' : '?') + `v=${version}`;
+
+  const T = escHtml(title);
+  const D = escHtml(description);
+  const I = escHtml(imgWithVer);
+  const U = escHtml(canonicalUrl);
+
+  console.error(`[ogEvents] Sending OG: title="${title}" image="${rawImage}"`);
+
+  res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
+  res.status(200).type('html').send(`<!doctype html>
+<html lang="${lang === 'ua' ? 'uk' : 'en'}">
+<head>
+  <meta charset="utf-8"/>
+  <title>${T}</title>
+  <meta property="og:type"               content="article"/>
+  <meta property="og:site_name"          content="${SITE_NAME}"/>
+  <meta property="og:locale"             content="${lang === 'ua' ? 'uk_UA' : 'en_US'}"/>
+  <meta property="og:title"              content="${T}"/>
+  <meta property="og:description"        content="${D}"/>
+  <meta property="og:image"              content="${I}"/>
+  <meta property="og:image:secure_url"   content="${I}"/>
+  <meta property="og:image:width"        content="1200"/>
+  <meta property="og:image:height"       content="630"/>
+  <meta property="og:url"                content="${U}"/>
+  <meta name="twitter:card"              content="summary_large_image"/>
+  <meta name="twitter:title"             content="${T}"/>
+  <meta name="twitter:description"       content="${D}"/>
+  <meta name="twitter:image"             content="${I}"/>
+  <link rel="canonical"                  href="${U}"/>
+</head>
+<body><p><a href="${U}">${T}</a></p></body>
+</html>`);
+}
+// force redeploy Sat Apr 18 19:21:19 EDT 2026

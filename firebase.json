@@ -3,7 +3,25 @@
     "site": "github-b91ab",
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "headers": [
+      {
+        "source": "/projects/**",
+        "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+      },
+      {
+        "source": "/events/**", 
+        "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+      }
+    ],
     "rewrites": [
+      {
+        "source": "/events/**",
+        "function": { "functionId": "ogEvents", "codebase": "qh", "region": "us-central1" }
+      },
+      {
+        "source": "/projects/**",
+        "function": { "functionId": "ogEvents", "codebase": "qh", "region": "us-central1" }
+      },
       { "source": "**", "destination": "/index.html" }
     ]
   },
