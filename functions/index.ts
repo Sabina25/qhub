@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as yup from 'yup';
+
 if (!admin.apps.length) admin.initializeApp();
 const db = admin.firestore();
 
@@ -63,27 +64,11 @@ const esc = (s: string) => String(s).replace(/[&<>"']/g, c =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' } as any)[c]
 );
 
-// Читаем index.html из dist (деплоится вместе с функцией)
-function getIndexHtml(): string {
-  try {
-    const p = path.join(__dirname, '..', '..', 'dist', 'index.html');
-    return fs.readFileSync(p, 'utf8');
-  } catch {
-    return '';
-  }
-}
-
-// Вставляем OG теги в <head> существующего index.html
-function injectOgTags(html: string, tags: string): string {
-  if (!html) return tags;
-  return html.replace('</head>', `${tags}\n</head>`);
-}
-
 function makeOgTags({ url, title, desc, image, published }: {
   url: string; title: string; desc: string; image: string; published?: string;
 }): string {
-  const T   = esc(title);
-  const D   = esc(desc);
+  const T = esc(title);
+  const D = esc(desc);
   const IMG = image
     ? `<meta property="og:image"        content="${esc(image)}"/>
   <meta property="og:image:width"  content="1200"/>
@@ -92,7 +77,6 @@ function makeOgTags({ url, title, desc, image, published }: {
     : '';
 
   return `
-  <!-- OG injected by ogEvents -->
   <title>${T}</title>
   <meta property="og:type"        content="article"/>
   <meta property="og:site_name"   content="Q-hub"/>
@@ -112,6 +96,7 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
   try {
     const ua = req.get('user-agent') || '';
 
+    console.log("PATH:", req.path, "PARTS:", JSON.stringify(parts), "KIND:", kind, "ID:", id); // console.log("PATH_OLD:", req.path, "UA:", req.get("user-agent"));
     const parts = req.path.replace(/^\//, '').split('/');
     const kind  = parts[0] as 'events' | 'projects';
     const id    = parts[1];
@@ -123,12 +108,17 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
 
     const canonicalUrl = `${SITE_URL}/${kind}/${id}`;
 
-    // ── Обычный браузер — редирект на основной сайт ──
-    if (!BOTS.test(ua)) {
-      res.redirect(302, canonicalUrl);
-      return;
-    }
+    // ── Обычный браузер — отдаём минимальный shell, React подхватит ──
+// ── Обычный браузер — отдаём реальный index.html ──
+if (!BOTS.test(ua)) {
+  const response = await fetch(`https://github-b91ab.web.app/index.html`);
+  const html = await response.text();
+  res.set('Cache-Control', 'no-store');
+  res.status(200).type('html').send(html);
+  return;
+}
 
+    // ── Бот — читаем Firestore и отдаём OG теги ──
     const lang: 'ua' | 'en' = (req.get('accept-language') || '')
       .toLowerCase().startsWith('en') ? 'en' : 'ua';
 
@@ -136,18 +126,11 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
     const snap = await db.collection(col).doc(id).get();
 
     if (!snap.exists) {
-      // Документ не найден — отдаём обычный index.html
-      const html = getIndexHtml();
-      if (html) {
-        res.status(200).type('html').send(html);
-      } else {
-        res.redirect(302, canonicalUrl);
-      }
+      res.status(404).type('html').send(`<!doctype html><html><head><meta charset="utf-8"/><title>Q-hub</title></head><body></body></html>`);
       return;
     }
 
     const doc = snap.data() as any;
-
     const title     = pick(doc.title, lang) || 'Q-hub';
     const rawDesc   = doc.excerpt ?? doc.descriptionHtml ?? '';
     const desc      = strip(pick(rawDesc, lang)).slice(0, 240);
@@ -155,19 +138,17 @@ export const ogEvents = functions.https.onRequest(async (req, res) => {
     const published = typeof doc.dateYMD === 'string' ? doc.dateYMD : undefined;
 
     const ogTags = makeOgTags({ url: canonicalUrl, title, desc, image, published });
-
-    // Краулер — отдаём минимальный HTML с OG тегами
     const T = esc(title);
+
     res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
     res.status(200).type('html').send(`<!doctype html>
 <html lang="uk"><head>
 <meta charset="utf-8"/>
-<title>${T}</title>
 ${ogTags}
 </head>
 <body>
-  <h1>${T}</h1>
-  <a href="${esc(canonicalUrl)}">${esc(canonicalUrl)}</a>
+<h1>${T}</h1>
+<a href="${esc(canonicalUrl)}">${esc(canonicalUrl)}</a>
 </body></html>`);
 
   } catch (e) {

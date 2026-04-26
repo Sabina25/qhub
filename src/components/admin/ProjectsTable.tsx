@@ -38,7 +38,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({ rows, loading, onE
         <div className="p-4 rounded-xl border bg-gray-50 text-gray-600">No projects found</div>
       ) : (
         filtered.map((r: any) => (
-          <div key={r.id} className="border rounded-xl p-4 bg-white shadow-sm">
+          <div key={r.id} className="border rounded-xl p-4 bg-white shadow-sm text-gray-900">
             <div className="flex items-start justify-between gap-3">
               <h3 className="font-medium text-base leading-snug line-clamp-2">
                 {pickL10n(r.title, 'ua') || pickL10n(r.title, 'en') || '—'}
@@ -65,7 +65,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({ rows, loading, onE
     <div className="hidden md:block border rounded-xl overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left">
-          <thead className="bg-gray-50">
+          <thead className="bg-gray-50 text-gray-900">
             <tr>
               <th className="p-3 w-[50%]">Title</th>
               <th className="p-3 w-[20%]">Date</th>
@@ -80,7 +80,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({ rows, loading, onE
               <tr><td className="p-3" colSpan={4}>No projects found</td></tr>
             ) : (
               filtered.map((r: any) => (
-                <tr key={r.id} className="border-t">
+                <tr key={r.id} className="border-t text-gray-900">
                   <td className="p-3">
                     <div className="font-medium line-clamp-2">
                       {pickL10n(r.title, 'ua') || pickL10n(r.title, 'en') || '—'}
@@ -90,7 +90,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({ rows, loading, onE
                   <td className="p-3">{r.featured ? 'Yes' : 'No'}</td>
                   <td className="p-3">
                     <div className="flex gap-2">
-                      <button onClick={() => onEdit(r)} className="px-3 py-1 rounded border hover:bg-gray-50">Edit</button>
+                      <button onClick={() => onEdit(r)} className="px-3 py-1 rounded border hover:bg-gray-50 text-gray-900">Edit</button>
                       <button onClick={() => onDelete(r.id)} className="px-3 py-1 rounded border border-red-300 text-red-600 hover:bg-red-50">Delete</button>
                     </div>
                   </td>
@@ -105,13 +105,13 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({ rows, loading, onE
 
   return (
     <section className="mt-10">
-      <h3 className="text-2xl font-semibold mb-4">Projects</h3>
+      <h3 className="text-2xl font-semibold mb-4 text-gray-900">Projects</h3>
       <div className="mb-4">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Поиск по названию (ua/en)…"
-          className="w-full md:w-1/2 border rounded-lg px-3 py-2"
+          className="w-full md:w-1/2 border rounded-lg px-3 py-2 text-gray-900"
         />
       </div>
       {Mobile}

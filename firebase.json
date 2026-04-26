@@ -1,35 +1,40 @@
 {
   "hosting": {
-    "site": "github-b91ab",
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "/projects/**",
+        "function": "ogEvents",
+        "region": "us-central1"
+      },
+      {
+        "source": "/events/**",
+        "function": "ogEvents",
+        "region": "us-central1"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
     "headers": [
       {
         "source": "/projects/**",
         "headers": [{ "key": "Cache-Control", "value": "no-store" }]
       },
       {
-        "source": "/events/**", 
-        "headers": [{ "key": "Cache-Control", "value": "no-store" }]
-      }
-    ],
-    "rewrites": [
-      {
         "source": "/events/**",
-        "function": { "functionId": "ogEvents", "codebase": "qh", "region": "us-central1" }
+        "headers": [{ "key": "Cache-Control", "value": "no-store" }]
       },
       {
-        "source": "/projects/**",
-        "function": { "functionId": "ogEvents", "codebase": "qh", "region": "us-central1" }
-      },
-      { "source": "**", "destination": "/index.html" }
+        "source": "**/*.@(js|css|woff2|woff|ttf)",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      }
     ]
   },
-  "functions": [
-    { "source": "qh", "codebase": "qh" }
-  ],
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs20"
   }
 }

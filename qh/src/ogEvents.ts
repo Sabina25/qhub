@@ -44,6 +44,7 @@ function ensureMedia(url: string) {
 }
 
 export const ogEvents = functions.https.onRequest(async (req, res) => {
+  console.log("Hi")
   console.error('[ogEvents] path=' + req.path + ' ua=' + req.get('user-agent'));
   try {
     const ua     = String(req.get('user-agent') || '');

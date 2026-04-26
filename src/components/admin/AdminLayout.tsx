@@ -69,7 +69,7 @@ export default function AdminLayout() {
         >
           <div className="flex items-center gap-2 px-4 py-4 border-b">
             <PlusCircle className="h-5 w-5 text-blue-600" />
-            <span className="font-semibold">Admin Panel</span>
+            <span className="font-semibold text-gray-900">Admin Panel</span>
           </div>
 
           <nav className="space-y-1 p-3">

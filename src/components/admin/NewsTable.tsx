@@ -61,7 +61,7 @@ export const NewsTable: React.FC<{
     return nums;
   }
 
-  const btnBase: React.CSSProperties = { padding: '5px 14px', borderRadius: 6, border: '1px solid #d1d5db', fontSize: 13, cursor: 'pointer', background: '#fff', transition: 'background 0.15s' };
+  const btnBase: React.CSSProperties = { padding: '5px 14px', borderRadius: 6, border: '1px solid #d1d5db', fontSize: 13, cursor: 'pointer', background: '#fff', transition: 'background 0.15s', color: '#111827' };
   const btnDanger: React.CSSProperties = { ...btnBase, border: '1px solid #fca5a5', color: '#dc2626' };
 
   return (
@@ -80,21 +80,21 @@ export const NewsTable: React.FC<{
         <div>
           <label style={{ display: 'block', fontSize: 12, color: '#6b7280', marginBottom: 4 }}>Search by title</label>
           <input value={q} onChange={e => setQ(e.target.value)} placeholder="Type to search…"
-            style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '7px 12px', fontSize: 13 }} />
+            style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '7px 12px', fontSize: 13, color: '#111827' }} />
         </div>
         <div>
           <label style={{ display: 'block', fontSize: 12, color: '#6b7280', marginBottom: 4 }}>Date from</label>
           <input type="date" value={fromYmd} onChange={e => setFromYmd(e.target.value)}
-            style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '7px 12px', fontSize: 13 }} />
+            style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '7px 12px', fontSize: 13, color: '#111827' }} />
         </div>
         <div>
           <label style={{ display: 'block', fontSize: 12, color: '#6b7280', marginBottom: 4 }}>Date to</label>
           <input type="date" value={toYmd} onChange={e => setToYmd(e.target.value)}
-            style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '7px 12px', fontSize: 13 }} />
+            style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '7px 12px', fontSize: 13, color: '#111827' }} />
         </div>
         <div style={{ display: 'flex', alignItems: 'flex-end' }}>
           <button type="button" onClick={() => { setQ(''); setFromYmd(''); setToYmd(''); }}
-            style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '7px 12px', fontSize: 13, cursor: 'pointer', background: '#fff' }}
+            style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '7px 12px', fontSize: 13, cursor: 'pointer', background: '#fff', color: '#111827' }}
             onMouseEnter={e => (e.currentTarget.style.background = '#f9fafb')}
             onMouseLeave={e => (e.currentTarget.style.background = '#fff')}>
             Reset filters
@@ -114,7 +114,7 @@ export const NewsTable: React.FC<{
         ) : paged.length === 0 ? (
           <div style={{ padding: '14px', borderRadius: 12, border: '1px solid #e5e7eb', background: '#f9fafb', color: '#6b7280', fontSize: 13 }}>No news found</div>
         ) : paged.map((r) => (
-          <div key={r.id} style={{ border: '1px solid #e5e7eb', borderRadius: 12, padding: 16, background: '#fff' }}>
+          <div key={r.id} style={{ border: '1px solid #e5e7eb', borderRadius: 12, padding: 16, background: '#fff', color: '#111827' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
               <p style={{ fontWeight: 500, fontSize: 14, lineHeight: 1.4, margin: 0 }}>
                 {pickL10n(r.title, lang) || '—'}
@@ -159,7 +159,7 @@ export const NewsTable: React.FC<{
               ) : paged.length === 0 ? (
                 <tr><td colSpan={4} style={{ padding: '16px 14px', color: '#6b7280', fontSize: 14 }}>No news found</td></tr>
               ) : paged.map((r, i) => (
-                <tr key={r.id} style={{ borderTop: '1px solid #f3f4f6', background: i % 2 === 0 ? '#fff' : '#fafafa' }}>
+                <tr key={r.id} style={{ borderTop: '1px solid #f3f4f6', background: i % 2 === 0 ? '#fff' : '#fafafa', color: '#111827' }}>
                   <td style={{ padding: '10px 14px' }}>
                     <div style={{ fontWeight: 500, fontSize: 14, lineHeight: 1.4 }}>
                       {pickL10n(r.title, lang) || '—'}

@@ -139,8 +139,8 @@ export const ProjectFormUI: React.FC<ProjectFormUIProps> = (p) => {
     setTimeout(() => URL.revokeObjectURL(url), 10000);
   };
 
-  const inputStyle: React.CSSProperties = { width: '100%', border: '1px solid #d1d5db', borderRadius: 6, padding: '7px 10px', fontSize: 14 };
-  const labelStyle: React.CSSProperties = { display: 'block', marginBottom: 6, fontWeight: 500, fontSize: 14 };
+  const inputStyle: React.CSSProperties = { width: '100%', border: '1px solid #d1d5db', borderRadius: 6, padding: '7px 10px', fontSize: 14, color: '#111827' };
+  const labelStyle: React.CSSProperties = { display: 'block', marginBottom: 6, fontWeight: 500, fontSize: 14, color: '#111827' };
   const sectionStyle: React.CSSProperties = { display: 'flex', flexDirection: 'column', gap: 4 };
 
   return (
@@ -164,7 +164,7 @@ export const ProjectFormUI: React.FC<ProjectFormUIProps> = (p) => {
               Restore
             </button>
             <button type="button" onClick={discardDraft}
-              style={{ padding: '4px 12px', borderRadius: 6, border: '1px solid #fde68a', background: '#fff', cursor: 'pointer', fontSize: 12 }}>
+              style={{ padding: '4px 12px', borderRadius: 6, border: '1px solid #fde68a', background: '#fff', cursor: 'pointer', fontSize: 12, color: '#111827' }}>
               Discard
             </button>
           </div>
@@ -238,6 +238,7 @@ export const ProjectFormUI: React.FC<ProjectFormUIProps> = (p) => {
       {/* ── Description ── */}
       <div style={sectionStyle}>
         <label style={labelStyle}>Description ({lang.toUpperCase()})</label>
+        <style>{`.ql-editor { color: #111827 !important; }`}</style>
         <ReactQuill key={`desc-${lang}`} theme="snow"
           value={p.form.descriptionHtml[lang] || ''}
           onChange={html => p.setDesc(lang, html)}
@@ -256,17 +257,26 @@ export const ProjectFormUI: React.FC<ProjectFormUIProps> = (p) => {
         {/* Cover */}
         <div style={sectionStyle}>
           <label style={labelStyle}>Cover image</label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button type="button" onClick={() => p.coverRef.current?.click()}
+              style={{ padding: '6px 14px', borderRadius: 6, border: '1px solid #d1d5db', background: '#fff', fontSize: 13, cursor: 'pointer', color: '#111827', whiteSpace: 'nowrap' }}>
+              Choose File
+            </button>
+            <span style={{ fontSize: 13, color: '#111827' }}>
+              {p.coverPreview || p.form.image ? 'File selected' : 'No file chosen'}
+            </span>
+          </div>
           <input key={p.coverKey} ref={p.coverRef} type="file"
             accept="image/jpeg,image/png,image/webp"
             onChange={p.onCoverChange} onClick={p.onCoverInputClick}
-            style={{ fontSize: 13 }}
+            style={{ display: 'none' }}
             {...(p.form.image ? {} : { required: true })} />
           {(p.coverPreview || p.form.image) && (
             <div style={{ marginTop: 10 }}>
               <img src={p.coverPreview || p.form.image} alt="cover"
                 style={{ maxHeight: 180, borderRadius: 8, border: '1px solid #e5e7eb', objectFit: 'contain' }} />
               <button type="button" onClick={p.clearCover}
-                style={{ marginTop: 8, padding: '4px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 12, cursor: 'pointer', background: '#fff' }}>
+                style={{ marginTop: 8, padding: '4px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 12, cursor: 'pointer', background: '#fff', color: '#111827' }}>
                 Clear cover
               </button>
             </div>
@@ -276,10 +286,19 @@ export const ProjectFormUI: React.FC<ProjectFormUIProps> = (p) => {
         {/* Gallery */}
         <div style={sectionStyle}>
           <label style={labelStyle}>Gallery (multiple)</label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button type="button" onClick={() => p.galleryRef.current?.click()}
+              style={{ padding: '6px 14px', borderRadius: 6, border: '1px solid #d1d5db', background: '#fff', fontSize: 13, cursor: 'pointer', color: '#111827', whiteSpace: 'nowrap' }}>
+              Choose Files
+            </button>
+            <span style={{ fontSize: 13, color: '#111827' }}>
+              {p.galleryPreviews.length > 0 || (p.form.gallery || []).length > 0 ? `${p.galleryPreviews.length || (p.form.gallery || []).length} file(s) selected` : 'No files chosen'}
+            </span>
+          </div>
           <input key={p.galleryKey} ref={p.galleryRef} type="file"
             accept="image/jpeg,image/png,image/webp" multiple
             onChange={p.onGalleryChange} onClick={p.onGalleryInputClick}
-            style={{ fontSize: 13 }} />
+            style={{ display: 'none' }} />
           {(p.galleryPreviews.length > 0 || (p.form.gallery || []).length > 0) && (
             <div style={{ marginTop: 10 }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
@@ -288,7 +307,7 @@ export const ProjectFormUI: React.FC<ProjectFormUIProps> = (p) => {
                 ))}
               </div>
               <button type="button" onClick={p.clearGallery}
-                style={{ marginTop: 8, padding: '4px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 12, cursor: 'pointer', background: '#fff' }}>
+                style={{ marginTop: 8, padding: '4px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 12, cursor: 'pointer', background: '#fff', color: '#111827' }}>
                 Clear gallery
               </button>
             </div>
@@ -307,7 +326,7 @@ export const ProjectFormUI: React.FC<ProjectFormUIProps> = (p) => {
                 style={{ ...inputStyle, flex: 1 }} />
               {p.form.youtubeUrls.length > 1 && (
                 <button type="button" onClick={() => p.removeVideoField(i)}
-                  style={{ padding: '6px 12px', border: '1px solid #d1d5db', borderRadius: 6, cursor: 'pointer', background: '#fff', fontSize: 16, lineHeight: 1 }}>
+                  style={{ padding: '6px 12px', border: '1px solid #d1d5db', borderRadius: 6, cursor: 'pointer', background: '#fff', fontSize: 16, lineHeight: 1, color: '#111827' }}>
                   ×
                 </button>
               )}
@@ -315,13 +334,13 @@ export const ProjectFormUI: React.FC<ProjectFormUIProps> = (p) => {
           ))}
         </div>
         <button type="button" onClick={p.addVideoField}
-          style={{ marginTop: 6, alignSelf: 'flex-start', padding: '5px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 13, cursor: 'pointer', background: '#fff' }}>
+          style={{ marginTop: 6, alignSelf: 'flex-start', padding: '5px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 13, cursor: 'pointer', background: '#fff', color: '#111827' }}>
           + Add video
         </button>
       </div>
 
       {/* ── Featured ── */}
-      <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, cursor: 'pointer' }}>
+      <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, cursor: 'pointer', color: '#111827' }}>
         <input type="checkbox" checked={p.form.featured}
           onChange={e => p.setField('featured', e.target.checked)} />
         Featured
@@ -336,13 +355,13 @@ export const ProjectFormUI: React.FC<ProjectFormUIProps> = (p) => {
         </button>
 
         <button type="button" onClick={openPreview}
-          style={{ padding: '10px 18px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', fontSize: 14, cursor: 'pointer' }}>
+          style={{ padding: '10px 18px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', fontSize: 14, cursor: 'pointer', color: '#111827' }}>
           👁 Preview
         </button>
 
         {p.editingId && (
           <button type="button" onClick={p.resetForm}
-            style={{ padding: '10px 18px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', fontSize: 14, cursor: 'pointer' }}>
+            style={{ padding: '10px 18px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', fontSize: 14, cursor: 'pointer', color: '#111827' }}>
             Cancel edit
           </button>
         )}

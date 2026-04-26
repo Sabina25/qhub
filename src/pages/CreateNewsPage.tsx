@@ -9,7 +9,7 @@ const CreateNewsPage: React.FC = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-6 md:p-8 bg-white shadow-md mt-10 rounded-2xl">
-      <h2 className="text-3xl font-semibold mb-6">
+      <h2 className="text-3xl font-semibold mb-6 text-gray-900">
         {l.editingId ? 'Edit News' : 'Create News'}
       </h2>
 
@@ -35,7 +35,7 @@ const CreateNewsPage: React.FC = () => {
         resetForm={l.resetForm}
       />
 
-      <h3 className="text-2xl font-semibold mt-10 mb-4">Existing news</h3>
+      <h3 className="text-2xl font-semibold mt-10 mb-4 text-gray-900">Existing news</h3>
       <NewsTable
         rows={l.rows}
         lang={l.activeLang as Lang}   

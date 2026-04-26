@@ -40,13 +40,15 @@ export type CreateNewsFormProps = {
 const inputStyle: React.CSSProperties = {
   width: '100%', border: '1px solid #d1d5db',
   borderRadius: 6, padding: '7px 10px', fontSize: 14,
+  color: '#111827',
 };
 const labelStyle: React.CSSProperties = {
   display: 'block', marginBottom: 6, fontWeight: 500, fontSize: 14,
+  color: '#111827',
 };
 const btnBase: React.CSSProperties = {
   padding: '8px 18px', borderRadius: 8, border: '1px solid #d1d5db',
-  background: '#fff', fontSize: 14, cursor: 'pointer',
+  background: '#fff', fontSize: 14, cursor: 'pointer', color: '#111827',
 };
 
 export const CreateNewsForm: React.FC<CreateNewsFormProps> = (p) => {
@@ -135,7 +137,7 @@ export const CreateNewsForm: React.FC<CreateNewsFormProps> = (p) => {
               Restore
             </button>
             <button type="button" onClick={discardDraft}
-              style={{ padding: '4px 12px', borderRadius: 6, border: '1px solid #fde68a', background: '#fff', cursor: 'pointer', fontSize: 12 }}>
+              style={{ padding: '4px 12px', borderRadius: 6, border: '1px solid #fde68a', background: '#fff', cursor: 'pointer', fontSize: 12, color: '#92400e' }}>
               Discard
             </button>
           </div>
@@ -182,9 +184,18 @@ export const CreateNewsForm: React.FC<CreateNewsFormProps> = (p) => {
       {/* Image */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         <label style={labelStyle}>Image</label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button type="button" onClick={() => p.fileRef.current?.click()}
+            style={{ padding: '6px 14px', borderRadius: 6, border: '1px solid #d1d5db', background: '#fff', fontSize: 13, cursor: 'pointer', color: '#111827', whiteSpace: 'nowrap' }}>
+            Choose File
+          </button>
+          <span style={{ fontSize: 13, color: '#111827' }}>
+            {p.previewUrl || p.form.image ? 'File selected' : 'No file chosen'}
+          </span>
+        </div>
         <input key={p.fileKey} ref={p.fileRef} type="file" accept="image/*"
           onClick={p.onImageInputClick} onChange={p.onImageChange}
-          style={{ fontSize: 13 }}
+          style={{ display: 'none' }}
           {...(p.editingId ? {} : { required: true })} />
         {(p.previewUrl || p.form.image) && (
           <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -217,6 +228,7 @@ export const CreateNewsForm: React.FC<CreateNewsFormProps> = (p) => {
       {/* Content */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         <label style={labelStyle}>Content ({lang.toUpperCase()})</label>
+        <style>{`.ql-editor { color: #111827 !important; }`}</style>
         <ReactQuill key={`excerpt-${lang}`} theme="snow"
           value={p.form.excerpt[lang] || ''}
           onChange={html => p.onQuillChange(lang, html)}
@@ -231,7 +243,7 @@ export const CreateNewsForm: React.FC<CreateNewsFormProps> = (p) => {
       </div>
 
       {/* Featured */}
-      <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, cursor: 'pointer' }}>
+      <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, cursor: 'pointer', color: '#111827' }}>
         <input type="checkbox" checked={p.form.featured}
           onChange={e => p.setForm((prev: any) => ({ ...prev, featured: e.target.checked }))} />
         Featured
