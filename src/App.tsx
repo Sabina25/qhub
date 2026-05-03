@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { TranslationProvider } from './context/TranslationContext';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import RequireAuth from './auth/RequireAuth';
 import AdminLayout from './components/admin/AdminLayout';
@@ -12,6 +12,7 @@ import Mission from './components/mainPage/Mission';
 import Projects from './components/mainPage/Projects';
 import News from './components/mainPage/News';
 import Members from './components/mainPage/Members';
+import Team from './components/mainPage/Team';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AllEventsPage from './pages/AllEventsPage';
@@ -28,12 +29,16 @@ import AnnouncementBanner from './components/AnnouncementBanner';
 
 import './components/mainPage/HomeSnap.css';
 
-const SECTIONS = ['home', 'organisation', 'news', 'projects', 'members', 'contact'];
+const SECTIONS = ['home', 'organisation', 'news', 'projects', 'members', 'team', 'contact'];
+const LAST_SNAP_IDX = SECTIONS.length - 1;
 
-const Home = () => {
+const getVh = () => window.visualViewport?.height ?? window.innerHeight;
+const isMobile = () => window.innerWidth < 1024;
+
+/* ── Десктоп: snap-layout ── */
+const DesktopHome = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
-  const [membersExpanded, setMembersExpanded] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.add('snap-active');
@@ -44,31 +49,24 @@ const Home = () => {
     const el = containerRef.current;
     if (!el) return;
     const onScroll = () => {
-      const idx = Math.round(el.scrollTop / window.innerHeight);
-      setActiveIdx(Math.min(idx, SECTIONS.length - 1));
+      const idx = Math.round(el.scrollTop / getVh());
+      const clamped = Math.min(idx, SECTIONS.length - 1);
+      setActiveIdx(clamped);
+      if (clamped >= LAST_SNAP_IDX) {
+        el.style.scrollSnapType = 'none';
+      } else {
+        el.style.scrollSnapType = 'y proximity';
+      }
     };
     el.addEventListener('scroll', onScroll, { passive: true });
     return () => el.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => {
-    const container = containerRef.current;
-    const membersSection = document.getElementById('members');
-    if (!container || !membersSection) return;
-
-    if (membersExpanded) {
-      // Отключаем snap на контейнере — он скроллится свободно
-      container.style.scrollSnapType = 'none';
-      // Добавляем класс который убирает overflow и height на секции
-      membersSection.classList.add('snap-section--members-expanded');
-    } else {
-      container.style.scrollSnapType = 'y proximity';
-      membersSection.classList.remove('snap-section--members-expanded');
-    }
-  }, [membersExpanded]);
-
   const goTo = (idx: number) => {
-    containerRef.current?.scrollTo({ top: idx * window.innerHeight, behavior: 'smooth' });
+    const el = containerRef.current;
+    if (!el) return;
+    el.style.scrollSnapType = 'y proximity';
+    el.scrollTo({ top: idx * getVh(), behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -79,44 +77,59 @@ const Home = () => {
     return () => { delete (window as any).__snapGoTo; };
   }, []);
 
-  const handleMembersExpand = useCallback((expanded: boolean) => {
-    setMembersExpanded(expanded);
-  }, []);
-
   return (
     <div className="home-wrapper">
       <AnnouncementBanner />
-      <div className="home-bg" aria-hidden="true">
-        <NeuralNetwork />
-      </div>
+      <div className="home-bg" aria-hidden="true"><NeuralNetwork /></div>
       <Header />
-
       <nav className="snap-dots" aria-label="Sections">
         {SECTIONS.map((id, i) => (
-          <button
-            key={id}
-            className={`snap-dot${activeIdx === i ? ' active' : ''}`}
-            onClick={() => goTo(i)}
-            aria-label={id}
-          />
+          <button key={id} className={`snap-dot${activeIdx === i ? ' active' : ''}`}
+            onClick={() => goTo(i)} aria-label={id} />
         ))}
       </nav>
-
       <div className="snap-container" ref={containerRef}>
-        <section id="home"         className="snap-section snap-section--hero">    <Hero />     </section>
-        <section id="organisation" className="snap-section snap-section--content"> <Mission />  </section>
-        <section id="news"         className="snap-section snap-section--content"> <News />     </section>
-        <section id="projects"     className="snap-section snap-section--content"> <Projects /> </section>
-        <section id="members"      className="snap-section snap-section--content">
-          <Members onExpandChange={handleMembersExpand} />
-        </section>
-        <section id="contact"      className="snap-section snap-section--content">
-          <Contact />
-        </section>
+        <section id="home"         className="snap-section snap-section--hero">    <Hero />    </section>
+        <section id="organisation" className="snap-section snap-section--content"> <Mission /> </section>
+        <section id="news"         className="snap-section snap-section--content"> <News />    </section>
+        <section id="projects"     className="snap-section snap-section--content"> <Projects /></section>
+        <section id="members"      className="snap-section snap-section--content snap-section--compact"> <Members /> </section>
+        <section id="contact"      className="snap-section snap-section--content snap-section--contact"><Contact /></section>
         <section><Footer /></section>
       </div>
     </div>
   );
+};
+
+/* ── Мобайл: обычный скролл ── */
+const MobileHome = () => (
+  <div style={{ background: '#080c14', minHeight: '100dvh', position: 'relative' }}>
+    <AnnouncementBanner />
+    <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', background: '#080c14' }}>
+      <NeuralNetwork />
+    </div>
+    <div style={{ position: 'relative', zIndex: 1 }}>
+      <Header />
+      <section id="home"         style={{ minHeight: '100dvh' }}><Hero /></section>
+      <section id="organisation" style={{ padding: '60px 0 40px' }}><Mission /></section>
+      <section id="news"         style={{ padding: '60px 0 40px' }}><News /></section>
+      <section id="projects"     style={{ padding: '60px 0 40px' }}><Projects /></section>
+      <section id="members"      style={{ padding: '60px 0 40px' }}><Members /></section>
+      <section id="contact"      style={{ padding: '60px 0 40px' }}><Contact /><Footer /></section>
+    </div>
+  </div>
+);
+
+const Home = () => {
+  const [mobile, setMobile] = useState(isMobile());
+
+  useEffect(() => {
+    const onResize = () => setMobile(isMobile());
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  return mobile ? <MobileHome /> : <DesktopHome />;
 };
 
 function App() {
