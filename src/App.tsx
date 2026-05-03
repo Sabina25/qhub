@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { TranslationProvider } from './context/TranslationContext';
 import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import RequireAuth from './auth/RequireAuth';
 import AdminLayout from './components/admin/AdminLayout';
@@ -12,7 +13,6 @@ import Mission from './components/mainPage/Mission';
 import Projects from './components/mainPage/Projects';
 import News from './components/mainPage/News';
 import Members from './components/mainPage/Members';
-import Team from './components/mainPage/Team';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AllEventsPage from './pages/AllEventsPage';
@@ -132,11 +132,20 @@ const Home = () => {
   return mobile ? <MobileHome /> : <DesktopHome />;
 };
 
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
+
 function App() {
   return (
     <AuthProvider>
       <TranslationProvider>
         <Router>
+        <ScrollToTop />
           <Routes>
             <Route path="/"             element={<Home />} />
             <Route path="/events"       element={<AllEventsPage />} />
