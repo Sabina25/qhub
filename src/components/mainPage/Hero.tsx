@@ -60,6 +60,7 @@ const Hero = () => {
 
          
           {/* Title */}
+
           <h1
             className="font-raleway"
             style={{
@@ -68,7 +69,7 @@ const Hero = () => {
               lineHeight: 1.15, marginBottom: 20,
             }}
           >
-            {t('hero.title')}
+            Qhub - {t('hero.title')}
           </h1>
 
           {/* Description */}
