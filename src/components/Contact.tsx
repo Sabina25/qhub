@@ -89,11 +89,11 @@ const Contact = () => {
   ];
 
   return (
-    <div id="contact" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mb-12">
+    /* ── убран id="contact" — он уже есть на <section> в App.tsx ── */
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mb-12">
 
       {/* Heading */}
       <div className="text-center mb-10">
-        
         <h2 className="font-raleway font-semibold text-3xl sm:text-4xl md:text-5xl mb-4" style={{ color: Q.text }}>
           {t('contact.title')}
         </h2>
@@ -105,15 +105,11 @@ const Contact = () => {
 
         {/* ── Left: info + contact items ── */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-
-          {/* Info card */}
           <div style={{ borderRadius: 16, padding: '28px 28px', background: 'rgba(77,184,184,0.06)', border: '0.5px solid rgba(77,184,184,0.22)', flex: 1 }}>
             <div style={{ width: 32, height: 2, background: `linear-gradient(90deg,${Q.teal},${Q.teal2})`, borderRadius: 2, marginBottom: 16 }} />
             <h3 className="font-raleway font-semibold text-xl mb-3" style={{ color: Q.text }}>
               {t('contact.info.title')}
             </h3>
-        
-
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {contactItems.map(({ Icon, label, value, href }) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
@@ -143,7 +139,6 @@ const Contact = () => {
             </div>
           </div>
 
-          {/* Teal accent strip */}
           <div style={{ borderRadius: 12, padding: '16px 22px', background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(77,184,184,0.1)', display: 'flex', alignItems: 'center', gap: 14 }}>
             <MessageSquare style={{ width: 18, height: 18, color: Q.teal, flexShrink: 0 }} />
             <p style={{ fontSize: 13, color: Q.muted, lineHeight: 1.5 }}>
@@ -154,8 +149,6 @@ const Contact = () => {
 
         {/* ── Right: form ── */}
         <div style={{ borderRadius: 16, padding: '28px 28px', background: 'rgba(255,255,255,0.04)', border: '0.5px solid rgba(77,184,184,0.15)' }}>
-
-          {/* Success */}
           {sent === 'ok' ? (
             <div style={{ textAlign: 'center', padding: '40px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
               <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(77,184,184,0.12)', border: '0.5px solid rgba(77,184,184,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -168,7 +161,7 @@ const Contact = () => {
                 {t('contact.thanks.body') || 'Ваше повідомлення надіслано. Ми зв\'яжемося з вами найближчим часом.'}
               </p>
               <button onClick={() => setSent(null)}
-                style={{ marginTop: 8, padding: '10px 24px', borderRadius: 30, border: `0.5px solid rgba(77,184,184,0.4)`, background: 'transparent', color: Q.teal, fontSize: 13, fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s' }}
+                style={{ marginTop: 8, padding: '10px 24px', borderRadius: 30, border: `0.5px solid rgba(77,184,184,0.4)`, background: 'transparent', color: Q.teal, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}
                 onMouseEnter={e => (e.currentTarget.style.background = 'rgba(77,184,184,0.08)')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                 {t('contact.thanks.send_another') || 'Надіслати ще'}
@@ -176,7 +169,6 @@ const Contact = () => {
             </div>
           ) : (
             <>
-              {/* Error */}
               {sent === 'fail' && (
                 <div style={{ marginBottom: 20, display: 'flex', gap: 12, padding: '12px 16px', borderRadius: 10, background: 'rgba(255,80,80,0.08)', border: '0.5px solid rgba(255,100,100,0.25)' }}>
                   <AlertCircle style={{ width: 18, height: 18, color: '#f87171', flexShrink: 0, marginTop: 1 }} />

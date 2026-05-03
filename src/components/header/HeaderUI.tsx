@@ -222,11 +222,13 @@ const HeaderUI: React.FC<Props> = ({
           <div style={{ display: 'flex', alignItems: 'center', height: 60, gap: 24 }}>
 
             {/* Logo */}
-            <img src="/images/Qlogo-l.png" alt="Q-hub" onClick={onLogoClick}
-              style={{ height: 38, cursor: 'pointer', userSelect: 'none', flexShrink: 0 }}
-              draggable={false} />
+            <a href="/" style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+              <img src="/images/Qlogo-l.png" alt="Q-hub"
+                style={{ height: 38, cursor: 'pointer', userSelect: 'none' }}
+                draggable={false} />
+            </a>
 
-            {/* ── Desktop nav ── */}
+            
             <div className="qh-desktop-nav"
               style={{ alignItems: 'center', gap: 28, marginLeft: 'auto' }}>
               {mainNav.map((item) => {

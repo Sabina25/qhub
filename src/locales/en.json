@@ -102,7 +102,8 @@
           "zore_mustafaeva": "Zore Mustafaeva",
           "lia_gazi_kyzy": "Lia Gazi Kyzy",
           "ruslan_ablaev": "Ruslan Ablaev",
-          "aziz_axtemov": "Aziz Akhtemov"
+          "aziz_axtemov": "Aziz Akhtemov",
+          "ulrie_kerimova": "Ulrie Kerimova"
         },
         "roles": {
           "head_of_board": "Head of the Board",
@@ -126,7 +127,8 @@
           "qhub_rep_turkey": "Q-hub Representative in Turkey",
           "qhub_rep_spain": "Q-hub Representative in Spain",
           "communication_and_it": "Online communication and IT projects",
-          "rf_affiliation": "Q-hub resident, Russian Federation affiliation"
+          "rf_affiliation": "Q-hub resident, Russian Federation affiliation",
+          "international_communication_issues": "International communication issues"
         }
       }    
   },

@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { TranslationProvider } from './context/TranslationContext';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 import RequireAuth from './auth/RequireAuth';
 import AdminLayout from './components/admin/AdminLayout';
@@ -33,6 +33,7 @@ const SECTIONS = ['home', 'organisation', 'news', 'projects', 'members', 'contac
 const Home = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
+  const [membersExpanded, setMembersExpanded] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.add('snap-active');
@@ -50,6 +51,22 @@ const Home = () => {
     return () => el.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    const membersSection = document.getElementById('members');
+    if (!container || !membersSection) return;
+
+    if (membersExpanded) {
+      // Отключаем snap на контейнере — он скроллится свободно
+      container.style.scrollSnapType = 'none';
+      // Добавляем класс который убирает overflow и height на секции
+      membersSection.classList.add('snap-section--members-expanded');
+    } else {
+      container.style.scrollSnapType = 'y proximity';
+      membersSection.classList.remove('snap-section--members-expanded');
+    }
+  }, [membersExpanded]);
+
   const goTo = (idx: number) => {
     containerRef.current?.scrollTo({ top: idx * window.innerHeight, behavior: 'smooth' });
   };
@@ -60,6 +77,10 @@ const Home = () => {
       if (idx >= 0) goTo(idx);
     };
     return () => { delete (window as any).__snapGoTo; };
+  }, []);
+
+  const handleMembersExpand = useCallback((expanded: boolean) => {
+    setMembersExpanded(expanded);
   }, []);
 
   return (
@@ -86,11 +107,13 @@ const Home = () => {
         <section id="organisation" className="snap-section snap-section--content"> <Mission />  </section>
         <section id="news"         className="snap-section snap-section--content"> <News />     </section>
         <section id="projects"     className="snap-section snap-section--content"> <Projects /> </section>
-        <section id="members"      className="snap-section snap-section--content"> <Members />  </section>
+        <section id="members"      className="snap-section snap-section--content">
+          <Members onExpandChange={handleMembersExpand} />
+        </section>
         <section id="contact"      className="snap-section snap-section--content">
           <Contact />
-          <Footer />
         </section>
+        <section><Footer /></section>
       </div>
     </div>
   );

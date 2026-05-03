@@ -1,0 +1,20 @@
+/* Добавь в конец HomeSnap.css */
+
+/* ── Compact section (Members / Partners only) ── */
+.snap-section--compact {
+  height: 50vh !important;
+  min-height: unset !important;
+  max-height: 50vh !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  justify-content: center !important;
+}
+
+/* ── Contact + Footer — не snap, свободный скролл ── */
+.snap-section--contact {
+  height: auto !important;
+  min-height: 100vh !important;
+  max-height: none !important;
+  overflow: visible !important;
+  scroll-snap-align: none !important;
+}

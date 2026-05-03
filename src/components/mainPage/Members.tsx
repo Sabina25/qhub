@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import memberLogos from '../../data/members';
 import LogoMarquee from '../LogoMarquee';
 import { useTranslation } from '../../context/TranslationContext';
@@ -36,22 +36,22 @@ const MemberCard = ({ member, avatarSize, t }: { member: any; avatarSize: number
   </div>
 );
 
-const DESKTOP_INITIAL = 4;
+const DESKTOP_INITIAL = 5;
 const MOBILE_INITIAL  = 3;
 
-const Members = () => {
+interface MembersProps {
+  onExpandChange?: (expanded: boolean) => void;
+}
+
+const Members = ({ onExpandChange }: MembersProps) => {
   const [showAll, setShowAll] = useState(false);
   const { t } = useTranslation();
 
-  useEffect(() => {
-    const section = document.getElementById('members');
-    if (!section) return;
-    if (showAll) {
-      section.style.scrollSnapAlign = 'none';
-    } else {
-      section.style.scrollSnapAlign = 'start';
-    }
-  }, [showAll]);
+  const handleToggle = () => {
+    const next = !showAll;
+    setShowAll(next);
+    onExpandChange?.(next);
+  };
 
   const visibleDesktop = showAll ? memberLogos : memberLogos.slice(0, DESKTOP_INITIAL);
   const visibleMobile  = showAll ? memberLogos : memberLogos.slice(0, MOBILE_INITIAL);
@@ -59,16 +59,14 @@ const Members = () => {
   return (
     <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', width: '100%' }}>
       <style>{`
-        /* ── Grids ── */
         .members-desktop { display: none !important; }
         .members-mobile  { display: grid !important; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
 
         @media (min-width: 640px) {
-          .members-desktop { display: grid !important; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; }
+          .members-desktop { display: grid !important; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 12px; }
           .members-mobile  { display: none !important; }
         }
 
-        /* ── Card — компактная ── */
         .member-card {
           border-radius: 12px;
           padding: 12px 8px 10px;
@@ -85,12 +83,10 @@ const Members = () => {
           .member-card { border-radius: 14px; padding: 16px 12px 14px; }
         }
 
-        /* ── Avatar ── */
         .member-avatar { margin-bottom: 8px; transition: transform 0.2s; }
         .member-card:hover .member-avatar { transform: scale(1.05); }
         @media (min-width: 640px) { .member-avatar { margin-bottom: 10px; } }
 
-        /* ── Text ── */
         .member-name { font-size: 11px; font-weight: 500; color: #e8f4f4; line-height: 1.3; margin-bottom: 2px; }
         .member-role { font-size: 10px; color: rgba(200,230,230,0.38); line-height: 1.3; }
         @media (min-width: 640px) {
@@ -98,7 +94,6 @@ const Members = () => {
           .member-role { font-size: 11px; }
         }
 
-        /* ── Button ── */
         .members-more-btn {
           display: inline-block; margin-top: 20px;
           padding: 9px 24px; border-radius: 30px;
@@ -110,7 +105,6 @@ const Members = () => {
         .members-more-btn:hover { background: rgba(77,184,184,0.08); }
       `}</style>
 
-      {/* Heading */}
       <div style={{ textAlign: 'center', marginBottom: 28 }}>
         <h2 className="font-raleway font-semibold"
           style={{ color: Q.text, fontSize: 'clamp(1.875rem, 4vw, 3rem)', marginBottom: 12 }}>
@@ -130,19 +124,17 @@ const Members = () => {
           {t('members.team')}
         </h3>
 
-        {/* Desktop: 8 (2×4) */}
         <div className="members-desktop">
-          {visibleDesktop.map((m, i) => <MemberCard key={i} member={m} avatarSize={60} t={t} />)}
+          {visibleDesktop.map((m, i) => <MemberCard key={i} member={m} avatarSize={48} t={t} />)}
         </div>
 
-        {/* Mobile: 6 (2×3) */}
         <div className="members-mobile">
           {visibleMobile.map((m, i) => <MemberCard key={i} member={m} avatarSize={44} t={t} />)}
         </div>
 
         {memberLogos.length > DESKTOP_INITIAL && (
           <div style={{ textAlign: 'center' }}>
-            <button className="members-more-btn" onClick={() => setShowAll(!showAll)}>
+            <button className="members-more-btn" onClick={handleToggle}>
               {showAll
                 ? t('members.show_less')
                 : `${t('members.show_more') || 'Показати більше'} (${memberLogos.length - DESKTOP_INITIAL})`}

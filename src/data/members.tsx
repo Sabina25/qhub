@@ -1,7 +1,6 @@
 const members = [
   { name: "members.list.names.muslim_umerov", role: "members.list.roles.head_of_board", imageUrl: "/images/team/Muslim.jpg" },
   { name: "members.list.names.emil_ibrahimov", role: "members.list.roles.deputy_head_of_board", imageUrl: "/images/team/emil.jpg" },
-  { name: "members.list.names.fatima_osmanova", role: "members.list.roles.cultural_projects_manager", },
   { name: "members.list.names.ivan_vdovychenko", role: "members.list.roles.international_cooperation_manager", imageUrl: "/images/team/ivan_vdovichenko.jpg" },
   { name: "members.list.names.imran_useinov", role: "members.list.roles.sports_projects_manager", imageUrl: "/images/team/imran.jpg"},
   { name: "members.list.names.adel_khayrutdinova", role: "members.list.roles.sustainable_partnerships_advisor" },
@@ -16,6 +15,7 @@ const members = [
   { name: "members.list.names.feride_seydametova", role: "members.list.roles.qhub_rep_belgium", imageUrl: "/images/team/Feride_Seyd.jpg" },
   { name: "members.list.names.aziz_axtemov", role: "members.list.roles.rf_affiliation" },
   { name: "members.list.names.safiye_ametova", role: "members.list.roles.finance_advisor" },
+  {name: "members.list.names.ulrie_kerimova", role: "members.list.roles.international_communication_issues", imageUrl: "/images/team/Ulrie_Kerimova.png"}
 ];
 
 export default members;
