@@ -84,8 +84,8 @@ const Contact = () => {
 
   const contactItems = [
     { Icon: Mail,   label: t('contact.info.email'),   value: 'hub.qirim@gmail.com',   href: 'mailto:hub.qirim@gmail.com' },
-    { Icon: Phone,  label: t('contact.info.phone'),   value: '+380 95 681 2469',        href: 'tel:+380956812469' },
-    { Icon: MapPin, label: t('contact.info.address'), value: `Q-hub · ${t('footer.contact.address')}`, href: undefined },
+    { Icon: Phone,  label: t('contact.info.phone'),   value: '+380 66 261 4890',        href: 'tel:+380662614890' },
+    //{ Icon: MapPin, label: t('contact.info.address'), value: `Q-hub · ${t('footer.contact.address')}`, href: undefined },
   ];
 
   return (
