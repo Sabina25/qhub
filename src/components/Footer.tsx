@@ -23,7 +23,7 @@ const Footer = () => {
   const contacts = [
     { Icon: Mail,   value: t('footer.contact.email') },
     { Icon: Phone,  value: t('footer.contact.phone') },
-    { Icon: MapPin, value: t('footer.contact.address') },
+    // { Icon: MapPin, value: t('footer.contact.address') },
   ];
 
   return (
