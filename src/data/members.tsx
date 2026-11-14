@@ -14,8 +14,8 @@ const members = [
   { name: "members.list.names.mefa_umerov", role: "members.list.roles.qhub_rep_odesa", imageUrl: "/images/team/mefa_umerov.jpg" },
   { name: "members.list.names.emir_asan_dervishev", role: "members.list.roles.qhub_rep_estonia", imageUrl: "/images/team/Emir_asan_dervish.jpg" },
   { name: "members.list.names.feride_seydametova", role: "members.list.roles.qhub_rep_belgium", imageUrl: "/images/team/Feride_Seyd.jpg" },
-  { name: "members.list.names.aziz_axtemov", role: "members.list.roles.rf_affiliation" },
-  { name: "members.list.names.safiye_ametova", role: "members.list.roles.finance_advisor" },
+  { name: "members.list.names.aziz_axtemov", role: "members.list.roles.rf_affiliation", imageUrl: "/images/team/Aziz_Akhtemov.jpg"  },
+  { name: "members.list.names.safiye_ametova", role: "members.list.roles.finance_advisor", imageUrl: "/images/team/Safiye_Ametova.jpeg"  },
   {name: "members.list.names.ulrie_kerimova", role: "members.list.roles.international_communication_issues", imageUrl: "/images/team/Ulrie_Kerimova.png"}
 ];
 
