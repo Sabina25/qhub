@@ -11,7 +11,7 @@ const members = [
   // { name: "members.list.names.kadir_tataris", role: "members.list.roles.fundraising_advisor", imageUrl: "/images/team/Kadir_Tataris.jpg" },
   { name: "members.list.names.elvina_khalilova", role: "members.list.roles.crimean_tatar_language_ambassador", imageUrl: "/images/team/elvina_khalilova.jpg" },
   // { name: "members.list.names.fikret_refatov", role: "members.list.roles.communications_advisor", imageUrl: "/images/team/fikret.jpg" },
-  { name: "members.list.names.mefa_umerov", role: "members.list.roles.qhub_rep_odesa", imageUrl: "/images/team/mefa_umerov.jpg" },
+  //{ name: "members.list.names.mefa_umerov", role: "members.list.roles.qhub_rep_odesa", imageUrl: "/images/team/mefa_umerov.jpg" },
   { name: "members.list.names.emir_asan_dervishev", role: "members.list.roles.qhub_rep_estonia", imageUrl: "/images/team/Emir_asan_dervish.jpg" },
   { name: "members.list.names.feride_seydametova", role: "members.list.roles.qhub_rep_belgium", imageUrl: "/images/team/Feride_Seyd.jpg" },
   { name: "members.list.names.aziz_axtemov", role: "members.list.roles.rf_affiliation", imageUrl: "/images/team/Aziz_Akhtemov.jpg"  },
